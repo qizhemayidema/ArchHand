@@ -8,8 +8,7 @@
 
 namespace app\admin\controller;
 
-use app\admin\model\Manager;
-use app\admin\model\User;
+use app\admin\model\Manager as ManagerModel;
 use think\Controller;
 use think\facade\Session;
 use think\Request;
@@ -46,7 +45,7 @@ class Login extends Controller
             return json_encode(['code' => 0, 'msg'=>$validate->getError()], 256);
         }
 
-        $res = (new Manager())->where(['username'=>$data['username'],'password'=>md5($data['password'])])->find();
+        $res = (new ManagerModel())->where(['user_name'=>$data['username'],'password'=>md5($data['password'])])->find();
         if (!$res){
             return json_encode(['code' => 0, 'msg'=>'账号或密码不正确'], 256);
         }
