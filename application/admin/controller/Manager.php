@@ -26,7 +26,6 @@ class Manager extends Base
     {
         $manager_id = $request->param('manager_id');
 
-
         $managerInfo = (new ManagerModel())->find($manager_id);
 
         $roleList = ($managerInfo['role_id'] == 1 ) ? (new RoleModel())->select()->toArray() : (new RoleModel())->where('id','<>',1)->select()->toArray();

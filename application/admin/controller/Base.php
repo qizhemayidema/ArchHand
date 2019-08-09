@@ -8,14 +8,12 @@
 
 namespace app\admin\controller;
 
-
-
 use app\http\middleware\LoginCheck;
 use think\Controller;
 use app\admin\model\Role as RoleModel;
 use app\admin\model\Permission as PermissionModel;
 
-class Base  extends Controller
+class Base extends Controller
 {
     protected $middleware = [LoginCheck::class];
 
@@ -29,6 +27,7 @@ class Base  extends Controller
 
         if (!$this->loginInfo) $this->redirect('/admin/Login/index');
 
+        $this->assign('Base',$this);
 
         if (!$this->checkPermission()){
             $this->redirect('http://www.baidu.com');
@@ -61,15 +60,11 @@ class Base  extends Controller
      * @param string $action
      * @return bool
      */
-    private function checkPermission($controller = '',$action = '')
+    public function checkPermission($controller = '',$action = '')
     {
-        $controller = $controller != '' ? $controller : request()->controller(true);
+        $controller = $controller != '' ? strtolower($controller) : request()->controller(true);
 
-        $action = $action != '' ? $action : request()->action(true);
-
-        $controller = strtolower($controller);
-
-        $action = strtolower($action);
+        $action = $action != '' ? strtolower($action) : request()->action(true);
 
         if ($this->loginInfo['role_id'] == 1) return true;
 
@@ -84,5 +79,4 @@ class Base  extends Controller
         }
         return false;
     }
-
 }
