@@ -6,11 +6,8 @@ use think\Controller;
 
 class Index extends Base
 {
-    public function index(){
-$data  = getCategoryTree();
-//return json($data);
-        dump($data);die;
-
+    public function index()
+    {
         return $this->fetch();
     }
 }
