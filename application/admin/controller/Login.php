@@ -50,7 +50,7 @@ class Login extends Controller
             return json_encode(['code' => 0, 'msg'=>'账号或密码不正确'], 256);
         }
         //登陆成功
-        \think\facade\Session::set('admin',$data['username']);
+        \think\facade\Session::set('admin',$res);
 
         return json_encode(['code' => 1, 'msg'=>'success'], 256);
     }

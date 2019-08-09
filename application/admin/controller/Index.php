@@ -6,8 +6,8 @@ use think\Controller;
 
 class Index extends Base
 {
-    public function index()
-    {
+    public function index(){
+
         return $this->fetch();
     }
 }
