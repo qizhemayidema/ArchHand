@@ -22,9 +22,58 @@ class Manager extends Base
         return $this->fetch();
     }
 
-    public function add()
+    public function add(Request $request)
     {
+        $manager_id = $request->param('manager_id');
+
+
+        $managerInfo = (new ManagerModel())->find($manager_id);
+
+        $roleList = ($managerInfo['role_id'] == 1 ) ? (new RoleModel())->select()->toArray() : (new RoleModel())->where('id','<>',1)->select()->toArray();
+
+        $this->assign('role_list',$roleList);
+
         return $this->fetch();
+    }
+
+    public function save(Request $request)
+    {
+        $data = $request->post();
+
+        $rules = [
+            'user_name'     => 'require',
+            'password'      => 'require',
+            're_password'   => 'require',
+            'role_id'       => 'require',
+        ];
+
+        $messages = [
+            'user_name.require'     => '管理员名称必须填写',
+            'password.require'      => '密码必须填写',
+            're_password.require'   => '确认密码必须填写',
+            'role_id.require'       => 'error',
+        ];
+
+        $validate = new Validate($rules,$messages);
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        if ($data['password'] != $data['re_password']){
+            return json(['code'=>0,'msg'=>'两次密码不一致']);
+        }
+
+        if ((new ManagerModel())->where(['user_name'=>$data['user_name']])->find()){
+            return json(['code'=>0,'msg'=>'该账号已存在']);
+        }
+
+        (new ManagerModel())->insert([
+            'user_name'     => $data['user_name'],
+            'password'      => md5($data['password']),
+            'role_id'       => $data['role_id'],
+        ]);
+
+        return json(['code'=>1,'msg'=>'success']);
     }
 
     //查看管理员
@@ -67,17 +116,6 @@ class Manager extends Base
             return json(['code'=>0,'msg'=>'error']);
         }
 
-        $ManagerInfo = (new ManagerModel())->find($data['manager_id']);
-
-
-        if ($ManagerInfo['role_id'] == 1 && ($ManagerInfo['id'] != $this->loginInfo['id'])){
-            return json(['code'=>0,'msg'=>'非法操作']);
-        }
-
-        if ( $data['role_id'] == 1 && $ManagerInfo['role_id'] != 1){
-            return json(['code'=>0,'msg'=> '不能设置超级管理员']);
-        }
-
         $result = [];
 
         //如果写了密码 则 更新密码
@@ -88,7 +126,7 @@ class Manager extends Base
             $result['password'] = md5($data['new_password']);
         }
 
-        $result['role_id'] = $this->loginInfo['id'] != 1 ?? $data['role_id'];
+        $result['role_id'] = $this->loginInfo['id'] != 1 ? $this->loginInfo['id'] : $data['role_id'];
         $result['user_name'] = $data['user_name'];
 
         (new ManagerModel())->where(['id'=>$data['manager_id']])->update($result);
@@ -96,5 +134,17 @@ class Manager extends Base
         return json(['code'=>1,'msg'=>'success']);
     }
 
+
+    public function delete(Request $request)
+    {
+        $manager_id = $request->param('manager_id');
+        if ($manager_id == 1){
+            return json(['code'=>0,'msg'=>'error']);
+        }
+
+        (new ManagerModel())->where(['id'=>$manager_id])->delete();
+
+        return json(['code'=>1,'msg'=>'success']);
+    }
 
 }
