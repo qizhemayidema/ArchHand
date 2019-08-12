@@ -76,8 +76,8 @@
                         layer.msg(data.msg,{icon:5,time:1000});
                     } else {
                         layer.msg('添加成功',{icon:1,time:1000},function(){
+                            window.parent.location.reload();
                             var index = parent.layer.getFrameIndex(window.name);
-                            parent.$('.btn-refresh').click();
                             parent.layer.close(index);
                         });
 

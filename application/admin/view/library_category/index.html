@@ -55,7 +55,7 @@
             <tr class="text-c">
 
                 <td>{$v['id']}</td>
-                <td style="text-align: left">{$v['name']}</td>
+                <td>{$v['cate_name']}</td>
                 <td class="td-manage">
                     <a title="编辑" href="javascript:;" onclick="member_edit('编辑','read?id={$v['id']}','4','','510')"
                        class="ml-5" style="text-decoration:none">
@@ -70,7 +70,7 @@
             </tbody>
         </table>
         <div id="AjaxPage" style="text-align:right;">
-            {$html|raw}
+            {$categories->render()|raw}
         </div>
     </div>
 </div>
