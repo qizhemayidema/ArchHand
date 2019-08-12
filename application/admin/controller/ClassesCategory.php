@@ -158,6 +158,11 @@ class ClassesCategory extends Base
             return json(['code'=>0,'msg'=>'请确认该分类下没有课程']);
         }
 
+        //判断分类有没有标签
+        if ((new \app\admin\model\ClassesTag())->where(['cate_id'=>$id])->find()){
+            return json(['code'=>0,'msg'=>'请确认该分类下标签']);
+        }
+
         //删除
         (new ClassCateModel())->where(['id'=>$id])->delete();
 

@@ -3,37 +3,57 @@
 <head>
     {include file="common/meta"}
     {include file="common/source"}
-    <title>分类管理</title>
+    <title>标签管理</title>
 </head>
 <body>
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 课程管理 <span class="c-gray en">&gt;</span> 分类管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 课程管理 <span class="c-gray en">&gt;</span> 标签管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="admin_add('添加分类','{:url('/admin/Classes_category/add')}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加分类</a></span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l"><a href="javascript:;" onclick="admin_add('添加标签','{:url('/admin/Classes_tag/add')}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加标签</a></span>
+        <div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="border: 0;">
+        <select id="category_select" class="select" style="width: 30%;border: 0;">
+            <option value="0" {if $cate_id == 0} selected {/if}>全部</option>
+            {foreach $cate_info as $key => $value}
+                <option value="{$value.id}" {if $value.id == $cate_id} selected {/if}>{$value.cate_name}</option>
+            {/foreach}
+        </select>
+        </span>
+        </div>
+
+    </div>
+
     <table class="table table-border table-bordered table-bg">
         <thead>
         <tr>
-            <th scope="col" colspan="9">分类列表</th>
+            <th scope="col" colspan="9">标签列表</th>
         </tr>
         <tr class="text-c">
             <th width="40">ID</th>
-            <th>分类名称</th>
+            <th>所属分类</th>
+            <th>标签名称</th>
+            <th>标签图片</th>
             <th width="100">操作</th>
         </tr>
         </thead>
         <tbody>
-        {foreach $cate_list as $key => $value}
+        {foreach $tag_info as $key => $value}
         <tr class="text-c">
             <td>{$value.id}</td>
-            <td style="text-align:left;"> {:str_repeat('---',$value.level)} {$value.cate_name}</td>
+            <td>{$value.cate_name}</td>
+            <td>{$value.name}</td>
+            <td><img src="{$value.tag_img}" alt="" style="width: 20px;"></td>
             <td class="td-manage">
-                <a title="编辑" href="javascript:;" onclick="admin_edit('分类编辑','{:url('/admin/Classes_category/read',['id'=>$value.id])}','1','800','500')" class="ml-5" style="text-decoration:none">
+                <a title="编辑" href="javascript:;" onclick="admin_edit('标签编辑','{:url('/admin/Classes_tag/read',['tag_id'=>$value.id])}','1','800','500')" class="ml-5" style="text-decoration:none">
                     <i class="Hui-iconfont">&#xe6df;</i>
                 </a>
-                <a title="删除" href="javascript:;" onclick="admin_del(this,'{:url('/admin/Classes_category/delete',['id'=>$value.id])}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                <a title="删除" href="javascript:;" onclick="admin_del(this,'{:url('/admin/Classes_tag/delete',['tag_id'=>$value.id])}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
         </tr>
         {/foreach}
         </tbody>
     </table>
+    <div style="float: right;">
+        {$tag_info->render()|raw}
+    </div>
 </div>
 {include file="common/footer"}
 <!--请在下方写此页面业务相关的脚本-->
@@ -41,6 +61,12 @@
 <script type="text/javascript" src="__STATIC__/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="__STATIC__/lib/laypage/1.2/laypage.js"></script>
 <script type="text/javascript">
+
+    $('#category_select').on('change',function(){
+        let value = $(this).val();
+        let url = "{:url('/admin/Classes_tag/index')}" + "?cate_id=" + value;
+            window.location.href = url;
+    })
     /*
         参数解释：
         title	标题
@@ -64,11 +90,12 @@
                     console.log(data);
                     if (data.code == 0){
                         layer.msg(data.msg,{icon:5,time:1000});
+
                     } else{
                         $(obj).parents("tr").remove();
                         layer.msg('已删除!',{icon:1,time:1000});
                     }
-                    
+
                 },
                 error:function(data) {
                     console.log(data.msg);

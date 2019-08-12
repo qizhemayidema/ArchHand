@@ -13,7 +13,6 @@ class ClassesCategory extends Model
     public function getCategoryList()
     {
         $data = $this->select()->toArray();
-
         return $this->getList($data);
     }
 
@@ -31,7 +30,6 @@ class ClassesCategory extends Model
                 unset($arr[$key]);
                 //开始递归,查找父ID为该节点ID的节点,级别则为原级别+1
                 $this->getList($arr, $value['id'], $level+1);
-
             }
         }
         return $list;
