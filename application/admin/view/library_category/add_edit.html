@@ -1,0 +1,130 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="__STATIC__/lib/html5shiv.js"></script>
+    <script type="text/javascript" src="__STATIC__/lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="__STATIC__/static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/static/h-ui.admin/skin/default/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/static/h-ui.admin/css/style.css"/>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="__STATIC__/lib/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <!--/meta 作为公共模版分离出去-->
+
+    <title>{$cate?'编辑分类':'新增分类'}</title>
+    <meta name="keywords" content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+    <meta name="description" content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<article class="page-container">
+    {if !isset($is_exist)}
+    <form action="{$cate?'update':'save'}" method="post" class="form form-horizontal" id="form-member-add">
+        <input id="id" name="id" value="{$cate?$cate['id']:null}" type="hidden">
+        <input id="cp_id" name="cp_id" value="{$cate?$cate['p_id']:null}" type="hidden">
+        <input id="ids_string" name="ids_string" value="{$cate?$cate['ids_string']:null}" type="hidden">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>分类名称：</label>
+            <div class="formControls col-xs-6 col-sm-7">
+                <input type="text" class="input-text" value="{$cate?$cate['cate_name']:null}" placeholder="" id="name"
+                       name="name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">父级分类：</label>
+            <div class="formControls col-xs-6 col-sm-7"> <span class="select-box">
+				<select class="select" size="1" name="p_id" id="p_id">
+					<option value="0" selected>顶级分类</option>
+					{foreach $categories as $v}
+					    {if $v['p_id']==0}
+                            {if isset($cate)}
+                                {if $cate['id']!=$v['id']}
+                                    <option value="{$v['id']}" {if $cate['p_id']==$v['id']}selected{/if}>
+                    {$v['cate_name']}
+                    </option>
+                                {/if}
+                            {else/}
+                                <option value="{$v['id']}">{$v['cate_name']}</option>
+                            {/if}
+					    {/if}
+					{/foreach}
+
+				</select>
+				</span></div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+    {else/}
+    <div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>未找到指定资源</div>
+    {/if}
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="__STATIC__/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="__STATIC__/static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="__STATIC__/static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__STATIC__/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+        $(function () {
+            $('#form-member-add').ajaxForm({
+                //beforeSubmit: checkForm, // 此方法主要是提交前执行的方法，根据需要设置
+                success: complete, // 这是提交后的方法
+                dataType: 'json'
+            });
+
+            // function checkForm() {
+            //
+            // }
+
+            function complete(data) {
+                console.log(data)
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 6, time: 1500, shade: 0.1}, function (index) {
+                        window.parent.location.reload();
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.msg(data.msg, {icon: 5, time: 1500});
+                    return false;
+                }
+            }
+
+        });
+
+
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
