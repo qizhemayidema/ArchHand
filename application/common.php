@@ -15,6 +15,11 @@ use think\exception\DbException;
 use think\Log;
 
 
+
+function jsone($code,$msg){
+    return json(['code'=>$code,'msg'=>$msg]);
+}
+
 /**
  * 文库树形菜单
  * @param int $parentId
@@ -22,44 +27,20 @@ use think\Log;
  * @return array
  * @throws \think\Exception\DbException
  */
-//{id:1,name:222,pid:0},
-//{}
-//{}
-
-
-function getCategoryTree($allCategories,$parentId = 0,$id=0)
+function getCategoryTree($allCategories = null, $parentId = 0, $level = 0)
 {
-//    return $allCategories
-//        // 从所有类目中挑选出父类目 ID 为 $parentId 的类目
-//        ->where('parent_id', $parentId)
-//        // 遍历这些类目，并用返回值构建一个新的集合
-//        ->map(function (Category $category) use ($allCategories) {
-//            $data = ['id' => $category->id, 'name' => $category->name];
-//            // 如果当前类目不是父类目，则直接返回
-//            if (!$category->is_directory) {
-//                return $data;
-//            }
-//            // 否则递归调用本方法，将返回值放入 children 字段中
-//            $data['children'] = $this->getCategoryTree($category->id, $allCategories);
-//
-//            return $data;
-//        });
-
-
-   static $data = array();
-//    $categories = LibraryCategory::where('p_id', $parentId)->all();
+    $data = array();
+    if (!$allCategories) {
+        $allCategories = LibraryCategory::all();
+    }
     foreach ($allCategories as $k => $v) {
-//        if(isset($v['p_id'])){0
-            if($v['p_id']==$parentId){
-                $data[] =$v;
-                $v['children'] = getCategoryTree($allCategories,$v['id']);
-//            }
+        if ($v['p_id'] == $parentId) {
+            $v['children'] = getCategoryTree($allCategories, $v['id']);
+            $data[] = $v;
         }
-
     }
     return $data;
 }
-
 
 /**
  * 分类列表
@@ -67,31 +48,23 @@ function getCategoryTree($allCategories,$parentId = 0,$id=0)
  * @param int $id
  * @return array|bool
  */
-function getCategories($categories, $id = 0,$level = 0)
+function getCategories($allCategories = null, $parentId = 0, $level = 0)
 {
-
-    if (!$categories) {
-        return false;
+    if (!$allCategories) {
+        $allCategories = LibraryCategory::all();
     }
     static $data = array();
-    foreach ($categories as $k => $v) {
-        if ($v['pid'] == $id) {
-            if ($v['children']) {
-                $data[] = [
-                    'id' => $v['id'],
-                    'name' => $v['pid'] ? str_repeat('-', $level * 5 + 1) . $v['name'] : $v['name'],
-                    'pid' => $v['pid'],
-                    'ids'=>$v['ids'],
-                ];
-                getCategories($v['children'], $v['id'],$level+1);
-            } else {
-                $data[] = [
-                    'id' => $v['id'],
-                    'name' => $v['pid'] ? str_repeat('-', $level * 5 + 1) . $v['name'] : $v['name'],
-                    'pid' => $v['pid'],
-                    'ids'=>$v['ids'],
-                ];
-            }
+
+    foreach ($allCategories as $v) {
+        if ($v['p_id'] == $parentId) {
+            $v['level'] = $level;
+            $data[] = [
+                'id' => $v['id'],
+                'name' => $v['p_id'] ? str_repeat('-', $level * 5 + 1) . $v['cate_name'] : $v['cate_name'],
+                'pid' => $v['p_id'],
+                'ids' => $v['ids_string'],
+            ];
+            getCategories($allCategories, $v['id'], $level + 1);
         }
     }
     return $data;

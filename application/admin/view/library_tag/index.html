@@ -21,19 +21,19 @@
     <script type="text/javascript" src="__STATIC__/lib/DD_belatedPNG_0.0.8a-min.js"></script>
     <script>DD_belatedPNG.fix('*');</script>
     <![endif]-->
-    <title>文库分类管理</title>
+    <title>文库标签管理</title>
 </head>
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 文库管理 <span
-        class="c-gray en">&gt;</span> 分类管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+        class="c-gray en">&gt;</span> 标签管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
                                               href="javascript:location.replace(location.href);" title="刷新"><i
         class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
 
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="l">
-            <a href="javascript:;" onclick="member_add('添加分类','add','','510')" class="btn btn-primary radius">
-                <i class="Hui-iconfont">&#xe600;</i> 添加分类
+            <a href="javascript:;" onclick="member_add('添加标签','add','','510')" class="btn btn-primary radius">
+                <i class="Hui-iconfont">&#xe600;</i> 添加标签
             </a>
         </span>
 
@@ -44,18 +44,19 @@
             <tr class="text-c">
 
                 <th width="25">ID</th>
-                <th width="100">分类名称</th>
+                <th width="25">标签名称</th>
+                <th width="25">所属分类</th>
                 <th width="25">操作</th>
             </tr>
             </thead>
             <tbody>
 
-            {if isset($categories)}
-            {foreach $categories as $k=>$v}
+            {if isset($tags)}
+            {foreach $tags as $k=>$v}
             <tr class="text-c">
-
                 <td>{$v['id']}</td>
                 <td style="text-align: left">{$v['name']}</td>
+                <td>{$v->category->cate_name}</td>
                 <td class="td-manage">
                     <a title="编辑" href="javascript:;" onclick="member_edit('编辑','read?id={$v['id']}','4','','510')"
                        class="ml-5" style="text-decoration:none">
@@ -70,7 +71,7 @@
             </tbody>
         </table>
         <div id="AjaxPage" style="text-align:right;">
-            {$html|raw}
+            {$tags|raw}
         </div>
     </div>
 </div>
