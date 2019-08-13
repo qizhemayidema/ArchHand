@@ -11,23 +11,6 @@
     <form action="" method="post" class="form form-horizontal" id="form-admin-per-add">
         <input type="hidden" name="id" value="{$cate_info.id}">
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限所属节点：</label>
-            <div class="formControls col-xs-8 col-sm-9">
-                <span class="select-box">
-                  <select class="select" size="1" name="p_id">
-
-                    <option value="0" {if $cate_info.p_id == 0} selected  {/if}>顶级节点</option>
-
-                    {if $cate_info.p_id != 0}
-                      {foreach $cate_list as $key => $value}
-                    <option value="{$value.id}" {if $cate_info.p_id == $value.id} selected  {/if}>{$value.cate_name}</option>
-                      {/foreach}
-                    {/if}
-                  </select>
-                </span>
-            </div>
-        </div>
-        <div class="row cl">
             <label class="form-label col-xs-4 col-sm-3">分类名称：</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input type="text" value="{$cate_info.cate_name}" class="input-text"  name="cate_name">

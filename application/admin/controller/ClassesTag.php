@@ -17,13 +17,12 @@ class ClassesTag extends Base
         if ($cate_id){
             $tagInfo = $tagInfo->where(['cate_id'=>$cate_id]);
         }
-        $tagInfo = $tagInfo->where(['p_id'=>0])
-                                ->field('cate.cate_name,tag.id,tag.name,tag.tag_img')
+        $tagInfo = $tagInfo->field('cate.cate_name,tag.id,tag.name,tag.tag_img')
                                 ->order('id','desc')
                                 ->paginate(20,false,['query'=>$request->param()]);
 
 
-        $cateInfo = (new CateModel())->where(['p_id'=>0])->select();
+        $cateInfo = (new CateModel())->select();
 
         $this->assign('tag_info',$tagInfo);
         $this->assign('cate_id',$cate_id);
@@ -33,7 +32,7 @@ class ClassesTag extends Base
 
     public function add(Request $request)
     {
-        $cateList = (new CateModel())->where(['p_id'=>0])->select();
+        $cateList = (new CateModel())->select();
 
         $this->assign('cate_list',$cateList);
 
@@ -81,7 +80,7 @@ class ClassesTag extends Base
     {
         $tag_id = $request->param('tag_id');
 
-        $cateList = (new CateModel())->where(['p_id'=>0])->select();
+        $cateList = (new CateModel())->select();
 
         $this->assign('cate_list',$cateList);
 

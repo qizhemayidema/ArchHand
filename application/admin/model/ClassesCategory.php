@@ -13,7 +13,7 @@ class ClassesCategory extends Model
     public function getCategoryList()
     {
         $data = $this->select()->toArray();
-        return $this->getList($data);
+        return $data;
     }
 
     protected function getList($arr, $pid =0, $level = 0)
