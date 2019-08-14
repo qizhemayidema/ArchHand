@@ -3,12 +3,14 @@
 namespace app\admin\controller;
 
 use think\Controller;
+
 use think\Db;
 use think\Request;
 use app\admin\model\Library as LibraryModel;
 use think\Validate;
 
 class Library extends Base
+
 {
     /**
      * 显示资源列表
@@ -17,10 +19,11 @@ class Library extends Base
      */
     public function index()
     {
-        //
-        $libraries = (new LibraryModel)->where('is_delete',0)->paginate(15);
+
+        $libraries = (new LibraryModel)->where('is_delete', 0)->paginate(15);
         $this->assign('libraries', $libraries);
         return $this->fetch();
+
     }
 
     /**
@@ -28,6 +31,7 @@ class Library extends Base
      *
      * @return \think\Response
      */
+
     public function add()
     {
         //
@@ -48,10 +52,11 @@ class Library extends Base
      * 显示指定的资源
      *
      * @param  int $id
-     * @return \think\Response
+     * @param  int $id
      */
     public function read($id)
     {
+
 
     }
 
@@ -65,10 +70,12 @@ class Library extends Base
      */
     public function update(Request $request, $id)
     {
+
         //
     }
 
     /**
+     * <<<<<<< HEAD
      * 删除指定资源
      *
      * @param  int $id
@@ -83,7 +90,7 @@ class Library extends Base
             //删除标签
             $del_value = Db::name('library_have_attribute_value')->where('library_id', $id['id'])->delete();
             //删除审核原因
-            $verify = Db::name('library_check_history')->where('library_id',$id['id'])->delete();
+            $verify = Db::name('library_check_history')->where('library_id', $id['id'])->delete();
             //TODO::删除远程文件
             Db::commit();
         } catch (\Exception $e) {
@@ -173,6 +180,5 @@ class Library extends Base
 
             return json(['code' => 0, 'msg' => '系统错误']);
         }
-
     }
 }

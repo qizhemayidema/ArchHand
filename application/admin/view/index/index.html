@@ -38,6 +38,7 @@
 </header>
 <aside class="Hui-aside">
     <div class="menu_dropdown bk_2">
+<<<<<<< HEAD
         <dl id="menu-library">
             <dt><i class="Hui-iconfont">&#xe622;</i> 文库管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
@@ -57,24 +58,43 @@
                 </ul>
             </dd>
         </dl>
+
+        {if $Base->checkPermission('Manager','__index')}
+
         <dl id="menu-comments">
             <dt><i class="Hui-iconfont">&#xe622;</i> 管理员管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
+                    {if $Base->checkPermission('Manager','index')}
                     <li><a data-href="{:url('/admin/Manager/index')}" data-title="管理员管理" href="javascript:void(0)">管理员管理</a></li>
+                    {/if}
+                    {if $Base->checkPermission('Role','index')}
                     <li><a data-href="{:url('/admin/Role/index')}" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
+                    {/if}
+                    {if $Base->checkPermission('Permission','index')}
                     <li><a data-href="{:url('/admin/Permission/index')}" data-title="权限管理" href="javascript:;">权限管理</a></li>
+                    {/if}
+                </ul>
+            </dd>
+        </dl>
+        {/if}
+        <dl id="menu-library_category">
+            <dt><i class="Hui-iconfont">&#xe622;</i> 文库管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li><a data-href="{:url('/admin/Library_category/index')}" data-title="分类管理" href="javascript:void(0)">分类管理</a></li>
+                    <li><a data-href="{:url('/admin/Library_attribute/index')}" data-title="属性管理" href="javascript:;">属性管理</a></li>
+                    <li><a data-href="{:url('/admin/Library/index')}" data-title="文库列表" href="javascript:;">文库列表</a></li>
                 </ul>
             </dd>
         </dl>
         <dl id="menu-member">
-            <dt><i class="Hui-iconfont">&#xe627;</i> 订单<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dt><i class="Hui-iconfont">&#xe627;</i> 课程管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li><a data-href="{:url('/admin/Order/index')}" data-title="全部订单" href="javascript:;">全部订单</a></li>
-                    <li><a data-href="{:url('/admin/Order/waitSend')}" data-title="待发货订单" href="javascript:;">待发货订单</a></li>
-                    <li><a data-href="{:url('/admin/Order/waitOk')}" data-title="等收货订单" href="javascript:;">等收货订单</a></li>
-                    <li><a data-href="{:url('/admin/Order/ok')}" data-title="完成订单" href="javascript:;">完成订单</a></li>
+                    <li><a data-href="{:url('/admin/Classes_category/index')}" data-title="分类管理" href="javascript:;">分类管理</a></li>
+                    <li><a data-href="{:url('/admin/Classes_tag/index')}" data-title="标签管理" href="javascript:;">标签管理</a></li>
+                    <li><a data-href="{:url('/admin/Classes/index')}" data-title="课程管理" href="javascript:;">课程管理</a></li>
                 </ul>
             </dd>
         </dl>

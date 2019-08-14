@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
+<<<<<<< HEAD
     {include file="common/meta,common/source"}
     <title>文库列表</title>
 </head>
@@ -33,6 +34,7 @@
             </tr>
             </thead>
             <tbody>
+
 
             {foreach $libraries as $v}
             <tr class="text-c">
@@ -98,6 +100,7 @@
     function member_del(obj, id) {
         layer.confirm('确认要删除吗？', function (index) {
             $.ajax({
+
                 type: 'POST',
                 url: 'delete',
                 dataType: 'json',
@@ -112,6 +115,7 @@
             });
         });
     }
+
 </script>
 </body>
 </html>
