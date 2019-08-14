@@ -6,8 +6,8 @@
 </head>
 <body>
 <nav class="breadcrumb">
-    <i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span> 文库管理 <span class="c-gray en">&gt;</span>
-    文库列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+    <i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span> 评论管理 <span class="c-gray en">&gt;</span>
+    文库评论列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
             href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
 
@@ -16,70 +16,55 @@
         <table class="table table-border table-bordered table-hover table-bg table-sort">
             <thead>
             <tr>
-                <th scope="col" colspan="110">文库列表</th>
+                <th scope="col" colspan="110">文库评论列表</th>
             </tr>
             <tr class="text-c">
                 <th width="5%">ID</th>
-                <th width="5%">分类</th>
-                <th width="10%">文库标题</th>
-                <th width="10%">用户</th>
-                <th width="5%">助手币</th>
-                <th width="20%">资源地址</th>
-                <th width="20%">描述</th>
-                <th width="10%">发布时间</th>
-                <th width="5%">是否官方发布</th>
-                <th width="5%">审核状态</th>
+                <th width="5%">用户</th>
+                <th width="10%">评论内容</th>
+                <th width="10%">发布日期</th>
+                <th width="5%">审核</th>
                 <th width="10%">操作</th>
             </tr>
             </thead>
             <tbody>
 
-            {foreach $libraries as $v}
+            {foreach $comments as $v}
             <tr class="text-c">
                 <td>{$v['id']}</td>
-                <td>{$v->category->cate_name}</td>
-                <td>{$v['name']}</td>
                 <td>{$v->user->nickname}</td>
-                <td>{$v['integral']}</td>
-                <td>
-                    <a href="{$v['source_url']}" target="_blank">
-                        {$v['source_url']}
-                    </a>
-                </td>
-                <td>{$v['desc']}</td>
-                <td>{$v['create_time']}</td>
-                <td>{$v['is_official']}</td>
+                <td>{$v['comment']}</td>
+                <td>{$v->create_time}</td>
                 <td>
                     {if condition="$v->getData('status')==0"}
                     <a style="cursor:pointer"
-                       class="label label-warning radius"
-                       onclick=" verify('审核','verify?id={$v->id}','4','','510')">
+                       class="label label-danger radius"
+                       onclick=" verify('{$v->id}','verify')">
                     {$v['status']}
                     </a>
                     {elseif condition="$v->getData('status')==1"}
                     <a style="cursor:pointer"
                        class="label label-success radius"
-                       onclick=" verify('审核','verify?id={$v->id}','4','','510')">
-                        {$v['status']}
-                    </a>
-                    {else/}
-                    <a style="cursor:pointer"
-                       class="label label-danger radius"
-                       onclick=" verify('审核','verify?id={$v->id}','4','','510')">
+                       onclick=" verify('{$v->id}','verify')">
                         {$v['status']}
                     </a>
                     {/if}
                 </td>
 
                 <td class="td-manage">
+                    <a title="查看" href="javascript:;" onclick="library_comment_show('评论内容','show?id={$v->id}')" class="ml-5"
+                       style="text-decoration:none"><i class="Hui-iconfont">&#xe725;</i>
+                    </a>
                     <a title="删除" href="javascript:;" onclick="member_del(this,{$v->id})" class="ml-5"
-                        style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                        style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i>
+                    </a>
+                </td>
             </tr>
             {/foreach}
 
             </tbody>
         </table>
-        <div id="AjaxPage" style="text-align:right;">{$libraries|raw}</div>
+        <div id="AjaxPage" style="text-align:right;">{$comments|raw}</div>
     </div>
 </div>
 
@@ -89,10 +74,29 @@
 <script type="text/javascript">
 
     /*用户-查看*/
-    function  verify(title, url, id, w, h) {
-        layer_show(title, url, w, h);
+    function library_comment_show(title,url,id,w,h){
+        layer_show(title,url,w,h);
     }
-
+    function verify(id,url,sign1='封禁',sign2='正常'){
+        $.get(url,{id:id},function(data){
+            if(data.code==1){
+                var a='<span class="label label-danger">'+data.msg+'</span>'
+                $('#zt'+id).html(a);
+                layer.msg(data.msg,{icon:2,time:1500,shade: 0.1,});
+                // location.replace(location.href);
+                window.location.reload();
+                return false;
+            }else{
+                var b='<span class="label label-info">'+data.msg+'</span>'
+                $('#zt'+id).html(b);
+                layer.msg(data.msg,{icon:1,time:1500,shade: 0.1,});
+                // location.replace(location.href);
+                window.location.reload();
+                return false;
+            }
+        });
+        return false;
+    }
 
     /*用户-删除*/
     function member_del(obj, id) {
