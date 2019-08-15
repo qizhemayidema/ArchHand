@@ -52,7 +52,6 @@ class Base extends Controller
 
        return $loginInfo;
 
-
     }
 
     /**
