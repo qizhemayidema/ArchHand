@@ -25,11 +25,10 @@
                 <th width="10%">用户</th>
                 <th width="5%">助手币</th>
                 <th width="20%">资源地址</th>
-                <th width="20%">描述</th>
                 <th width="10%">发布时间</th>
                 <th width="5%">是否官方发布</th>
                 <th width="5%">审核状态</th>
-                <th width="10%">操作</th>
+                <th width="5%">操作</th>
             </tr>
             </thead>
             <tbody>
@@ -53,7 +52,6 @@
                         {$v['source_url']}
                     </a>
                 </td>
-                <td>{$v['desc']}</td>
                 <td>{$v['create_time']}</td>
                 <td>{$v['is_official']}</td>
                 <td>
@@ -99,7 +97,12 @@
 <script type="text/javascript">
 
     function library_show(title,url,id,w,h){
-        layer_show(title,url,w,h);
+        var index = layer.open({
+            type: 2,
+            title: title,
+            content: url
+        });
+        layer.full(index);
     }
 
     /*用户-查看*/

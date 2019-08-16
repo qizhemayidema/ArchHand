@@ -45,10 +45,6 @@ class Config extends Base
     public function save(Request $request)
     {
         $form = $request->post();
-
-
-
-
         $data = [
             'title' => trim($form['title']),
             'keyword' => trim($form['keyword']),
@@ -61,14 +57,11 @@ class Config extends Base
             'phone' => trim($form['phone']),
             'qr_code' => trim($form['qr_code']),
             'email' => trim($form['email']),
-            'app_key' => trim($form['app_key']),
-            'app_secret' => trim($form['app_secret']),
-            'sign' => trim($form['sign']),
         ];
+
         $data = json_encode($data);
         $status = file_put_contents(self::WEB_SITE_PATH, $data);
         if ($status) {
-            Cache::set('web_site', $data);
             return jsone(1, '设置成功');
         } else {
             return jsone(0, '设置失败');

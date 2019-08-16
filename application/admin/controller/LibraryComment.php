@@ -102,6 +102,7 @@ class LibraryComment extends Base
         $id = $request->only('id');
         Db::startTrans();
         try {
+            //TODO::替换字段
             $comm = LibraryCommentModel::where('id', $id['id'])->delete();
             $check = Db::name('library_comment_check_history')->where('library_comment_id', $id['id'])->delete();
             Db::commit();

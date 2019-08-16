@@ -54,6 +54,8 @@ class Official extends Base
             $form['avatar_url'] = 'uploads/users/default/20150828225753jJ4Fc.jpeg';
         }
         $form['type'] = 2;
+        $form['birthday'] = strTotime($form['birthday']);
+
         $form['create_time']=time();
         $user = (new UserModel())->save($form);
         if ($user) {
@@ -107,7 +109,7 @@ class Official extends Base
         $form['birthday'] = strtotime($form['birthday']);
 
         if ($form['avatar_url'] == '') {
-            $form['avatar_url'] = 'uploads/users/default/20150828225753jJ4Fc.jpeg';
+            unset($form['avatar_url']);
         }
         $user = UserModel::update($form);
         if ($user) {

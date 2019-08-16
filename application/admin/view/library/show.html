@@ -1,13 +1,130 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-
 	{include file="common/source"}
 <title>查看评论</title>
 </head>
 <body>
 <div class="page-container">
-	{$comment->comment|raw}
+
+	<div class="bk-gray radius col-md-12">
+		<div class="content">
+			<div class="pt-20 pb-5 pl-20">
+				<h1>标题</h1>
+			</div>
+			<div class="pt-5 pb-5 pl-20 c-999">
+				<span class="">匿名</span>
+				<span class="">时间</span>
+				<span>浏览</span>
+				<span>助手币</span>
+			</div>
+		</div>
+		<hr/>
+		<div class="content">
+			<div>
+				<span class="pr-20">标签:</span>
+					<span class="c-white" style="background-color: #777777">asdfadsfasdf</span>
+				<span class="c-white" style="background-color: #777777">asdfadsfasdf</span>
+				<span class="c-white" style="background-color: #777777">asdfadsfasdf</span>
+			</div>
+
+			<div>下载</div>
+
+			<div>
+				富文本
+			</div>
+
+			<div>
+				<span>点赞</span>
+				<span>收藏</span>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+		<tr>
+			<th scope="col" colspan="10">订单信息</th>
+		</tr>
+		<tr class="text-c">
+			<th>订单号</th>
+			<th>商品总价</th>
+			<th>运费价格</th>
+			<th>优惠券减少</th>
+			<th>实际支付</th>
+			<th>当前状态</th>
+			<th>物流单号</th>
+			<th>下单时间</th>
+			<th>支付时间</th>
+			<th>完成时间</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr class="text-c">
+			<td>gsdfgsdfgsfg</td>
+			<td>sdfgsfg</td>
+			<td>sdfgsfdg</td>
+			<td>sdfgsfgsfg</td>
+			<td>sdfgsfg</td>
+			<td>
+
+				<span style="color:red;">未支付</span>
+
+			</td>
+			<td>sdfgsfdg</td>
+			<td>sfdgsfg</td>
+			<td>sdfgsfg</td>
+			<td>sdfgsfdgsfg</td>
+		</tr>
+		</tbody>
+	</table><br/>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+		<tr>
+			<th scope="col" colspan="9">买家信息</th>
+		</tr>
+		<tr class="text-c">
+			<th>买家名称</th>
+			<th>送货地址</th>
+			<th>手机号</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr class="text-c">
+			<td>sdfgsfg</td>
+			<td>sfdgsfg</td>
+			<td>sdfgsfg</td>
+		</tr>
+		</tbody>
+	</table><br/>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+		<tr>
+			<th scope="col" colspan="9">订单商品信息</th>
+		</tr>
+		<tr class="text-c">
+			<th>商品名</th>
+			<th>商品单价</th>
+			<th>规格</th>
+			<th>数量</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr class="text-c">
+			<td>asdfadf</td>
+			<td>asdfasdf</td>
+			<td>asdfadf</td>
+			<td>asdfasdf</td>
+		</tr>
+		</tbody>
+	</table>
 </div>
 <!--_footer 作为公共模版分离出去-->
 {include file="common/footer"}

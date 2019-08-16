@@ -29,6 +29,11 @@ class Library extends Base
 
     public function show($id){
         $library = LibraryModel::where('id',$id)->find();
+        if(!$library){
+            $this->assign('is_exist',11);
+        }
+        $this->assign('library',$library);
+        return $this->fetch();
     }
 
     public function userShow($id){

@@ -13,12 +13,12 @@
     <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
 </nav>
 <div class="page-container">
-    <form class="form form-horizontal" id="form-article-add" method="post" action="save">
+    <form class="form form-horizontal" id="form-member-add" method="post" action="save">
         <div id="tab-system" class="HuiTab">
             <div class="tabBar cl">
                 <span>基本设置</span>
                 <span>右侧导航设置</span>
-                <span>短信设置</span>
+                <span>底部导航设置</span>
             </div>
             <div class="tabCon">
                 <div class="row cl">
@@ -74,6 +74,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="tabCon">
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">VIP：</label>
@@ -108,7 +109,7 @@
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">二维码：</label>
                     <div class="formControls col-xs-8 col-sm-9">
-                        <input type="hidden" id="data_photo" name="qr_code">
+                        <input type="hidden" id="data_photo" name="qr_code" value="{$site->qr_code?:null}">
                         <div id="fileList" class="uploader-list" style=""></div>
                         <div id="imgPicker" style="float:left">选择图片</div>
                         <img id="img_data" height="100px" style="margin-left: 10px;margin-top: 50px;"
@@ -119,27 +120,7 @@
             </div>
 
             <div class="tabCon">
-                <div class="row cl">
-                    <label class="form-label col-xs-4 col-sm-2">AppKey：</label>
-                    <div class="formControls col-xs-8 col-sm-9">
-                        <input type="text" id="app_key" value="{$site->app_key?:null}" class="input-text" name="app_key" placeholder="短信AppKey">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp短信AppKey</span>
-                    </div>
-                </div>
-                <div class="row cl">
-                    <label class="form-label col-xs-4 col-sm-2">AppSecret：</label>
-                    <div class="formControls col-xs-8 col-sm-9">
-                        <input type="text" id="app_secret" value="{$site->app_secret?:null}" class="input-text" name="app_secret" placeholder="短信AppSecret">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp短信AppSecret</span>
-                    </div>
-                </div>
-                <div class="row cl">
-                    <label class="form-label col-xs-4 col-sm-2">签名：</label>
-                    <div class="formControls col-xs-8 col-sm-9">
-                        <input type="text" id="sign" value="{$site->sign?:null}" class="input-text" name="sign" placeholder="短信签名">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp短信签名</span>
-                    </div>
-                </div>
+                
             </div>
         </div>
         <div class="row cl">
@@ -212,11 +193,10 @@
         });
 
         function complete(data) {
+            // console.log(11)
             if (data.code == 1) {
                 layer.msg(data.msg, {icon: 6, time: 1500, shade: 0.1}, function (index) {
-                    window.parent.location.reload();
-                    var index = parent.layer.getFrameIndex(window.name);
-                    parent.layer.close(index);
+                    window.location.href="{:url('config/index')}";
                 });
             } else {
                 layer.msg(data.msg, {icon: 5, time: 1500});
