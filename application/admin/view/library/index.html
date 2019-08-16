@@ -1,7 +1,6 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-<<<<<<< HEAD
     {include file="common/meta,common/source"}
     <title>文库列表</title>
 </head>
@@ -41,7 +40,13 @@
                 <td>{$v['id']}</td>
                 <td>{$v->category->cate_name}</td>
                 <td>{$v['name']}</td>
-                <td>{$v->user->nickname}</td>
+                <td>
+                    <a href="javascript:void(0);" onclick="member_show('{$v->user->nickname}','userShow?id={$v->user->id}','10001','360','400')">
+                        <i class="avatar size-L radius">
+                            <img alt="" src="{$v->user->avatar_url?'/'.$v->user->avatar_url:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
+                        </i>
+                    </a>
+                </td>
                 <td>{$v['integral']}</td>
                 <td>
                     <a href="{$v['source_url']}" target="_blank">
@@ -74,6 +79,9 @@
                 </td>
 
                 <td class="td-manage">
+                    <a title="查看" href="javascript:;" onclick="library_show('评论内容','show?id={$v->id}')" class="ml-5"
+                       style="text-decoration:none"><i class="Hui-iconfont">&#xe725;</i>
+                    </a>
                     <a title="删除" href="javascript:;" onclick="member_del(this,{$v->id})" class="ml-5"
                         style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
             </tr>
@@ -89,6 +97,15 @@
 <!--_footer 作为公共模版分离出去-->
 
 <script type="text/javascript">
+
+    function library_show(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*用户-查看*/
+    function member_show(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
 
     /*用户-查看*/
     function  verify(title, url, id, w, h) {

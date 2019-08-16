@@ -1,0 +1,109 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    {include file="common/meta,common/source"}
+    <title>用户列表</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span> 用户管理 <span class="c-gray en">&gt;</span>
+    用户列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+            href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+    <!--<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">-->
+		<!--&lt;!&ndash;<a href="javascript:;" onclick="member_add('添加用户','add','','510')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加用户</a>&ndash;&gt;-->
+	<!--</span>-->
+
+    <!--</div>-->
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr>
+                <th scope="col" colspan="110">帐户列表</th>
+            </tr>
+            <tr class="text-c">
+                <th width="5%">ID</th>
+                <th width="5%">手机号</th>
+                <th width="10%">头像</th>
+                <th width="10%">昵称</th>
+                <th width="5%">性别</th>
+                <th width="5%">是否开通VIP</th>
+                <th width="5%">助手币</th>
+                <th width="10%">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $users as $v}
+            <tr class="text-c">
+                <td>{$v['id']}</td>
+                <td>{$v['phone']}</td>
+                <td>
+                    <a href="javascript:void(0);">
+                        <i class="avatar size-L radius">
+                            <img alt="" src="{$v['avatar_url']?'/'.$v['avatar_url']:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
+                        </i>
+                    </a>
+                </td>
+                <td>{$v['nickname']}</td>
+                <td>{$v['sex']}</td>
+                <td>{$v['vip_id']==0?'否':'是'}
+                    <span style="right;color: #cc0000;">
+                        <strong>{if $v->getData('vip_id')!=0}
+                            {$v->vip->discount}折<i class="Hui-iconfont" >&#xe6c1;</i>
+                            {/if}
+                        </strong>
+                    </span>
+                </td>
+                <td>{$v['integral']}</td>
+                <td class="td-manage">
+                    <a title="编辑" href="javascript:;" onclick="member_edit('编辑','read?id={$v["id"]}','4','','510')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i>
+                    </a>
+                    <a title="删除" href="javascript:;" onclick="member_del(this,{$v->id})" class="ml-5"
+                        style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+            </tr>
+            {/foreach}
+
+            </tbody>
+        </table>
+        <div id="AjaxPage" style="text-align:right;">{$users|raw}</div>
+    </div>
+</div>
+
+{include file="common/footer"}
+<!--_footer 作为公共模版分离出去-->
+
+<script type="text/javascript">
+
+    /*用户-添加*/
+    function member_add(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*用户-查看*/
+    function member_edit(title, url, id, w, h) {
+        layer_show(title, url, w, h);
+    }
+
+
+    /*用户-删除*/
+    function member_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'GET',
+                url: 'delete',
+                dataType: 'json',
+                data:{'id':id},
+                success: function (data) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

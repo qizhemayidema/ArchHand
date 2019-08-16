@@ -17,4 +17,8 @@ class LibraryComment extends Model
         $status = [0 => '封禁', 1 => '正常'];
         return $status[$value];
     }
+
+    public function getCreateTimeAttr($value){
+        return date('Y-m-d H:i:s',$value);
+    }
 }

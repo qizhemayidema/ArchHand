@@ -1,0 +1,101 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    {include file="common/meta,common/source"}
+    <title>VIP列表</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span> 用户管理 <span class="c-gray en">&gt;</span>
+    VIP列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+             href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a>
+</nav>
+<div class="page-container">
+    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">
+		<a href="javascript:;" onclick="member_add('添加VIP','add','4','1100','510')" class="btn btn-primary radius"><i
+                class="Hui-iconfont">&#xe600;</i> 添加VIP</a>
+	</span>
+
+    </div>
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr>
+                <th scope="col" colspan="110">VIP列表</th>
+            </tr>
+            <tr class="text-c">
+                <th width="5%">ID</th>
+                <th width="5%">充值金额 (RMB)</th>
+                <th width="10%">折扣</th>
+                <!--<th width="5%">说明</th>-->
+                <th width="10%">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $vip as $v}
+            <tr class="text-c">
+                <td>{$v['id']}</td>
+                <td>{$v['price']}</td>
+                <td><strong style="color: #cc0000;">{$v['discount']} 折<i class="Hui-iconfont" >&#xe6c1;</i></strong></td>
+                <!--<td>{$v['desc']}</td>-->
+                <td class="td-manage">
+                    <a title="编辑" href="javascript:;" onclick="member_edit('编辑','read?id={$v["id"]}','4','1100','510')"
+                    class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i>
+                    </a>
+                    <a title="删除" href="javascript:;" onclick="member_del(this,{$v['id']})" class="ml-5"
+                       style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+            </tr>
+            {/foreach}
+
+            </tbody>
+        </table>
+        <div id="AjaxPage" style="text-align:right;">{$vip|raw}</div>
+    </div>
+</div>
+
+{include file="common/footer"}
+<!--_footer 作为公共模版分离出去-->
+
+<script type="text/javascript">
+
+    // function member_add(title,url){
+    //     var index = layer.open({
+    //         type: 2,
+    //         title: title,
+    //         content: url
+    //     });
+    //     layer.full(index);
+    // }
+
+    function member_add(title, url, id, w, h) {
+        layer_show(title, url, w, h);
+    }
+
+    /*用户-查看*/
+    function member_edit(title, url, id, w, h) {
+        layer_show(title, url, w, h);
+    }
+
+
+    /*用户-删除*/
+    function member_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+                type: 'GET',
+                url: 'delete',
+                dataType: 'json',
+                data: {'id': id},
+                success: function (data) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

@@ -18,6 +18,10 @@ class Library extends Model
         return $this->belongsTo('LibraryCategory', 'cate_id');
     }
 
+    public function attribute(){
+        return $this->hasMany('LibraryHaveAttributeValue');
+    }
+
     public function getStatusAttr($value)
     {
         $status = [-1 => '审核未通过', 0 => '未审核', 1 => '审核以通过'];

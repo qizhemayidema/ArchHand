@@ -20,10 +20,24 @@ class Library extends Base
     public function index()
     {
 
-        $libraries = (new LibraryModel)->where('is_delete', 0)->paginate(15);
+        $libraries = (new LibraryModel)->where('is_delete', 0)
+            ->where('status','<>',-1)->order('status asc')->paginate(15);
         $this->assign('libraries', $libraries);
         return $this->fetch();
 
+    }
+
+    public function show($id){
+        $library = LibraryModel::where('id',$id)->find();
+    }
+
+    public function userShow($id){
+        $user = \app\admin\model\User::where('id',$id)->find();
+        if(!$user){
+            $this->assign('is_exist',11);
+        }
+        $this->assign('user',$user);
+        return $this->fetch();
     }
 
     /**

@@ -21,7 +21,7 @@
             <tr class="text-c">
                 <th width="5%">ID</th>
                 <th width="5%">用户</th>
-                <th width="10%">评论内容</th>
+                <!--<th width="10%">评论内容</th>-->
                 <th width="10%">发布日期</th>
                 <th width="5%">审核</th>
                 <th width="10%">操作</th>
@@ -32,8 +32,14 @@
             {foreach $comments as $v}
             <tr class="text-c">
                 <td>{$v['id']}</td>
-                <td>{$v->user->nickname}</td>
-                <td>{$v['comment']}</td>
+                <td>
+                    <a href="javascript:void(0);" onclick="member_show('{$v->user->nickname}','userShow?id={$v->user->id}','10001','360','400')">
+                        <i class="avatar size-L radius">
+                            <img alt="" src="{$v->user->avatar_url?'/'.$v->user->avatar_url:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
+                        </i>
+                    </a>
+                </td>
+                <!--<td>{$v['comment']}</td>-->
                 <td>{$v->create_time}</td>
                 <td>
                     {if condition="$v->getData('status')==0"}
@@ -72,6 +78,11 @@
 <!--_footer 作为公共模版分离出去-->
 
 <script type="text/javascript">
+
+    /*用户-查看*/
+    function member_show(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
 
     /*用户-查看*/
     function library_comment_show(title,url,id,w,h){

@@ -1,0 +1,16 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+
+	{include file="common/source"}
+<title>查看评论</title>
+</head>
+<body>
+<div class="page-container">
+	{$comment->comment|raw}
+</div>
+<!--_footer 作为公共模版分离出去-->
+{include file="common/footer"}
+
+</body>
+</html>

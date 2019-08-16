@@ -1,8 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    {include file="common/meta"}
-    {include file="common/source"}
+    {include file="common/meta,common/source"}
     <title>主页</title>
 </head>
 <body>
@@ -38,26 +37,7 @@
 </header>
 <aside class="Hui-aside">
     <div class="menu_dropdown bk_2">
-<<<<<<< HEAD
-        <dl id="menu-library">
-            <dt><i class="Hui-iconfont">&#xe622;</i> 文库管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a data-href="{:url('/admin/Library/index')}" data-title="文库列表" href="javascript:void(0)">文库列表</a></li>
 
-                </ul>
-            </dd>
-        </dl>
-
-        <dl id="menu-library_comment">
-            <dt><i class="Hui-iconfont">&#xe622;</i> 评论管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a data-href="{:url('/admin/Library_comment/index')}" data-title="文库评论列表" href="javascript:void(0)">文库评论列表</a></li>
-
-                </ul>
-            </dd>
-        </dl>
 
         {if $Base->checkPermission('Manager','__index')}
 
@@ -78,6 +58,17 @@
             </dd>
         </dl>
         {/if}
+
+        <dl id="menu-user">
+            <dt><i class="Hui-iconfont">&#xe622;</i> 用户管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li><a data-href="{:url('/admin/official/index')}" data-title="分类管理" href="javascript:void(0)">生成官方账号</a></li>
+                    <li><a data-href="{:url('/admin/user/index')}" data-title="属性管理" href="javascript:;">用户列表</a></li>
+                    <li><a data-href="{:url('/admin/member/index')}" data-title="文库列表" href="javascript:;">会员管理</a></li>
+                </ul>
+            </dd>
+        </dl>
         <dl id="menu-library_category">
             <dt><i class="Hui-iconfont">&#xe622;</i> 文库管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
@@ -99,11 +90,21 @@
             </dd>
         </dl>
 
-        <dl id="menu-system">
-            <dt><i class="Hui-iconfont">&#xe62e;</i> 设置<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+        <dl id="menu-library_comment">
+            <dt><i class="Hui-iconfont">&#xe622;</i> 评论管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li><a data-href="{:url('/admin/roll_pic/index')}" data-title="首页轮播图" href="javascript:void(0)">首页轮播图</a></li>
+                    <li><a data-href="{:url('/admin/Library_comment/index')}" data-title="文库评论列表" href="javascript:void(0)">文库评论列表</a></li>
+
+                </ul>
+            </dd>
+        </dl>
+
+        <dl id="menu-system">
+            <dt><i class="Hui-iconfont">&#xe62e;</i> 网站设置<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li><a data-href="{:url('/admin/config/index')}" data-title="配置管理" href="javascript:void(0)">配置管理</a></li>
                     <li><a data-href="{:url('/admin/Index_desc/index')}" data-title="首页介绍" href="javascript:void(0)">首页介绍</a></li>
                     <li><a data-href="{:url('/admin/Coupon/index')}" data-title="优惠券管理" href="javascript:void(0)">优惠券管理</a></li>
                     <li><a data-href="{:url('/admin/Carriage/index')}" data-title="运费管理" href="javascript:void(0)">运费管理</a></li>

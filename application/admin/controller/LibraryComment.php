@@ -37,6 +37,14 @@ class LibraryComment extends Base
         return $this->fetch();
     }
 
+    public function userShow($id){
+        $user = \app\admin\model\User::where('id',$id)->find();
+        if(!$user){
+            $this->assign('is_exist',11);
+        }
+        $this->assign('user',$user);
+        return $this->fetch();
+    }
 
     /**
      * 显示创建资源表单页.
