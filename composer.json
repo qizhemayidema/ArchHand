@@ -19,7 +19,8 @@
         "php": ">=5.6.0",
         "topthink/framework": "5.1.*",
         "topthink/think-captcha": "2.*",
-        "upyun/sdk": "^3.3"
+        "upyun/sdk": "^3.3",
+        "ezyang/htmlpurifier": "^4.11"
     },
     "autoload": {
         "psr-4": {

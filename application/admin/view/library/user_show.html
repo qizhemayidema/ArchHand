@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  {include file="common/meta,common/source"}
+<title>用户查看</title>
+</head>
+<body>
+<div class="cl pd-20" style=" background-color:#5bacb6">
+  {if !isset($is_exist)}
+  <img class="avatar avatar-XL l" style="width: 64px;height: 64px;" src="{$user['avatar_url']?'/'.$user['avatar_url']:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
+  <dl style="margin-left:80px; color:#fff">
+    <dt><span class="f-18">{$user['nickname']}</span>
+      <span class="pl-10 f-12">
+        VIP：{$user['vip_id']==0?'否':'是'}
+        <span style="color: #cc0000;">
+          <strong>
+            {if $user->vip_id!=0}
+            {$user->vip->discount}折<i class="Hui-iconfont" >&#xe6c1;</i>
+            {/if}
+          </strong>
+        </span>
+      </span>
+    </dt>
+    <dd class="pt-10 f-12" style="margin-left:0">{$user['type']==1?'普通用户':'官方用户'}</dd>
+  </dl>
+</div>
+<div class="pd-20">
+  <table class="table">
+    <tbody>
+      <tr>
+        <th class="text-r" width="80">性别：</th>
+        <td>{$user['sex']}</td>
+      </tr>
+      <tr>
+        <th class="text-r">手机：</th>
+        <td>{$user['phone']}</td>
+      </tr>
+      <tr>
+        <th class="text-r">邮箱：</th>
+        <td>{$user['email']}</td>
+      </tr>
+      <tr>
+        <th class="text-r">注册时间：</th>
+        <td>{$user['create_time']}</td>
+      </tr>
+      <tr>
+        <th class="text-r">助手币：</th>
+        <td>{$user['integral']}</td>
+      </tr>
+    </tbody>
+  </table>
+  {else/}
+  <div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>未找到指定用户</div>
+  {/if}
+</div>
+{include file="common/footer"}
+</body>
+</html>

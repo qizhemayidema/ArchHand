@@ -1,0 +1,10 @@
+{
+  "base": {
+    "title": 123,
+    "keyword": 456,
+    "description": 789,
+    "icp": 234,
+    "announcement": 567,
+    "copyright": 890
+  }
+}

@@ -1,0 +1,111 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+	{include file="common/meta,common/source"}
+<title>审核</title>
+</head>
+<body>
+<article class="page-container">
+	{if !isset($is_exist)}
+	<form id="add" action="verifySave" method="post" class="form form-horizontal" id="form-member-add">
+		<input name="id" type="hidden" value="{$id}">
+		<input name="name" type="hidden" value="{$name}">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">审核：</label>
+			<div class="formControls col-xs-6 col-sm-7"> <span class="select-box">
+				<select class="select" size="1" name="status" onchange="func()">
+					<option value="1">通过</option>
+					<option value="-1">不通过</option>
+					<option value="0">未审核</option>
+				</select>
+				</span>
+			</div>
+		</div>
+		<div id="verify" class="hidden">
+			<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">不通过原因：</label>
+			<div class="formControls col-xs-6 col-sm-7">
+				<textarea name="because" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,100)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+			</div>
+		</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+	{else/}
+	<div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>{$is_exist}</div>
+	{/if}
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+{include file="common/footer"}
+<script type="text/javascript">
+    function func(){
+        let value = $('select option:selected').val();
+        console.log(value);
+        if(value==='-1'){
+            console.log(11);
+            $('#verify').removeClass();
+
+        }else{
+            $('#verify').addClass('hidden');
+		}
+    }
+
+    $(function(){
+        $('#add').ajaxForm({
+            // beforeSubmit: checkForm, // 此方法主要是提交前执行的方法，根据需要设置
+            success: complete, // 这是提交后的方法
+            dataType: 'json'
+        });
+
+        // function checkForm(){
+        //     if( '' == $.trim($('#title').val())){
+        //         layer.msg('区域名称不能为空', {icon: 5,time:1500,shade: 0.1}, function(index){
+        //             layer.close(index);
+        //         });
+        //         return false;
+        //     }
+        //
+        // }
+
+        function complete(data){
+
+
+            if(data.code == 1){
+                layer.msg(data.msg, {icon: 6,time:1500,shade: 0.1}, function(){
+                    window.parent.location.reload();
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                });
+            }else{
+                layer.msg(data.msg, {icon: 5,time:1500,shade: 0.1}, function(index){
+                    layer.close(index);
+                });
+                return false;
+            }
+        }
+
+    });
+
+
+
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+
+
+
+});
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
