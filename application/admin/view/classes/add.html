@@ -4,21 +4,136 @@
 <head>
     {include file="common/meta"}
     {include file="common/source"}
+    <link href="__STATIC__/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css"/>
+    <link href="__STATIC__/lib/layui/2.5.4/css/layui.css" rel="stylesheet" type="text/css"/>
     <title>添加课程</title>
+    <style>
+        .layui-btn{
+            margin: 0 auto;
+            display: block;
+        }
+        .layui-upload-choose{
+            padding: 0;
+        }
+        .layui-inline{
+            display: block;
+        }
+    </style>
 </head>
 <body>
-<article class="page-container">
-    <form action="" method="post" class="form form-horizontal" id="form-admin-per-add">
-
+<article class="page-container form form-horizontal">
+    <input type="hidden" name="is_chapter_video">
+    <form action="" method="post" class="form form-horizontal" enctype="multipart/form-data" id="form-admin-per-add">
+        <input type="hidden" name="class_pic">
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3">课程名称：</label>
+            <label class="form-label col-xs-4 col-sm-2">课程名称：</label>
             <div class="formControls col-xs-8 col-sm-9">
-                <input type="text" class="input-text"  name="name">
+                <input type="text" class="input-text" name="name">
             </div>
         </div>
         <div class="row cl">
-            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-                <button type="submit" class="btn btn-success radius" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+            <label class="form-label col-xs-4 col-sm-2">封面图：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div id="uploader-demo">
+                    <!--用来存放item-->
+                    <div id="fileList" class="uploader-list"></div>
+                    <div id="filePicker">选择图片</div>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">选择分类：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <span class="select-box">
+                    <select class="select" name="cate_id" size="1">
+                        {foreach $cate_list as $key => $value}
+                        <option value="{$value.id}">{$value.cate_name}</option>
+                        {/foreach}
+                    </select>
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">选择标签：</label>
+            <div class="formControls col-xs-8 col-sm-9 check-box skin-minimal" id="tag_box">
+                {foreach $tag_list as $key => $value}
+
+                    <input type="checkbox" name="tag_id[]" value="{$value.id}">&nbsp; {$value.name} &nbsp;
+                {/foreach}
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">介绍：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea id="editor" name="desc"></textarea>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">第几章节前免费：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" name="free_chapter">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">购买所需筑手币：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" name="integral">
+            </div>
+        </div>
+    <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">上传课程：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div id="uploadfile">
+                    <div id="thelist" class="uploader-list">
+                        <input onclick="add_chapter()" id="add_chapter_button" class="btn btn-secondary radius" type="button" value="添加一行">
+                        <p>&nbsp;</p>
+                        <table class="table table-border table-bordered table-bg">
+                            <tr class="text-c">
+                                <th width="5%" class="file-num">章节</th>
+                                <th class="file-name">课程名称</th>
+                                <th class="file-name">课程视频</th>
+                                <th class="file-num">封面图</th>
+                                <th class="file-status">视频状态</th>
+                                <th width="20%" class="file-manage">操作</th>
+                            </tr>
+                            <tbody id="chapter_tbody">
+                            <tr>
+                                <input type="hidden" name="chapter_video[]" class="chapter_video_url">
+                                <td class="text-c"><input name="chapter_num[]" type="text" class="input-text"></td>
+                                <td class="text-c"><input name="chapter_title[]" type="text" class="input-text"></td>
+                                <td class="text-c chapter_video_td">
+                                    <div class="layui-upload">
+                                        <button type="button" class="layui-btn layui-btn-normal" id="chapter_video_1">
+                                            选择视频
+                                        </button>
+                                        <input class="layui-upload-file" type="file">
+                                        <span class="layui-inline layui-upload-choose"></span>
+                                    </div>
+                                </td>
+                                <td class="text-c chapter_pic_td">
+                                    <div class="layui-upload">
+                                        <button type="button" class="layui-btn layui-btn-normal" id="chapter_pic_1">
+                                            选择图片
+                                        </button>
+                                        <input class="layui-upload-file" type="file" name="chapter_pic[]">
+                                        <span class="layui-inline layui-upload-choose"></span>
+                                    </div>
+                                </td>
+                                <td class="text-c chapter_video_status">未上传</td>
+                                <td class="text-c">
+                                    <a title="删除" href="javascript:;" onclick="remove_chapter(this)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button type="submit" class="btn btn-primary radius" name="admin-role-save"><i class="icon-ok"></i> 提交
+                </button>
             </div>
         </div>
     </form>
@@ -30,36 +145,348 @@
 <script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
 <script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
 <script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/layui/2.5.4/layui.all.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/layui/2.5.4/layui.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
 <script type="text/javascript">
-    $(function(){
-        $('form').submit(function(){
+    var chapter_num = 1;
+    //是否上传视频
+    var is_upload = true;
+    $(function () {
+        var upload;
 
-            var formData = new FormData(document.getElementById('form-admin-per-add'));
+        //初始化
+        layui.use('upload', function () {
+            $ = layui.jquery
+            upload = layui.upload
+            //选完文件后不自动上传 图片
+            upload.render({
+                elem: '#chapter_pic_1'
+                , url: '/upload/'
+                , auto: false
+                , accept: 'image'
+                ,field:'chapter_pic[]'
+                //,multiple: true
+                , done: function (res) {
+                    console.log(res)
+                }
+            });
+
+            //选完文件后不自动上传 视频
+            upload.render({
+                elem: '#chapter_video_1'
+                , url: '/upload/'
+                , auto: false
+                , accept: 'video'
+                //,multiple: true
+                , done: function (res) {
+                    console.log(res)
+                }
+            });
+        })
+        //添加一行 课程
+        add_chapter = function () {
+            chapter_num += 1;
+            let str = `<tr>
+                                <input type="hidden" name="chapter_video[]" class="chapter_video_url">
+                                <td class="text-c"><input name="chapter_num[]" type="text" class="input-text"></td>
+                                <td class="text-c"><input name="chapter_title[]" type="text" class="input-text"></td>
+                                <td class="text-c chapter_video_td">
+                                    <div class="layui-upload">
+                                        <button type="button" class="layui-btn layui-btn-normal" id="chapter_video_${chapter_num}">
+                                            选择视频
+                                        </button>
+                                        <input class="layui-upload-file" type="file">
+                                        <span class="layui-inline layui-upload-choose"></span>
+                                    </div>
+                                </td>
+                                <td class="text-c chapter_pic_td">
+                                    <div class="layui-upload">
+                                        <button type="button" class="layui-btn layui-btn-normal" id="chapter_pic_${chapter_num}">
+                                            选择图片
+                                        </button>
+                                        <input class="layui-upload-file" type="file" name="chapter_pic[]">
+                                        <span class="layui-inline layui-upload-choose"></span>
+                                    </div>
+                                </td>
+                                <td class="text-c chapter_video_status">未上传</td>
+                                <td class="text-c">
+                                    <a title="删除" href="javascript:;" onclick="remove_chapter(this)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                                </td>
+                            </tr>`;
+            $('#chapter_tbody').append(str);
+            console.log(chapter_num);
+
+
+            //选完文件后不自动上传 图片
+            upload.render({
+                elem: '#chapter_pic_' + chapter_num
+                , url: '/upload/'
+                , auto: false
+                , accept: 'image'
+                ,field:'chapter_pic[]'
+                //,multiple: true
+                , done: function (res) {
+                    console.log(res)
+                }
+            });
+            //选完文件后不自动上传 视频
+            upload.render({
+                elem: '#chapter_video_' + chapter_num
+                , url: '/upload/'
+                , auto: false
+                , accept: 'video'
+                //,multiple: true
+                , done: function (res) {
+                    console.log(res)
+                }
+            });
+        }
+        //删除一行 课程
+        remove_chapter = function (obj){
+            layer.confirm('确认要删除吗？',function(index){
+                $(obj).parents("tr").remove();
+                layer.msg('已删除!',{icon:1,time:1000});
+            });
+        }
+
+        $('form').submit(function(){
+            //检查是否拥有没有上传视频的课程
+            var flag = true;
+
+            $.each($('.chapter_video_td .layui-upload-file'),function(k,filename){
+                var FileName = $(filename).val();
+                var index1=FileName.lastIndexOf(".");
+                var index2=FileName.length;
+                var suffix=FileName.substring(index1, index2);//后缀名
+                if (!suffix){
+                    layer.msg('有课程没有视频!',{icon: 5, time: 1500});
+                    flag = false;
+                    return false;
+                }
+            })
+
+            if (!flag){return false;}
+            $('#add_chapter_button').remove();
+            $('.chapter_video_td button').remove();
+
+
+
+            //验证是否填写
+            // var name = $('input[name=name]').val();
+            // var class_pic = $('input[name=class_pic]').val();
+            // var cate_id = $('input[name=cate_id]').val();
+            // var tag_ids = '';
+            //     $("input:checkbox:checked").each(function(k,element){
+            //         tag_ids += $(element).val() + ",";
+            // })
+            // if (tag_ids.length > 0){
+            //     tag_ids = tag_ids.substr(0,tag_ids.length - 1);
+            // }
+            // var desc = $('textarea[name=desc]').val();
+            // var free_chapter = $('input[name=free_chapter]').val();
+            // var integral = $('input[name=integral]').val();
+            //
+            //
+            // result.append('name',name);
+            // result.append('class_pic',class_pic);
+            // result.append('cate_id',cate_id);
+            // result.append('tag_ids',tag_ids);
+            // result.append('desc',desc);
+            // result.append('free_chapter',free_chapter);
+            // result.append('integral',integral);
+            if ($('input[name=is_chapter_video]').val().length > 0){
+                is_upload = false;
+            }
+
+
+            if (is_upload){
+                $('.chapter_video_status').each(function(k,v){
+                    $(v).html("<span style='color:darkorange;'>上传中</span>");
+                })
+                var chapter_video_length = $('.chapter_video_td .layui-upload-file').length;
+
+                $.each($('.chapter_video_td .layui-upload-file'),function(k,filename){
+                    var file = $(filename).val();
+                    var index1=file.lastIndexOf(".");
+                    var index2=file.length;
+                    var suffix=file.substring(index1, index2);//后缀名
+
+                    var save_path = 'video/' + createPic() + suffix;
+                    // 获取 policy 和 secret
+                    $.getJSON('{:url('/admin/Classes/uploadVideo')}?save_path=' + save_path, function (data) {
+                        var uploadData = new FormData();
+                        uploadData.append('file',filename.files[0]);
+                        uploadData.append('policy', data.policy);
+                        uploadData.append('authorization', data.authorization);
+                        $.ajax({
+                            url: 'http://v0.api.upyun.com/archhandcom',
+                            type: 'POST',
+                            data: uploadData,
+                            cache: false,
+                            processData: false,
+                            contentType: false,
+                        }).done(function(data, textStatus) {
+                            data = JSON.parse(data);
+                            $(filename).parents('tr').find('.chapter_video_status').html("<span style='color:limegreen;'>上传成功</span>");
+                            $(filename).parents('tr').find('.chapter_video_url').val(data.url);
+                            var chapter_video = $('input[name=is_chapter_video]').val();
+                            if (chapter_video.length === 0){
+                                chapter_video = data.url;
+                            }else{
+                                chapter_video += ','+ data.url;
+                            }
+                            $('input[name=chapter_video]').val(chapter_video);
+                            if (k + 1 === chapter_video_length){
+                                form_ajax();
+                            }
+                        }).fail(function(res, textStatus, error) {
+                            try {
+                                var body = JSON.parse(res.responseText);
+                                alert('error--: ' + body.message);
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        });
+                    });
+                })
+            } else{
+                form_ajax();
+            }
+
+
+
+        })
+
+        //创建一个随机文件名称
+        function createPic(){
+            var now=new Date();
+            var year = now.getFullYear(); //得到年份
+            var month = now.getMonth();//得到月份
+            var date = now.getDate();//得到日期
+            var hour = now.getHours();//得到小时
+            var minu = now.getMinutes();//得到分钟
+            month = month + 1;
+            if (month < 10) month = "0" + month;
+            if (date < 10) date = "0" + date;
+            var time = year + month + date+hour+minu;
+            return time+"_" + Math.floor(Math.random() * 1000000000 );
+        }
+
+        function form_ajax () {
+
+            // 拼接 课程表单
+            var result = new FormData($('form')[0]);
+            //请求后端
             $.ajax({
-                url:"{:url('/admin/Classes_category/save')}",
-                type:'post',
-                DataType:'json',
-                data:formData,
-                processData:false,
-                contentType:false,
-                success:function(data){
-                    if (data.code == 0){
-                        layer.msg(data.msg,{icon:5,time:1000});
+                url: "{:url('/admin/Classes/save')}",
+                type: 'post',
+                DataType: 'json',
+                data: result,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    is_upload = false;
+                    if (data.code == 0) {
+                        layer.msg(data.msg, {icon: 5, time: 1000});
                     } else {
-                        layer.msg('添加成功',{icon:1,time:1000},function(){
+                        layer.msg('添加成功', {icon: 1, time: 1000}, function () {
                             window.parent.location.reload();
                             var index = parent.layer.getFrameIndex(window.name);
                             parent.layer.close(index);
                         });
-
                     }
                 }
             })
             return false;
+        }
+
+        $('select[name=cate_id]').change(function () {
+            $.ajax({
+                url:"{:url('/admin/Classes_tag_api/getTagForCate')}",
+                data:'cate_id=' + $(this).val(),
+                type:'post',
+                dataType:'json',
+                success:function(data){
+                    let str =``;
+                    $.each(data.data,function(k,v){
+                        str += `<input type="checkbox" name="tag_id[]" value="${v.id}">&nbsp; ${v.name} &nbsp;`
+                    })
+
+                    $('#tag_box').html(str);
+                }
+            })
         })
 
+        var uploader  = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: true,
+
+            // swf文件路径
+            swf: '__STATIC__/lib/webuploader/0.1.5/Uploader.swf',
+
+
+            // 文件接收服务端。
+            server: "{:url('/admin/Pic/uploadOnePic')}",
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker',
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        $list = $("#fileList"),
+            $btn = $("#btn-star"),
+            state = "pending",
+            thumbnailWidth = thumbnailHeight = 100,
+            uploader;
+
+        uploader .on( 'fileQueued', function( file ) {
+            var $li = $(
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+                '<div class="info">' + file.name + '</div>' +
+                '</div>'
+                ),
+                $img = $li.find('img');
+
+
+            // $list为容器jQuery实例
+            $list.html( $li );
+
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            // thumbnailWidth x thumbnailHeight 为 100 x 100
+
+            uploader.makeThumb( file, function( error, src ) {
+                if ( error ) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+
+                $img.attr( 'src', src );
+            }, thumbnailWidth, thumbnailHeight );
+        });
+
+        //上传成功
+        uploader.on('uploadAccept', function (file, response) {
+            if (response.valid == 1){
+                $('input[name=class_pic]').val(response.message);
+            }
+        });
     })
+$(function(){
+    var ue = UE.getEditor('editor');
+})
 </script>
+
 <!--/请在上方写此页面业务相关的脚本-->
 </body>
 </html>
