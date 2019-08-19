@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use think\Request;
 use app\admin\model\ClassesTag as TagModel;
+use app\admin\model\ClassesTagList as TagListModel;
 use app\admin\model\ClassesCategory as CateModel;
 use think\Validate;
 
@@ -131,12 +132,25 @@ class ClassesTag extends Base
         return json(['code'=>1,'msg'=>'success']);
     }
 
-    public function delete()
+    public function delete(Request $request)
     {
+        $id = $request->param('tag_id');
+
+        $tagInfo = (new TagModel())->find($id);
+        if(file_exists($tagInfo['tag_img'])){
+            unlink('.' . $tagInfo['tag_img']);
+        }
         //删除tag表
-
+        (new TagModel())->where(['id'=>$id])->delete();
         //删除课程 tag_list
+        (new TagListModel())->where(['tag_id'=>$id])->delete();
 
-        //删除
+        return json(['code'=>1,'msg'=>'success']);
+    }
+
+    public function uploadPic()
+    {
+        $path = 'class_tag/';
+        return (new UploadPic())->uploadOnePic($path);
     }
 }

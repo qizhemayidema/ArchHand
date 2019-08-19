@@ -6,6 +6,7 @@
     {include file="common/source"}
     <link href="__STATIC__/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css"/>
     <link href="__STATIC__/lib/layui/2.5.4/css/layui.css" rel="stylesheet" type="text/css"/>
+
     <title>添加课程</title>
     <style>
         .layui-btn{
@@ -150,8 +151,11 @@
 <script type="text/javascript" src="__STATIC__/lib/layui/2.5.4/layui.js"></script>
 <script type="text/javascript" src="__STATIC__/lib/ueditor/1.4.3/ueditor.config.js"></script>
 <script type="text/javascript" src="__STATIC__/lib/ueditor/1.4.3/ueditor.all.min.js"> </script>
+<script type="text/javascript" src="__STATIC__/lib/jquery/jquery-migrate-1.2.1.js"> </script>
 <script type="text/javascript">
-    var chapter_num = 1;
+    var chapter_num = 1;        //添加课程视频自增起始
+    var video_exts = 'mp4|mkv';
+
     //是否上传视频
     var is_upload = true;
     $(function () {
@@ -180,6 +184,8 @@
                 , url: '/upload/'
                 , auto: false
                 , accept: 'video'
+                , exts : video_exts
+
                 //,multiple: true
                 , done: function (res) {
                     console.log(res)
@@ -238,6 +244,7 @@
                 , url: '/upload/'
                 , auto: false
                 , accept: 'video'
+                , exts : video_exts
                 //,multiple: true
                 , done: function (res) {
                     console.log(res)
@@ -246,13 +253,20 @@
         }
         //删除一行 课程
         remove_chapter = function (obj){
-            layer.confirm('确认要删除吗？',function(index){
+            if ($('#chapter_tbody tr').length == 1){
+                layer.msg('最少拥有一个课程!',{icon:5,time:1000});
+            }else{
                 $(obj).parents("tr").remove();
                 layer.msg('已删除!',{icon:1,time:1000});
-            });
+            }
         }
 
         $('form').submit(function(){
+            var loading = layer.msg('提交中', {
+                icon: 16
+                ,shade: 0.01
+                ,time : 0
+            });
             //检查是否拥有没有上传视频的课程
             var flag = true;
 
@@ -264,39 +278,14 @@
                 if (!suffix){
                     layer.msg('有课程没有视频!',{icon: 5, time: 1500});
                     flag = false;
+                    layer.close(loading);
                     return false;
                 }
             })
 
             if (!flag){return false;}
-            $('#add_chapter_button').remove();
-            $('.chapter_video_td button').remove();
-
-
-
-            //验证是否填写
-            // var name = $('input[name=name]').val();
-            // var class_pic = $('input[name=class_pic]').val();
-            // var cate_id = $('input[name=cate_id]').val();
-            // var tag_ids = '';
-            //     $("input:checkbox:checked").each(function(k,element){
-            //         tag_ids += $(element).val() + ",";
-            // })
-            // if (tag_ids.length > 0){
-            //     tag_ids = tag_ids.substr(0,tag_ids.length - 1);
-            // }
-            // var desc = $('textarea[name=desc]').val();
-            // var free_chapter = $('input[name=free_chapter]').val();
-            // var integral = $('input[name=integral]').val();
-            //
-            //
-            // result.append('name',name);
-            // result.append('class_pic',class_pic);
-            // result.append('cate_id',cate_id);
-            // result.append('tag_ids',tag_ids);
-            // result.append('desc',desc);
-            // result.append('free_chapter',free_chapter);
-            // result.append('integral',integral);
+            $('#add_chapter_button').addClass('btn disabled radius');
+            $('.chapter_video_td button').addClass('btn disabled radius');
             if ($('input[name=is_chapter_video]').val().length > 0){
                 is_upload = false;
             }
@@ -317,31 +306,28 @@
                     var save_path = 'video/' + createPic() + suffix;
                     // 获取 policy 和 secret
                     $.getJSON('{:url('/admin/Classes/uploadVideo')}?save_path=' + save_path, function (data) {
+
                         var uploadData = new FormData();
                         uploadData.append('file',filename.files[0]);
                         uploadData.append('policy', data.policy);
                         uploadData.append('authorization', data.authorization);
                         $.ajax({
-                            url: 'http://v0.api.upyun.com/archhandcom',
+                            url:'http://v0.api.upyun.com/archhandcom',
                             type: 'POST',
                             data: uploadData,
                             cache: false,
                             processData: false,
                             contentType: false,
                         }).done(function(data, textStatus) {
+
                             data = JSON.parse(data);
                             $(filename).parents('tr').find('.chapter_video_status').html("<span style='color:limegreen;'>上传成功</span>");
                             $(filename).parents('tr').find('.chapter_video_url').val(data.url);
-                            var chapter_video = $('input[name=is_chapter_video]').val();
-                            if (chapter_video.length === 0){
-                                chapter_video = data.url;
-                            }else{
-                                chapter_video += ','+ data.url;
-                            }
-                            $('input[name=chapter_video]').val(chapter_video);
+
                             if (k + 1 === chapter_video_length){
                                 form_ajax();
                             }
+                            layer.close(loading);
                         }).fail(function(res, textStatus, error) {
                             try {
                                 var body = JSON.parse(res.responseText);
@@ -349,15 +335,14 @@
                             } catch(e) {
                                 console.error(e);
                             }
+                            layer.close(loading);
                         });
                     });
                 })
             } else{
                 form_ajax();
             }
-
-
-
+            return false;
         })
 
         //创建一个随机文件名称
@@ -430,7 +415,7 @@
 
 
             // 文件接收服务端。
-            server: "{:url('/admin/Pic/uploadOnePic')}",
+            server: "{:url('/admin/Classes/uploadPic')}",
 
             // 选择文件的按钮。可选。
             // 内部根据当前运行是创建，可能是input元素，也可能是flash.
@@ -477,8 +462,10 @@
 
         //上传成功
         uploader.on('uploadAccept', function (file, response) {
-            if (response.valid == 1){
-                $('input[name=class_pic]').val(response.message);
+            if (response.code == 1){
+                $('input[name=class_pic]').val(response.msg);
+            }else{
+                layer.msg(response.msg,{icon:5,time:1000});
             }
         });
     })

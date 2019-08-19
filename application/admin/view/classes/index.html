@@ -26,23 +26,30 @@
         </tr>
         </thead>
         <tbody>
-
+        {foreach $cate_info as $key => $value}
         <tr class="text-c">
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{$value.id}</td>
+            <td>{$value.cate_name}</td>
+            <td>{$value.name}</td>
+            <td>{$value.see_num}</td>
+            <td>{$value.learn_num}</td>
+            <td>{$value.integral}</td>
+            <td>{$value.create_time|date="Y-m-d H:i:s"}</td>
             <td class="td-manage">
-                <a title="编辑" href="javascript:;" onclick="admin_edit('分类编辑','{:url('/admin/Classes_category/read')}','1','800','500')" class="ml-5" style="text-decoration:none">
+                <a title="查看信息" href="javascript:;" onclick="product_add('查看详情','{:url('/admin/Classes/show',['id'=>$value.id])}')" class="ml-5" style="text-decoration:none">
+                    <i class="Hui-iconfont">&#xe725;</i>
+                </a>
+                <a title="编辑" href="javascript:;" onclick="product_add('编辑课程','{:url('/admin/Classes/read',['id'=>$value.id])}')" class="ml-5" style="text-decoration:none">
                     <i class="Hui-iconfont">&#xe6df;</i>
                 </a>
-                <a title="删除" href="javascript:;" onclick="admin_del(this,'{:url('/admin/Classes_category/delete')}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                <a title="删除" href="javascript:;" onclick="admin_del(this,'{:url('/admin/Classes/delete',['id'=>$value.id])}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
         </tr>
+        {/foreach}
         </tbody>
     </table>
+    <div style="float: right;">
+        {$cate_info->render()|raw}
+    </div>
 </div>
 {include file="common/footer"}
 <!--请在下方写此页面业务相关的脚本-->
@@ -75,7 +82,6 @@
                 url: url,
                 dataType: 'json',
                 success: function(data){
-                    console.log(data);
                     if (data.code == 0){
                         layer.msg(data.msg,{icon:5,time:1000});
                     } else{
