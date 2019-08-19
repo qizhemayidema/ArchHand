@@ -55,8 +55,8 @@ class Official extends Base
         }
         $form['type'] = 2;
         $form['birthday'] = strTotime($form['birthday']);
-
         $form['create_time'] = time();
+
         $user = (new UserModel())->save($form);
         if ($user) {
             return jsone(1, '创建成功');

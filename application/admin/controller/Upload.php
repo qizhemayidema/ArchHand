@@ -11,8 +11,7 @@ class Upload extends Base
     //图片上传
     public function upload(Request $request)
     {
-//        $file = request()->file('file');
-//        $path = request()->post('path');
+
         $file_path = '/static/images/';
         $file = $request->file('file');
         $file_info = $file->validate(['size' => 2097152, 'ext' => 'jpg,png,git'])->move('.' . $file_path);

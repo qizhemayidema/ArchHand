@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {include file="common/meta"}
+    {include file="common/source"}
+    <title>课程详情</title>
+</head>
+<body>
+<div class="page-container">
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="10">课程信息</th>
+        </tr>
+        <tr class="text-c">
+            <th>ID</th>
+            <th>所属分类</th>
+            <th>观看次数</th>
+            <th>学习人数</th>
+            <th>课程封面图</th>
+            <th>免费章节</th>
+            <th>视频总节数</th>
+            <th>所需筑手币</th>
+            <th>创建时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="text-c">
+            <td>{$class_info.id}</td>
+            <td>{$class_info.cate_name}</td>
+            <td>{$class_info.see_num}</td>
+            <td>{$class_info.learn_num}</td>
+            <td><img src="{$class_info.class_pic}" alt="" style="width: 100px;"></td>
+            <td>{$class_info.free_chapter}</td>
+            <td>{$class_info.chapter_sum}</td>
+            <td>{$class_info.integral}</td>
+            <td>{$class_info.create_time|date="Y-m-d H:i:s"}</td>
+        </tr>
+        </tbody>
+    </table><br/>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="9">课程介绍</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td th scope="col" colspan="9">
+                {$class_info.desc|raw}
+            </td>
+        </tr>
+        </tbody>
+    </table><br/>
+    <table class="table table-border table-bordered table-bg">
+        <thead>
+        <tr>
+            <th scope="col" colspan="9">课程内容</th>
+        </tr>
+        <tr class="text-c">
+            <th>章节</th>
+            <th>标题</th>
+            <th>预览</th>
+        </tr>
+        </thead>
+        <tbody>
+        {foreach $chapter_info as $key => $value}
+        <tr class="text-c">
+            <td>{$value.chapter_num}</td>
+            <td>{$value.title}</td>
+            <td>
+                <video poster="{$value.pic}" width="320" height="240" controls src="{:env('UPYUN.CDN_URL')}{$value.source_url|raw}"></video></td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+
+</div>
+
+{include file="common/footer"}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__STATIC__/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/laypage/1.2/laypage.js"></script>
+
+</body>
+</html>

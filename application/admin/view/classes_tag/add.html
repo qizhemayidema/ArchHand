@@ -98,7 +98,7 @@
 
 
         // 文件接收服务端。
-        server: "{:url('/admin/Pic/uploadOnePic')}",
+        server: "{:url('/admin/Classes_tag/uploadPic')}",
 
         // 选择文件的按钮。可选。
         // 内部根据当前运行是创建，可能是input元素，也可能是flash.
@@ -145,8 +145,11 @@
 
     //上传成功
     uploader.on('uploadAccept', function (file, response) {
-        if (response.valid == 1){
-            $('input[name=tag_img]').val(response.message);
+        console.log(response);
+        if (response.code == 1){
+            $('input[name=tag_img]').val(response.msg);
+        }else{
+            layer.msg(response.msg,{icon:5,time:1000});
         }
     });
 </script>
