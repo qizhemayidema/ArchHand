@@ -20,6 +20,13 @@ class Config extends Base
     {
 
         $data = json_decode(file_get_contents(self::WEB_SITE_PATH));
+        $signs = json_decode($data->sign_in_integral);
+        $sign = [];
+        foreach ($signs as $k => $v) {
+            $sign[$k] = $v;
+        }
+        $sign = implode(',', $sign);
+        $data->sign_in_integral = $sign;
 
         $this->assign('site', $data);
 
@@ -44,7 +51,21 @@ class Config extends Base
      */
     public function save(Request $request)
     {
+
         $form = $request->post();
+
+        $validate = new \app\admin\validate\Config();
+        if (!$validate->check($form)) {
+            return jsone(0, $validate->getError());
+        }
+
+
+        $sign_in_integral = explode(',', trim($form['sign_in_integral']));
+        $sign = [];
+        foreach ($sign_in_integral as $k => $v) {
+            $sign[$k + 1] = $v;
+
+        }
         $data = [
             'title' => trim($form['title']),
             'keyword' => trim($form['keyword']),
@@ -52,14 +73,20 @@ class Config extends Base
             'icp' => trim($form['icp']),
             'announcement' => trim($form['announcement']),
             'copyright' => trim($form['copyright']),
-            'vip' => trim($form['vip']),
             'qq' => trim($form['qq']),
             'phone' => trim($form['phone']),
             'qr_code' => trim($form['qr_code']),
-            'email' => trim($form['email']),
+            'issue_integral' => trim($form['issue_integral']),
+            'comment_integral' => trim($form['comment_integral']),
+            'ratio_integral' => trim($form['ratio_integral']),
+            'service_charge_integral' => trim($form['service_charge_integral']),
+            'sign_in_integral' => json_encode($sign),
         ];
 
         $data = json_encode($data);
+
+//        dump($data);
+//        die;
         $status = file_put_contents(self::WEB_SITE_PATH, $data);
         if ($status) {
             return jsone(1, '设置成功');
@@ -68,6 +95,7 @@ class Config extends Base
         }
 
     }
+
 
     /**
      * 显示指定的资源

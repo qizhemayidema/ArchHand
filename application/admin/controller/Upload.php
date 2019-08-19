@@ -11,26 +11,22 @@ class Upload extends Base
     //图片上传
     public function upload(Request $request)
     {
+        $upload = (new UploadPic())->uploadOnePic();
 
-        $file_path = '/static/images/';
-        $file = $request->file('file');
-        $file_info = $file->validate(['size' => 2097152, 'ext' => 'jpg,png,git'])->move('.' . $file_path);
-        if (!$file_info) {
-            return json(['success' => false, 'msg' => $file->getError(), 'file_path' => $file->getError()]);
+        $upload = $upload->getData();
+        if ($upload['code'] == 1) {
+            return json(['success' => true, 'msg' => '图片上传成功', 'file_path' => $upload['msg']]);
+        } else {
+            return json(['success' => false, 'msg' => $upload['msg'], 'file_path' => '']);
         }
-        $path = $file_info->getSaveName();
-        $path = str_replace('\\', '/', $path);
-        $file_path .= $path;
-
-        return json(['success' => true, 'msg' => '图片上传成功', 'file_path' => $file_path]);
     }
 
     //会员头像上传
     public function uploadUser()
     {
-        $pic = (new Pic())->uploadOnePic(\request());
+        $pic = (new UploadPic())->uploadOnePic();
         $path = $pic->getData();
-        echo $path['message'];
+        echo $path['msg'];
     }
 
 }
