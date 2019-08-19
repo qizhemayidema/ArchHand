@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\model\LibraryHaveAttributeValue;
 use think\Controller;
 
 use think\Db;
@@ -21,28 +22,48 @@ class Library extends Base
     {
 
         $libraries = (new LibraryModel)->where('is_delete', 0)
-            ->where('status','<>',-1)->order('status asc')->paginate(15);
+            ->where('status', '<>', -1)->order('status asc')->paginate(15);
         $this->assign('libraries', $libraries);
         return $this->fetch();
 
     }
 
-    public function show($id){
-        $library = LibraryModel::where('id',$id)->find();
-        if(!$library){
-            $this->assign('is_exist',11);
-        }
-        $this->assign('library',$library);
-        return $this->fetch();
+    public function show($id)
+    {
+//        try {
+            $library = LibraryModel::with(['cate','attribute' => function ($query) {
+                $query->field('id,attr_value,library_id')->with(['attributeValue' => function ($query) {
+                    $query->field('id,value');
+                }]);
+            }])->get($id);
+
+//            dump($library);die;
+            if (!$library) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+            }
+            $this->assign('library', $library);
+            return $this->fetch();
+//        } catch (\Exception $e) {
+//            $this->assign('is_exist', $e->getMessage());
+//            return $this->fetch();
+//        }
+
+
     }
 
-    public function userShow($id){
-        $user = \app\admin\model\User::where('id',$id)->find();
-        if(!$user){
-            $this->assign('is_exist',11);
+    public function userShow($id)
+    {
+        try {
+            $user = \app\admin\model\User::where('id', $id)->find();
+            if (!$user) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+            }
+            $this->assign('user', $user);
+            return $this->fetch();
+        } catch (\Exception $e) {
+            $this->assign('is_exist', $e->getMessage());
+            return $this->fetch();
         }
-        $this->assign('user',$user);
-        return $this->fetch();
     }
 
     /**
@@ -128,16 +149,20 @@ class Library extends Base
      */
     public function verify($id)
     {
-
-        $library = LibraryModel::where('id', $id)->find();
-        if (!$library) {
-            $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+        try {
+            $library = LibraryModel::where('id', $id)->find();
+            if (!$library) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+                return $this->fetch();
+            }
+            $this->assign('status', $library->status);
+            $this->assign('id', $library->id);
+            $this->assign('name', $library->name);
+            return $this->fetch();
+        } catch (\Exception $e) {
+            $this->assign('is_exist', $e->getMessage());
             return $this->fetch();
         }
-        $this->assign('status', $library->status);
-        $this->assign('id', $library->id);
-        $this->assign('name', $library->name);
-        return $this->fetch();
     }
 
     /**

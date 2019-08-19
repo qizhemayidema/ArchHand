@@ -19,7 +19,11 @@ class Library extends Model
     }
 
     public function attribute(){
-        return $this->hasMany('LibraryHaveAttributeValue');
+        return $this->hasMany('LibraryHaveAttributeValue','library_id','id');
+    }
+
+    public function cate(){
+        return $this->belongsTo('LibraryCategory','cate_id','id');
     }
 
     public function getStatusAttr($value)

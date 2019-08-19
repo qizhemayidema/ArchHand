@@ -6,5 +6,8 @@ use think\Model;
 
 class LibraryHaveAttributeValue extends Model
 {
-    //
+
+    public function attributeValue(){
+        return $this->belongsTo('LibraryAttributeValue','attr_value','id');
+    }
 }

@@ -29,7 +29,7 @@
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>VIP说明：</label>
             <div class="formControls col-xs-6 col-sm-9">
-                <textarea id="editor" placeholder="Balabala" autofocus name="desc">{if isset($vip)}{$vip['desc']}{/if}</textarea>
+                <textarea id="editor" placeholder="" autofocus name="desc">{if isset($vip)}{$vip['desc']}{/if}</textarea>
             </div>
         </div>
 
@@ -42,7 +42,7 @@
     </form>
 
     {else/}
-    <div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>未找到指定资源</div>
+    <div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>{$is_exist}</div>
     {/if}
 </article>
 

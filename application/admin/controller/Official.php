@@ -17,7 +17,7 @@ class Official extends Base
      */
     public function index()
     {
-        $user = UserModel::where('type', 2)->where('is_delete',1)->paginate(15);
+        $user = UserModel::where('type', 2)->where('is_delete', 1)->paginate(15);
 
         $this->assign('users', $user);
         return $this->fetch();
@@ -56,7 +56,7 @@ class Official extends Base
         $form['type'] = 2;
         $form['birthday'] = strTotime($form['birthday']);
 
-        $form['create_time']=time();
+        $form['create_time'] = time();
         $user = (new UserModel())->save($form);
         if ($user) {
             return jsone(1, '创建成功');
@@ -72,18 +72,23 @@ class Official extends Base
      */
     public function read($id)
     {
-        $user = UserModel::where('id', $id)->find();
+        try {
+            $user = UserModel::where('id', $id)->find();
 
-        if (!$user) {
-            $this->assign('is_exist', 11);
+            if (!$user) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
 
-        } else {
-            $user['password'] = '******';
-            $vip = Vip::all();
-            $this->assign('vip', $vip);
-            $this->assign('user', $user);
+            } else {
+                $user['password'] = '******';
+                $vip = Vip::all();
+                $this->assign('vip', $vip);
+                $this->assign('user', $user);
+            }
+            return $this->fetch('official/add_edit');
+        } catch (\Exception $e) {
+            $this->assign('is_exist', $e->getMessage());
+            return $this->fetch('official/add_edit');
         }
-        return $this->fetch('official/add_edit');
     }
 
     /**
@@ -128,9 +133,9 @@ class Official extends Base
     public function delete($id)
     {
         try {
-            $user = UserModel::where('id', $id)->where('is_delete',1)->find();
-            if($user){
-                $user = UserModel::update(['id'=>$id,'is_delete'=>0]);
+            $user = UserModel::where('id', $id)->where('is_delete', 1)->find();
+            if ($user) {
+                $user = UserModel::update(['id' => $id, 'is_delete' => 0]);
             }
             return jsone(1, '删除成功');
         } catch (\Exception $e) {
