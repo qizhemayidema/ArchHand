@@ -6,6 +6,7 @@ use think\Request;
 use app\admin\model\ClassesTag as TagModel;
 use app\admin\model\ClassesTagList as TagListModel;
 use app\admin\model\ClassesCategory as CateModel;
+use app\common\controller\UploadPic;
 use think\Validate;
 
 class ClassesTag extends Base

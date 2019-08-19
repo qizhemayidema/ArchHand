@@ -12,5 +12,14 @@
   "email": "asdf",
   "app_key": "asdf",
   "app_secret": "asdf",
-  "sign": "asdf"
+  "sign": "asdf",
+  "sign_in_integral" : {
+    "1" : "10",
+    "2" : "20",
+    "3" : "30",
+    "4" : "40",
+    "5" : "50",
+    "6" : "60",
+    "7" : "70"
+  }
 }

@@ -1,14 +1,11 @@
 <?php
 
-namespace app\admin\controller;
+namespace app\common\controller;
 
-use app\http\middleware\LoginCheck;
 use think\Controller;
 use think\Request;
 
-class UploadPic extends Controller {
-
-    protected $middleware = [LoginCheck::class];
+class UploadPic extends Controller{
 
     /**
      * @param null $file_path 保存的目录
@@ -19,8 +16,8 @@ class UploadPic extends Controller {
     {
         if (request()->isPost()){
             $file_path = $file_path ? config('app.upload_root_path') . $file_path : config('app.upload_root_path');
-            if (!file_exists($file_path)) {
-                mkdir($file_path, 0777,true);
+            if (!file_exists('.' . $file_path)) {
+                mkdir('.' . $file_path, 0777,true);
             }
             $rules = [
                 'ext'   => 'jpeg,jpg,png,gif',
@@ -49,8 +46,8 @@ class UploadPic extends Controller {
     {
         if (request()->isPost()){
             $file_path = $file_path ? config('app.upload_root_path') . $file_path : config('app.upload_root_path');
-            if (!file_exists($file_path)) {
-                mkdir($file_path, 0777,true);
+            if (!file_exists('.' . $file_path)) {
+                mkdir('.' . $file_path, 0777,true);
             }
             $rules = [
                 'ext'   => 'jpeg,jpg,png,gif',
@@ -81,8 +78,8 @@ class UploadPic extends Controller {
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)) {
             $type = $result[2];
             $new_file = config('app.upload_root_path'). $path . date('Ymd', time()) . "/";
-            if (!file_exists($new_file)) {
-                mkdir($new_file, 0777,true);
+            if (!file_exists('.' . $new_file)) {
+                mkdir( '.' . $new_file, 0777,true);
             }
             $file_name = md5(time() . mt_rand(100000000, 999999999));
             $new_file = $new_file . $file_name . ".{$type}";
