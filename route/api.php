@@ -8,15 +8,16 @@
 
 
 Route::group('api',function(){
+    //获取分类和属性
     Route::get('library/category','api/LibraryCategory/index');
-
-
-
+    //云库首页
     Route::get('library/index','api/Library/index');
-    Route::get('library/create','api/Library/add');
+    //云库添加
     Route::post('library/save','api/Library/save');
-    Route::get('library/:id','api/Library/show');
-    Route::get('library/edit/:id','api/Library/read');
+    //云库显示
+    Route::get('library/show','api/Library/show');
+    //云库修改
     Route::put('library/update','api/Library/update');
-    Route::delete('library/delete','api/Library/delete');
+    //云库删除
+    Route::delete('library/:id','api/Library/delete');
 });

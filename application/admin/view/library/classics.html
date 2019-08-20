@@ -3,33 +3,22 @@
 <html>
 <head>
 	{include file="common/meta,common/source"}
-<title>审核</title>
+<title>加精</title>
 </head>
 <body>
 <article class="page-container">
 	{if !isset($is_exist)}
-	<form id="add" action="verifySave" method="post" class="form form-horizontal" id="form-member-add">
+	<form id="add" action="classicsSave" method="post" class="form form-horizontal" id="form-member-add">
 		<input name="id" type="hidden" value="{$id}">
-
 		<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-3">审核：</label>
+			<label class="form-label col-xs-4 col-sm-3">加精：</label>
 			<div class="formControls col-xs-6 col-sm-7"> <span class="select-box">
 				<select class="select" size="1" name="status" onchange="func()">
 					<option value="1">通过</option>
 					<option value="-1">不通过</option>
-					<option value="0">未审核</option>
 				</select>
 				</span>
 			</div>
-		</div>
-		<div id="verify" class="hidden">
-			<div class="row cl">
-			<label class="form-label col-xs-4 col-sm-3">不通过原因：</label>
-			<div class="formControls col-xs-6 col-sm-7">
-				<textarea name="because" cols="" rows="" class="textarea"  placeholder="" onKeyUp="$.Huitextarealength(this,100)"></textarea>
-				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
-			</div>
-		</div>
 		</div>
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
@@ -45,16 +34,6 @@
 <!--_footer 作为公共模版分离出去-->
 {include file="common/footer"}
 <script type="text/javascript">
-    function func(){
-        let value = $('select option:selected').val();
-        if(value==='-1'){
-            console.log(11);
-            $('#verify').removeClass();
-
-        }else{
-            $('#verify').addClass('hidden');
-		}
-    }
 
     $(function(){
         $('#add').ajaxForm({
@@ -74,6 +53,8 @@
         // }
 
         function complete(data){
+
+
             if(data.code == 1){
                 layer.msg(data.msg, {icon: 6,time:1500,shade: 0.1}, function(){
                     window.parent.location.reload();

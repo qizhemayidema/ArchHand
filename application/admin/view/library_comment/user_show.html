@@ -7,7 +7,7 @@
 <body>
 <div class="cl pd-20" style=" background-color:#5bacb6">
   {if !isset($is_exist)}
-  <img class="avatar avatar-XL l" style="width: 64px;height: 64px;" src="{$user['avatar_url']?'/'.$user['avatar_url']:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
+  <img class="avatar avatar-XL l" style="width: 64px;height: 64px;" src="{$user['avatar_url']?$user['avatar_url']:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
   <dl style="margin-left:80px; color:#fff">
     <dt><span class="f-18">{$user['nickname']}</span>
       <span class="pl-10 f-12">

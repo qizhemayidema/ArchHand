@@ -19,26 +19,58 @@ class Library extends Controller
     {
         //SELECT library_id FROM zhu_library_have_attribute_value
         //WHERE attr_value IN (1,2) GROUP BY library_id HAVING COUNT(attr_value) = 2 ORDER BY library_id DESC LIMIT 0,1
+        //分类 ID
         $cate = $request->get('cate');
+        if($cate){
+            $cate_field = 'cate_id';
+        }else{
+            $cate_field = '';
+        }
+        //属性ID 以逗号分隔
         $attr = $request->get('attr');
+        //筛选
+        $filtrate = $request->get('filtrate');
+        if($filtrate==1){
+            //原创
+            $filtrate = 'is_original';
+        }else if($filtrate==2){
+            //精华
+            $filtrate = 'is_classics';
+        }
         try {
             if (!$attr) {
-                $library = LibraryModel::field('id,library_pic,name')->where('cate_id', $cate)->paginate(16);
+                $library = LibraryModel::field('id,library_pic,name')->where('is_delete',0)
+                    ->where('status',1)->where($cate_field,$cate)->where($filtrate,1)->order('create_time desc')->paginate(16);
             } else {
-                $cate = explode(',', $attr);
-                $length = count($cate);
-                $library = LibraryModel::field('id,library_pic,name')->where('id', 'in', function ($query) use ($cate, $length) {
-                    $library_id = $query->name('library_have_attribute_value')->field('library_id')->where('attr_value', 'in', $cate)
+                $attr_value = explode(',', $attr);
+                $length = count($attr_value);
+                $library = LibraryModel::field('id,library_pic,name')->where('id', 'in', function ($query) use ($attr_value, $length) {
+                    //查询出拥有特定属性的云库ID
+                    $library_id = $query->name('library_have_attribute_value')->field('library_id')->where('attr_value', 'in', $attr_value)
                         ->group('library_id')->having('count(attr_value)=' . $length);
-                })->paginate(16);
+                })->where('is_delete',0)->where('status',1)->where($filtrate,1)->order('create_time desc')->paginate(16);
             }
 
             return json($library);
         }catch(\Exception $e){
-            
+            return json('出错啦');
         }
 
     }
+
+    public function show(Request $request){
+        if(!$id = $request->get('id')){
+            return '参数错误';
+        }
+        //name user_id name_status create_time see_num integral source_url gehsi size desc
+        //like_num collect_num comment_num is_classics is_official
+        $library = LibraryModel::field('id,name,user_id,name_status,create_time,see_num,integral,source_url,suffix,data_size,desc,
+        like_num,collect_num,comment_num,is_classics,is_official')->where('id',1)->find();
+
+        
+
+    }
+
 
     /**
      * 显示创建资源表单页.

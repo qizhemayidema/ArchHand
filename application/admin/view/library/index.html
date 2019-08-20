@@ -28,12 +28,12 @@
                 <th width="20%">资源地址</th>
                 <th width="10%">发布时间</th>
                 <th width="5%">是否官方发布</th>
+                <th width="5%">精华</th>
                 <th width="5%">审核状态</th>
                 <th width="5%">操作</th>
             </tr>
             </thead>
             <tbody>
-
 
             {foreach $libraries as $v}
             <tr class="text-c">
@@ -60,6 +60,27 @@
                 </td>
                 <td>{$v['create_time']}</td>
                 <td>{$v['is_official']}</td>
+                <td>
+                    {if condition="$v->is_classics==0"}
+                    <a style="cursor:pointer"
+                       class="label radius"
+                       onclick="">
+                        未加精
+                    </a>
+                    {elseif condition="$v->is_classics==1"}
+                    <a style="cursor:pointer"
+                       class="label label-success radius"
+                       onclick=" ">
+                        以加精
+                    </a>
+                    {else/}
+                    <a style="cursor:pointer"
+                       class="label label-warning radius"
+                       onclick=" verify_classics('classics','{$v->id}','{$v->is_classics}')">
+                        申请中
+                    </a>
+                    {/if}
+                </td>
                 <td>
                     {if condition="$v->getData('status')==0"}
                     <a style="cursor:pointer"
@@ -101,6 +122,56 @@
 <!--_footer 作为公共模版分离出去-->
 
 <script type="text/javascript">
+
+    function verify_classics(url, id, classics){
+        layer.msg('加精处理', {
+            time: 0 //不自动关闭
+            ,btn: ['同意', '不同意']
+            ,btn1: function(index){
+                layer.close(index);
+                $.get(url,{id:id,classics:1},function(data){
+                    if(data.code==1){
+                        var a='<span class="label label-danger">'+data.msg+'</span>'
+                        $('#zt'+id).html(a);
+                        layer.msg(data.msg,{icon:2,time:1500,shade: 0.1,});
+                        // location.replace(location.href);
+                        window.location.reload();
+                        return false;
+                    }else{
+                        console.log(2)
+                        var b='<span class="label label-info">'+data.msg+'</span>'
+                        $('#zt'+id).html(b);
+                        layer.msg(data.msg,{icon:1,time:1500,shade: 0.1,});
+                        // location.replace(location.href);
+                        window.location.reload();
+                        return false;
+                    }
+                });
+            }
+            ,btn2:function(index){
+                layer.close(index);
+                $.get(url,{id:id,classics:0},function(data){
+                    if(data.code==1){
+                        var a='<span class="label label-danger">'+data.msg+'</span>'
+                        $('#zt'+id).html(a);
+                        layer.msg(data.msg,{icon:2,time:1500,shade: 0.1,});
+                        // location.replace(location.href);
+                        window.location.reload();
+                        return false;
+                    }else{
+                        console.log(2)
+                        var b='<span class="label label-info">'+data.msg+'</span>'
+                        $('#zt'+id).html(b);
+                        layer.msg(data.msg,{icon:1,time:1500,shade: 0.1,});
+                        // location.replace(location.href);
+                        window.location.reload();
+                        return false;
+                    }
+                });
+            }
+        });
+    }
+
 
     function library_show(title,url,id,w,h){
         var index = layer.open({

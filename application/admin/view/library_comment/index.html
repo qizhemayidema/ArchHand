@@ -35,7 +35,7 @@
                 <td>
                     <a href="javascript:void(0);" onclick="member_show('{$v->user->nickname}','userShow?id={$v->user->id}','10001','360','400')">
                         <i class="avatar size-L radius">
-                            <img alt="" src="{$v->user->avatar_url?'/'.$v->user->avatar_url:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
+                            <img alt="" src="{$v->user->avatar_url?$v->user->avatar_url:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
                         </i>
                     </a>
                 </td>
@@ -45,7 +45,7 @@
                     {if condition="$v->getData('status')==0"}
                     <a style="cursor:pointer"
                        class="label label-danger radius"
-                       onclick=" verify('{$v->id}','verify')">
+                       onclick=" ">
                     {$v['status']}
                     </a>
                     {elseif condition="$v->getData('status')==1"}
