@@ -67,7 +67,7 @@ class Library extends Controller
         $library = LibraryModel::field('id,name,user_id,name_status,create_time,see_num,integral,source_url,suffix,data_size,desc,
         like_num,collect_num,comment_num,is_classics,is_official')->where('id',1)->find();
 
-        
+
 
     }
 

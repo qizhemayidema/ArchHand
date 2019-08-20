@@ -17,6 +17,9 @@ use app\admin\model\Classes as ClassModel;
 use app\admin\model\ClassesTagList as ClassTagListModel;
 use app\admin\model\ClassesChapter as ClassChapterModel;
 
+use app\common\controller\UploadPic;
+
+
 class Classes extends Controller
 {
 
