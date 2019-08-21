@@ -50,13 +50,18 @@ Route::group('/api',function(){
         Route::post('/search','api/Classes/search');
         Route::post('/list','api/Classes/list');
         Route::post('/listMore','api/Classes/listMore');
+        Route::post('/info','api/Classes/info');
+        Route::post('/seeVideo','api/Classes/seeVideo');
+        Route::post('/buy','api/Classes/buy');
+        Route::post('/collect','api/Classes/collect');
     });
     Route::group('/Class_comment',function(){
         Route::post('/add','api/ClassesComment/add');
+        Route::post('/readList','api/ClassesComment/readList');
         Route::post('/remove','api/ClassesComment/remove');
+        Route::post('/like','api/ClassesComment/like');
     });
 
     Route::post('/Sign_in/getIntegral','api/Sign_in/getIntegral');
     Route::post('/Library/uploadVideo','api/Library/uploadVideo');
-
 });

@@ -109,7 +109,7 @@ class Login extends Base
         if ($data['csrf'] != $csrf_token){
             return json(['code'=>0,'msg'=>'登陆失败,请重新登陆']);
         }
-        $userInfo = $userModel->where(['phone'=>$data['phone'],'password'=>md5($data['password'])])->find();
+        $userInfo = $userModel->where(['phone'=>$data['phone'],'password'=>md5($data['password']),'is_delete'=>1])->find();
         if (!$userInfo){
             return json(['code'=>0,'msg'=>'账号或密码错误,请重新登陆']);
         }
@@ -119,7 +119,8 @@ class Login extends Base
             'last_login_time' => time(),
             'token' => $token,
         ]);
-        return json(['code'=>1,'msg'=>$token]);
+        $info = $userInfo->where(['id'=>$userInfo['id']])->field('avatar_url,nickname,integral')->find();
+        return json(['code'=>1,'msg'=>$token,'data'=>$info]);
     }
 
     public function rePwd(Request $request)
@@ -144,7 +145,7 @@ class Login extends Base
         }
 
         //查询是否有此用户
-        $userInfo = (new UserModel())->where(['phone'=>$data['phone']])->find();
+        $userInfo = (new UserModel())->where(['phone'=>$data['phone'],'is_delete'=>1])->find();
         if (!$userInfo){
             return json(['code'=>0,'msg'=>'不存在这个用户']);
         }
@@ -156,7 +157,6 @@ class Login extends Base
         if (1111 != $data['code']){
             return json(['code'=>0,'msg'=>'验证码不正确']);
         }
-
 
         //绑定用户
         $userInfo->save([
@@ -295,7 +295,6 @@ class Login extends Base
             $ip = getenv("REMOTE_ADDR");
         return $ip;
     }
-
 
     //生成token
     protected function makeToken($password)
