@@ -12,7 +12,6 @@
 
 use think\facade\Route;
 
-
 Route::group('/api',function(){
 
     Route::group('/Login',function(){
@@ -47,10 +46,13 @@ Route::group('/api',function(){
         Route::post('/removeClass','api/Collect/removeClass');
         Route::post('/removeLibrary','api/Collect/removeLibrary');
     });
-
     Route::group('/Class',function(){
         Route::post('/search','api/Classes/search');
         Route::post('/list','api/Classes/list');
+        Route::post('/listMore','api/Classes/listMore');
+    });
+    Route::group('/Class_comment',function(){
+        Route::post('/remove','api/ClassesComment/remove');
     });
 
     Route::post('/Sign_in/getIntegral','api/Sign_in/getIntegral');

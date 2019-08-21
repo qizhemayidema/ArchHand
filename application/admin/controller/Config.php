@@ -20,10 +20,14 @@ class Config extends Base
     {
         $data = json_decode(file_get_contents(self::WEB_SITE_PATH));
 
+        $sign = [];
+//
         foreach ($data->sign_in_integral as $k => $v) {
             $sign[$k] = $v;
         }
+
         $sign = implode(',', $sign);
+
         $data->sign_in_integral = $sign;
 
         $this->assign('site', $data);

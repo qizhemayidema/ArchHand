@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 use think\Controller;
 
+
 use think\Db;
 use think\Request;
 use app\api\model\LibraryHaveAttributeValue as LibraryHaveAttributeValueModel;
@@ -13,6 +14,7 @@ use Upyun\Upyun;
 use Upyun\Config;
 use Upyun\Signature;
 use Upyun\Util;
+
 
 class Library extends Base
 {
@@ -196,8 +198,8 @@ class Library extends Base
             return json(['code' => 0, 'msg' => '点赞失败'], 400);
         }
 
-    }
 
+    }
 
     /**
      * 又拍云 文库上传接口
@@ -228,6 +230,5 @@ class Library extends Base
             'service_name' => env('UPYUN.SERVICE_NAME'),
             'path'  => $real_path,
         ));
-
     }
 }

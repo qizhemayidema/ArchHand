@@ -6,6 +6,7 @@
  * Time: 10:17
  */
 
+use think\facade\Route;
 
 
 
@@ -35,4 +36,6 @@ Route::group('api',function(){
     Route::post('library/comment/save','api/LibraryComment/save');
     //云库评论点赞
     Route::post('library/comment/like','api/LibraryComment/like');
+    //云库删除自己的评论
+    Route::delete('library/comment/delete','api/LibraryComment/delete');
 });
