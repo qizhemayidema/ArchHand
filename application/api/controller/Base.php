@@ -7,7 +7,7 @@ use app\api\model\User as UserModel;
 
 class Base extends Controller
 {
-    private  $userInfo = [];
+    private $userInfo = [];
 
     public function initialize()
     {

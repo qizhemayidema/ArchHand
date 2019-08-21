@@ -6,13 +6,10 @@ use app\api\model\ClassesComment as ClassCommentModel;
 use app\api\model\Library as LibraryModel;
 use app\api\model\LibraryComment as LibraryCommentModel;
 use app\api\model\Classes as ClassesModel;
-use think\Controller;
 use think\Exception;
-use think\Request;
 
 class Comment extends Base
 {
-
 
     public function removeLibrary()
     {
@@ -46,9 +43,6 @@ class Comment extends Base
         }catch (Exception $e){
             return json(['code'=>0,'msg'=>'删除失败']);
         }
-
         return json(['code'=>1,'msg'=>'success']);
     }
-
-
 }

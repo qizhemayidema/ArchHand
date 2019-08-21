@@ -48,9 +48,15 @@ Route::group('/api',function(){
         Route::post('/removeLibrary','api/Collect/removeLibrary');
     });
 
+    Route::group('/Comment',function(){
+        Route::post('/removeLibrary','api/Comment/removeLibrary');
+        Route::post('/removeClass','api/Comment/removeClass');
+    });
+
     Route::group('/Class',function(){
         Route::post('/search','api/Classes/search');
         Route::post('/list','api/Classes/list');
+        Route::post('/listMore','api/Classes/listMore');
     });
 
     Route::post('/Sign_in/getIntegral','api/Sign_in/getIntegral');

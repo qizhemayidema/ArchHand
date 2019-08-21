@@ -61,9 +61,39 @@ class Classes extends Base
     }
 
     //课程列表更多
-    public function listMore()
+    public function listMore(Request $request)
     {
+        $data = $request->post();
+        $rules = [
+            'cate_id'       => 'require',
+            'page'          => 'require|number',
+            'page_length'   => 'require|number',
+        ];
+        $messages = [
+            'cate_id.require'   => '必须携带 参数 cate_id',
+            'page.require'      => '必须携带 参数 page',
+            'page.number'       => 'page必须为数字',
+            'page_length.require' => '必须携带 参数 page_length',
+            'page_length.number' => 'page_length 必须为数字',
+        ];
 
+        $validate = new Validate($rules,$messages);
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $classModel = new ClassModel();
+        $start = $data['page'] * $data['page_length'] - $data['page_length'];
+        $classModel = $classModel->where(['is_delete'=>0])
+            ->where(['cate_id'=>$data['cate_id']]);
+        $count = $classModel->count();
+        $result = $classModel
+            ->order('id','desc')
+            ->field('id,name,class_pic')
+            ->limit($start,$data['page_length'])
+            ->select()->toArray();
+
+        return json(['code'=>1,'data'=>$result,'count'=>$count]);
     }
 
     //课程详情页面
@@ -71,4 +101,6 @@ class Classes extends Base
     {
 
     }
+
+
 }
