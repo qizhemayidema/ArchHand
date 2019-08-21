@@ -3,4 +3,8 @@
 *.log
 .env
 .DS_Store
+/public/static/images
+/public/uploads
+composer.lock
+composer.json
 

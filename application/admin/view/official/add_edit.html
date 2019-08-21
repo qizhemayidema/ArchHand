@@ -37,11 +37,11 @@
             <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>性别：</label>
             <div class="formControls col-xs-8 col-sm-9 skin-minimal">
                 <div class="radio-box">
-                    <input name="sex" type="radio" id="sex-1" value="1" {if isset($user)&& $user->sex==1}checked{else/}checked{/if}>
+                    <input name="sex" type="radio" id="sex-1" value="1" {if isset($user)&& $user->getData('sex')==1}checked{else/}checked{/if}>
                     <label for="sex-1">男</label>
                 </div>
                 <div class="radio-box">
-                    <input type="radio" id="sex-2" name="sex" value="0" {if isset($user)&&$user->sex==0}checked{/if}>
+                    <input type="radio" id="sex-2" name="sex" value="0" {if isset($user)&&$user->getData('sex')==0}checked{/if}>
                     <label for="sex-2">女</label>
                 </div>
             </div>
@@ -101,7 +101,7 @@
                 <div id="fileList" class="uploader-list" style=""></div>
                 <div id="imgPicker" style="float:left">选择图片</div>
                 <img id="img_data" height="100px" style="margin-left: 10px;margin-top: 50px;"
-                     src="{$user?($user['avatar_url']?'/'.$user['avatar_url']:'__STATIC__/static/h-ui.admin/images/no_img.jpg'):'__STATIC__/static/h-ui.admin/images/no_img.jpg'}"/>
+                     src="{$user?($user['avatar_url']?$user['avatar_url']:'__STATIC__/static/h-ui.admin/images/no_img.jpg'):'__STATIC__/static/h-ui.admin/images/no_img.jpg'}"/>
             </div>
 
         </div>
@@ -166,7 +166,7 @@
 
         'onUploadSuccess': function (file, data, response) {
             $("#data_photo").val(data._raw);
-            $("#img_data").attr('src', '/' + data._raw).show();
+            $("#img_data").attr('src', data._raw).show();
         }
     });
 

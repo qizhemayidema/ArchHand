@@ -28,22 +28,32 @@ class LibraryComment extends Base
 
     public function show($id)
     {
-        $comment = LibraryCommentModel::where('id', $id)->find();
-        if (!$comment) {
-            $this->assign('is_exist', '未找到当前评论信息，请返回列表页刷新后确认是否以删除');
-        }
+        try {
+            $comment = LibraryCommentModel::where('id', $id)->find();
+            if (!$comment) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+            }
 
-        $this->assign('comment', $comment);
-        return $this->fetch();
+            $this->assign('comment', $comment);
+            return $this->fetch();
+        }catch (\Exception $e){
+            $this->assign('is_exist', $e->getMessage());
+            return $this->fetch();
+        }
     }
 
     public function userShow($id){
-        $user = \app\admin\model\User::where('id',$id)->find();
-        if(!$user){
-            $this->assign('is_exist',11);
+        try {
+            $user = \app\admin\model\User::where('id', $id)->find();
+            if (!$user) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+            }
+            $this->assign('user', $user);
+            return $this->fetch();
+        }catch(\Exception $e){
+            $this->assign('is_exist',$e->getMessage());
+            return $this->fetch();
         }
-        $this->assign('user',$user);
-        return $this->fetch();
     }
 
     /**
@@ -102,6 +112,7 @@ class LibraryComment extends Base
         $id = $request->only('id');
         Db::startTrans();
         try {
+            //TODO::替换字段
             $comm = LibraryCommentModel::where('id', $id['id'])->delete();
             $check = Db::name('library_comment_check_history')->where('library_comment_id', $id['id'])->delete();
             Db::commit();
@@ -135,10 +146,10 @@ class LibraryComment extends Base
                 Db::commit();
                 return json(['code' => 1, 'msg' => '正常']);
             } else {
-                $comm = LibraryCommentModel::update(['id' => $id, 'status' => 0]);
+                $comm = LibraryCommentModel::update(['id' => $id,'status' => 0]);
                 $check = Db::name('library_comment_check_history')->insert([
                     'library_comment_id' => $id,
-                    'manager_id' => session('admin')->id,
+                    'manager_name' => session('admin')->user_name,
                     'create_time' => time(),
                 ]);
                 Db::commit();

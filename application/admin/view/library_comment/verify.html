@@ -10,7 +10,7 @@
 	{if !isset($is_exist)}
 	<form id="add" action="verifySave" method="post" class="form form-horizontal" id="form-member-add">
 		<input name="id" type="hidden" value="{$id}">
-		<input name="name" type="hidden" value="{$name}">
+
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3">审核：</label>
 			<div class="formControls col-xs-6 col-sm-7"> <span class="select-box">
@@ -47,7 +47,6 @@
 <script type="text/javascript">
     function func(){
         let value = $('select option:selected').val();
-        console.log(value);
         if(value==='-1'){
             console.log(11);
             $('#verify').removeClass();
@@ -75,8 +74,6 @@
         // }
 
         function complete(data){
-
-
             if(data.code == 1){
                 layer.msg(data.msg, {icon: 6,time:1500,shade: 0.1}, function(){
                     window.parent.location.reload();

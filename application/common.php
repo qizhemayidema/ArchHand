@@ -15,9 +15,12 @@ use think\exception\DbException;
 use think\Log;
 
 
-
-function jsone($code,$msg){
-    return json(['code'=>$code,'msg'=>$msg]);
+function jsone($code, $msg, $data = null, $httpCode = 200)
+{
+    if ($data == null) {
+        return json(['code' => $code, 'msg' => $msg]);
+    }
+    return json(['code' => $code, 'msg' => $msg, 'data' => $data], $httpCode);
 }
 
 /**
@@ -41,8 +44,6 @@ function jsone($code,$msg){
 //    }
 //    return $data;
 //}
-
-
 
 
 /**

@@ -29,12 +29,14 @@ class User extends Model
 //        return $vip[$value];
 //    }
 
-        public function getCreateTimeAttr($value){
-        return date('Y-m-d H:i:s',$value);
-        }
+    public function getCreateTimeAttr($value)
+    {
+        return date('Y-m-d H:i:s', $value);
+    }
 
-    public function vip(){
-        return $this->belongsTo('Vip','vip_id','id');
+    public function vip()
+    {
+        return $this->belongsTo('Vip', 'vip_id', 'id');
     }
 
 }

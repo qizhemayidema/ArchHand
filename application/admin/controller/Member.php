@@ -49,7 +49,7 @@ class Member extends Base
 //        //过滤
 //        $clean_html = $purifier->purify($html);
         $form = $request->only('id,price,discount,desc');
-
+//        dump($form);die;
         $validate = new VipValidate();
         if (!$validate->check($form)) {
             return jsone(0, $validate->getError());
@@ -72,14 +72,19 @@ class Member extends Base
      */
     public function read($id)
     {
-        $vip = Vip::where('id', $id)->find();
+        try {
+            $vip = Vip::where('id', $id)->find();
 
-        if (!$vip) {
-            $this->assign('is_exist', 111);
+            if (!$vip) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+                return $this->fetch('member/add_edit');
+            }
+            $this->assign('vip', $vip);
+            return $this->fetch('member/add_edit');
+        }catch(\Exception $e){
+            $this->assign('is_exist',$e->getMessage());
             return $this->fetch('member/add_edit');
         }
-        $this->assign('vip', $vip);
-        return $this->fetch('member/add_edit');
     }
 
 

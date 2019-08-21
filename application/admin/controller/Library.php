@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\model\LibraryHaveAttributeValue;
 use think\Controller;
 
 use think\Db;
@@ -21,23 +22,48 @@ class Library extends Base
     {
 
         $libraries = (new LibraryModel)->where('is_delete', 0)
-            ->where('status','<>',-1)->order('status asc')->paginate(15);
+            ->where('status', '<>', -1)->order('status asc')->paginate(15);
         $this->assign('libraries', $libraries);
         return $this->fetch();
 
     }
 
-    public function show($id){
-        $library = LibraryModel::where('id',$id)->find();
+    public function show($id)
+    {
+//        try {
+        $library = LibraryModel::with(['cate', 'attribute' => function ($query) {
+            $query->field('id,attr_value,library_id')->with(['attributeValue' => function ($query) {
+                $query->field('id,value');
+            }]);
+        }])->get($id);
+
+//            dump($library);die;
+        if (!$library) {
+            $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+        }
+        $this->assign('library', $library);
+        return $this->fetch();
+//        } catch (\Exception $e) {
+//            $this->assign('is_exist', $e->getMessage());
+//            return $this->fetch();
+//        }
+
+
     }
 
-    public function userShow($id){
-        $user = \app\admin\model\User::where('id',$id)->find();
-        if(!$user){
-            $this->assign('is_exist',11);
+    public function userShow($id)
+    {
+        try {
+            $user = \app\admin\model\User::where('id', $id)->find();
+            if (!$user) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+            }
+            $this->assign('user', $user);
+            return $this->fetch();
+        } catch (\Exception $e) {
+            $this->assign('is_exist', $e->getMessage());
+            return $this->fetch();
         }
-        $this->assign('user',$user);
-        return $this->fetch();
     }
 
     /**
@@ -123,16 +149,20 @@ class Library extends Base
      */
     public function verify($id)
     {
-
-        $library = LibraryModel::where('id', $id)->find();
-        if (!$library) {
-            $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+        try {
+            $library = LibraryModel::where('id', $id)->find();
+            if (!$library) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+                return $this->fetch();
+            }
+            $this->assign('status', $library->status);
+            $this->assign('id', $library->id);
+            $this->assign('name', $library->name);
+            return $this->fetch();
+        } catch (\Exception $e) {
+            $this->assign('is_exist', $e->getMessage());
             return $this->fetch();
         }
-        $this->assign('status', $library->status);
-        $this->assign('id', $library->id);
-        $this->assign('name', $library->name);
-        return $this->fetch();
     }
 
     /**
@@ -169,22 +199,19 @@ class Library extends Base
                     $check = Db::name('library_check_history')->insert([
                         'library_id' => $form['id'],
                         'because' => $form['because'],
-                        'manager_id' => session('admin')->id,
+                        'manager_name' => session('admin')->user_name,
                         'library_name' => $form['name'],
                         'create_time' => time(),
                     ]);
                     if (!$check) {
                         Db::rollback();
+                        dump(1);
                         return json(['code' => 0, 'msg' => '审核失败']);
                     }
                 } else {
                     $check = Db::name('library_check_history')->where('library_id', $form['id'])->delete();
-                    if ($check) {
-                        Db::commit();
-                        return json(['code' => 1, 'msg' => '审核成功']);
-                    }
-                    Db::rollback();
-                    return json(['code' => 0, 'msg' => '审核失败']);
+                    Db::commit();
+                    return json(['code' => 1, 'msg' => '审核成功']);
                 }
                 Db::commit();
                 return json(['code' => 1, 'msg' => '审核成功']);
@@ -195,4 +222,26 @@ class Library extends Base
             return json(['code' => 0, 'msg' => '系统错误']);
         }
     }
+
+
+    public function classics(Request $request)
+    {
+
+        $param = $request->get();
+        if ($param['classics']) {
+            $is_num = 1;
+        } else {
+            $is_num = 0;
+        }
+        try {
+            $classics = Db::name('library')->where('id', $param['id'])->update(['is_classics' => $is_num]);
+            if ($classics) {
+                return json(['code' => 1, 'msg' => '操作成功']);
+            }
+            return json(['code' => 0, 'msg' => '失败']);
+        } catch (\Exception $e) {
+            return json(['code' => 0, 'msg' => '出错啦']);
+        }
+    }
+
 }

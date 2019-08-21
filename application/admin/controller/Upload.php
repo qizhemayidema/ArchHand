@@ -1,37 +1,33 @@
 <?php
 
 namespace app\admin\controller;
+
+use app\common\controller\UploadPic;
 use think\Controller;
 use think\File;
 use think\Request;
 
 class Upload extends Base
 {
-	//图片上传
-    public function upload(){
-       $file = request()->file('file');
-       $path = request()->post('path');
-       $path = 'uploads/'.$path;
-       $info = $file->move($path);
-       if($info){
-           return json(['success'=>true,'msg'=>'图片上传成功','file_path'=>'/'.$path.'/'.$info->getSaveName()]);
-        }else{
-           return json(['success'=>true,'msg'=>$file->getError(),'file_path'=>$file->getError()]);
+    //图片上传
+    public function upload(Request $request)
+    {
+        $upload = (new UploadPic())->uploadOnePic();
+
+        $upload = $upload->getData();
+        if ($upload['code'] == 1) {
+            return json(['success' => true, 'msg' => '图片上传成功', 'file_path' => $upload['msg']]);
+        } else {
+            return json(['success' => false, 'msg' => $upload['msg'], 'file_path' => '']);
         }
     }
 
     //会员头像上传
-    public function uploadUser(){
-        $path = request()->param('path');
-       $file = request()->file('file');
-
-       $path = 'uploads/'.$path;
-       $info = $file->move($path);
-       if($info){
-            echo $path.'/'.$info->getSaveName();
-        }else{
-            echo $file->getError();
-        }
+    public function uploadUser()
+    {
+        $pic = (new UploadPic())->uploadOnePic();
+        $path = $pic->getData();
+        echo $path['msg'];
     }
 
 }
