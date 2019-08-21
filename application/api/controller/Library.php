@@ -8,6 +8,7 @@ use think\Db;
 use think\Request;
 use app\api\model\LibraryHaveAttributeValue as LibraryHaveAttributeValueModel;
 use app\api\model\Library as LibraryModel;
+use app\api\validate\Library as LibraryValidate;
 use Upyun\Upyun;
 use Upyun\Config;
 use Upyun\Signature;
@@ -114,7 +115,21 @@ class Library extends Base
      */
     public function save(Request $request)
     {
-        //
+        $user = $this->userInfo;
+        $data = $request->post();
+        $data['user_id']=$user['id'];
+        $validate = new LibraryValidate();
+        if(!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $config = \HTMLPurifier_Config::createDefault();
+        $purifier = new \HTMLPurifier($config);
+        $data['desc'] = $purifier->purify($data['desc']);
+        $data['data_size'] = $data['data_size']/1024/1024;
+        dump($data['data_size']);
+
+
     }
 
 

@@ -4,8 +4,10 @@ namespace app\api\controller;
 
 use think\Controller;
 use think\Request;
+use app\api\model\Library;
+use app\api\model\Classes;
 
-class index extends Controller
+class Index extends Controller
 {
     /**
      * 显示资源列表
@@ -14,10 +16,21 @@ class index extends Controller
      */
     public function index()
     {
-        $json_file = 'web_site.json';
-        $config = json_decode(file_get_contents(CONFIG_PATH.'web_site.json'));
+        try {
+            //TODO::查询今日力推
+            //TODO::查询最新分享
 
-        dump($config);die;
+            $library = Library::field('id,name,library_pic')->where('status', 1)->where('is_delete', 0)
+                ->order('create_time desc')->limit(0, 8)->select();
+
+            $classes = Classes::field('id,name,class_pic')->where('is_delete',0)
+                ->order('create_time desc')->limit(0, 8)->select();
+
+            $data = ['library' => $library, 'classes' => $classes];
+            return json(['code' => 1, 'msg' => '查询成功', 'data' => $data]);
+        }catch(\Exception $e){
+            return json(['code'=>0,'msg'=>'查询失败']);
+        }
     }
 
     /**

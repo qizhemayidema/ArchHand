@@ -38,15 +38,24 @@ class LibraryComment extends Base
      */
     public function save(Request $request)
     {
+        $data = $request->post();
 
         $user = $this->userInfo;
-        $data = $request->post();
 
         $data['user_id'] = $user['id'];
         $validate = new LibraryCommentValidate();
         if (!$validate->check($data)) {
             return json(['code' => 0, 'msg' => $validate->getError()]);
         }
+        //加载默认配置
+        $config =  \HTMLPurifier_Config::createDefault();
+//       //设置白名单
+//        $config->set('HTML.Allowed','p');
+//       //实例化对象
+        $purifier = new \HTMLPurifier($config);
+//        //过滤
+        $data['comment'] = $purifier->purify($data['comment']);
+
         $data['create_time'] = time();
         Db::startTrans();
         try {
@@ -55,6 +64,8 @@ class LibraryComment extends Base
                 $library = (new LibraryModel())->where('id', $data['library_id'])->find();
                 $library->comment_num = $library->comment_num + 1;
                 $library->save();
+
+                //TODO:加积分
                 Db::commit();
                 return json(['code' => 1, 'msg' => '发布成功'], 201);
             } else {

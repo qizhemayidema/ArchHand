@@ -10,8 +10,10 @@
 
 
 Route::group('api',function(){
+    //主页
+    Route::get('index','api/Index/index');
     //公共配置
-    Route::get('');
+    Route::get('config','api/Config/index');
     //获取分类和属性
     Route::get('library/category','api/LibraryCategory/index');
     //云库首页
