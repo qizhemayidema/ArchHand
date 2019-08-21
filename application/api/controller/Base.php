@@ -25,9 +25,9 @@ class Base extends Controller
 
     private function getUserInfo()
     {
-        $token = request()->post('token');
+        $token = request()->param('token');
         if ($token){
-            $this->userInfo = (new UserModel())->where(['token'=>$token])->find();
+            $this->userInfo = (new UserModel())->where(['token'=>$token,'is_delete'=>1])->find();
             if (!$this->userInfo){
                 header('Content-type: application/json');
                 exit(json_encode(['code'=>0,'msg'=>'获取用户信息失败'],256));
@@ -58,6 +58,14 @@ class Base extends Controller
             'create_time' => time(),
         ];
         (new IntegralHistoryModel())->insert($result);
+        $upArr = [1,2,5,6,7,8,9,10];
+        $downArr = [3,4];
+        $userModel =(new UserModel())->where(['id'=>$this->userInfo['id']]);
+        if (in_array($type,$upArr)){
+            $userModel->setInc('integral',$integral);
+        }else if(in_array($type,$downArr)){
+            $userModel->setDec('integral',$integral);
+        }
     }
 
     /**
