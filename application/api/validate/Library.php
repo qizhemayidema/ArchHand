@@ -22,7 +22,7 @@ class Library extends Validate
         'integral' => 'require|number',
         'source_url' => 'require',
         'desc' => 'require|min:10',
-        'library_pid' => 'require',
+        'library_pic' => 'require',
         'suffix' => 'require|alpha',
         'data_size' => 'require|number',
         'is_original' => 'require|number',

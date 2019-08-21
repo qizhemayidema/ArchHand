@@ -119,17 +119,44 @@ class Library extends Base
     {
         $user = $this->userInfo;
         $data = $request->post();
-        $data['user_id']=$user['id'];
+        $data['user_id'] = $user['id'];
         $validate = new LibraryValidate();
-        if(!$validate->check($data)){
-            return json(['code'=>0,'msg'=>$validate->getError()]);
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
         }
 
         $config = \HTMLPurifier_Config::createDefault();
         $purifier = new \HTMLPurifier($config);
         $data['desc'] = $purifier->purify($data['desc']);
-        $data['data_size'] = round($data['data_size']/1024/1024,2);
-        dump($data['data_size']);
+        $data['data_size'] = round($data['data_size'] / 1024 / 1024, 2);
+        $data['is_official'] = $user->type == 2 ? 1 : 0;
+        $data['create_time'] = time();
+        dump($data);
+        Db::startTrans();
+//        try{
+
+        $library_integral = LibraryModel::field('create_time')->where('user_id', $user['id'])->order('create_time desc')
+            ->limit(0, 3)->select();
+        $count = 0;
+        foreach ($library_integral as $value) {
+            dump($value->getData('create_time'));
+            if (date('Ymd', time()) - date('Ymd', $value->getData('create_time')) >= 1) {
+                $count += 1;
+            }
+        }
+        $library = LibraryModel::create($data);
+        if ($count) {
+            $this->addUserIntegralHistory(10,1);
+        }
+
+
+
+
+
+//        }catch(\Exception $e){
+//            Db::rollback();
+//            return json(['code'=>0,'msg'=>'发布失败'],400);
+//        }
 
 
     }
@@ -228,7 +255,7 @@ class Library extends Base
             'policy' => $policy,
             'authorization' => $signature,
             'service_name' => env('UPYUN.SERVICE_NAME'),
-            'path'  => $real_path,
+            'path' => $real_path,
         ));
     }
 }
