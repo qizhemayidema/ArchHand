@@ -7,7 +7,7 @@ use think\Db;
 use think\Request;
 use think\Validate;
 use app\api\model\Classes as ClassModel;
-use app\api\model\ClassCategory as CateModel;
+use app\api\model\ClassesCategory as CateModel;
 
 class Classes extends Base
 {

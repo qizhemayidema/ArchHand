@@ -18,14 +18,15 @@ class Config extends Base
      */
     public function index()
     {
-
         $data = json_decode(file_get_contents(self::WEB_SITE_PATH));
-        $signs = json_decode($data->sign_in_integral);
-        $sign = [];
-        foreach ($signs as $k => $v) {
+//        $signs = json_decode($data->sign_in_integral);
+//        $sign = $data['sign_in_integral'];
+        foreach ($data->sign_in_integral as $k => $v) {
             $sign[$k] = $v;
         }
+
         $sign = implode(',', $sign);
+
         $data->sign_in_integral = $sign;
 
         $this->assign('site', $data);

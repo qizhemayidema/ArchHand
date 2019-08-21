@@ -29,5 +29,4 @@ class LibraryComment extends Model
         $src = "src=\'".$http.'${1}\'';
         return $content =  preg_replace($regex, $src, $value);
     }
-
 }

@@ -7,7 +7,7 @@ use think\facade\Request;
 
 class Common extends Model
 {
-    public function imgSrcToRealUrl($value)
+    public static function imgSrcToRealUrl($value)
     {
         //替换img src路径
         $http = Request::domain();

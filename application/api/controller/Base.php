@@ -6,10 +6,11 @@ use think\Controller;
 use think\Request;
 use think\Response;
 use app\api\model\User as UserModel;
+use app\api\model\UserIntegralHistory as IntegralHistoryModel;
 
 class Base extends Controller
 {
-    protected  $userInfo = [];
+    private $userInfo = [];
 
     public function initialize()
     {
@@ -31,6 +32,30 @@ class Base extends Controller
         }
     }
 
-    public function index(){
+    public function __get($name)
+    {
+        // TODO: Implement __get() method.
+        if (!$this->$name){
+            header('Content-type: application/json');
+            exit(json_encode(['code'=>0,'msg'=>'获取用户信息失败'],256));
+        }
+        return $this->$name;
     }
+
+    /**
+     * 添加 积分变动记录到表中
+     * @param $integral
+     */
+    protected function addUserIntegralHistory($type,$integral)
+    {
+        $result = [
+            'type'  => $type,
+            'integral' => $integral,
+            'user_id'   => $this->userInfo['id'],
+            'create_time' => time(),
+        ];
+
+        (new IntegralHistoryModel())->insert($result);
+    }
+
 }
