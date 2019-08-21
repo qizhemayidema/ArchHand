@@ -146,7 +146,7 @@ class LibraryComment extends Base
                 Db::commit();
                 return json(['code' => 1, 'msg' => '正常']);
             } else {
-                $comm = LibraryCommentModel::update(['id' => $id,'comment'=>'<s>评论以删除</s>', 'status' => 0]);
+                $comm = LibraryCommentModel::update(['id' => $id,'status' => 0]);
                 $check = Db::name('library_comment_check_history')->insert([
                     'library_comment_id' => $id,
                     'manager_name' => session('admin')->user_name,

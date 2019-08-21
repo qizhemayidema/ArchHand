@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\common\controller\UploadPic;
 use think\Controller;
 use think\File;
 use think\Request;

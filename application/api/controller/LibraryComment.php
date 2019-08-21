@@ -3,83 +3,113 @@
 namespace app\api\controller;
 
 use think\Controller;
+use think\Db;
 use think\Request;
+use app\api\model\LibraryComment as LibraryCommentModel;
+use app\api\validate\LibraryComment as LibraryCommentValidate;
+use app\api\model\Library as LibraryModel;
 
-class LibraryComment extends Controller
+class LibraryComment extends Base
 {
     /**
      * 显示资源列表
      *
      * @return \think\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $library_id = $request->get('library_id');
+        try {
+            $comment = LibraryCommentModel::field('u.nickname,u.avatar_url,l.id,l.comment,l.like_num,l.create_time')->alias('l')
+                ->join('user u', 'l.user_id=u.id')
+                ->where('status', 1)->where('library_id', $library_id)->paginate(15);
 
-    /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
-     */
-    public function create()
-    {
-        //
+            return json(['code' => 1, 'msg' => '查询成功', 'data' => $comment], 200);
+        } catch (\Exception $e) {
+            return json(['code' => 0, 'msg' => '查询失败'], 400);
+        }
     }
 
     /**
      * 保存新建的资源
      *
-     * @param  \think\Request  $request
+     * @param  \think\Request $request
      * @return \think\Response
      */
     public function save(Request $request)
     {
-        //
+
+        $user = $this->userInfo;
+        $data = $request->post();
+
+        $data['user_id'] = $user['id'];
+        $validate = new LibraryCommentValidate();
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
+        }
+        $data['create_time'] = time();
+        Db::startTrans();
+        try {
+            $comment = LibraryCommentModel::create($data, ['user_id', 'library_id', 'comment', 'create_time']);
+            if ($comment) {
+                $library = (new LibraryModel())->where('id', $data['library_id'])->find();
+                $library->comment_num = $library->comment_num + 1;
+                $library->save();
+                Db::commit();
+                return json(['code' => 1, 'msg' => '发布成功'], 201);
+            } else {
+                return json(['code' => 0, 'msg' => '发布失败'], 400);
+            }
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['code' => 0, 'msg' => '发布失败'], 400);
+        }
     }
 
     /**
-     * 显示指定的资源
-     *
-     * @param  int  $id
-     * @return \think\Response
+     * 评论点赞
+     * @param Request $request
+     * @return \think\response\Json
      */
-    public function read($id)
+    public function like(Request $request)
     {
-        //
+        $user = $this->userInfo;
+        $comment_id = $request->post('comment_id');
+
+        Db::startTrans();
+        try {
+            if ($comment_id) {
+                $comment_like_user = Db::name('library_comment_like_history')
+                    ->where('comment_id',$comment_id)->where('user_id',$user['id'])
+                    ->count('comment_id');
+
+                if($comment_like_user){
+                   return json(['code'=>0,'msg'=>'当前评论以点赞，不能重复点赞']);
+                }
+
+                $comment = (new LibraryCommentModel())->where('id', $comment_id)->find();
+                if(!$comment){
+                    return json(['code'=>0,'msg'=>'数据走丢啦，刷新后试试吧']);
+                }
+                $comment->like_num = $comment->like_num + 1;
+                $comment->save();
+
+                $comment_like_user = Db::name('library_comment_like_history')->insert(['comment_id' => $comment->id, 'user_id' => $user['id']]);
+
+                if ($comment_like_user) {
+                    Db::commit();
+                    return json(['code' => 1, 'msg' => '点赞成功'], 200);
+                } else {
+                    return json(['code' => 0, 'msg' => '点赞失败'], 400);
+                }
+            }else{
+                return json(['code'=>0,'msg'=>'缺少必要参数']);
+            }
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['code' => 0, 'msg' => '点赞失败'], 400);
+        }
+
     }
 
-    /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete($id)
-    {
-        //
-    }
 }

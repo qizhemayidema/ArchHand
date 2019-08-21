@@ -31,6 +31,5 @@ class Base extends Controller
         }
     }
 
-    public function index(){
-    }
+
 }
