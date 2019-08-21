@@ -33,13 +33,29 @@ class ClassesComment extends Base
         if (!$validate->check($data)){
             return json(['code'=>0,'msg'=>$validate->getError()]);
         }
-        $commentModel->insert([
-            'user_id'   => $this->userInfo['id'],
-            'create_time' => time(),
-            'class_id'  => $data['class_id'],
-            'comment'   => $data['content'],
-        ]);
-        return json(['code'=>0,'msg'=>'success']);
+        //加载默认配置
+        $config =  \HTMLPurifier_Config::createDefault();
+//       //设置白名单
+//        $config->set('HTML.Allowed','p');
+//       //实例化对象
+        $purifier = new \HTMLPurifier($config);
+        $data['content'] = $purifier->purify($data['content']);
+
+        $commentModel->startTrans();
+        try{
+            $commentModel->insert([
+                'user_id'   => $this->userInfo['id'],
+                'create_time' => time(),
+                'class_id'  => $data['class_id'],
+                'comment'   => $data['content'],
+            ]);
+//            $this->addUserIntegralHistory();
+            $commentModel->commit();
+        }catch (Exception $e){
+            $commentModel->rollback();
+        }
+
+        return json(['code'=>1,'msg'=>'success']);
     }
 
     //like

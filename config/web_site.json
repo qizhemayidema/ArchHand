@@ -9,7 +9,10 @@
   "phone": "13465321542",
   "qr_code": "\/static\/uploads\/20190819\/5d3c586aa4b179d739972998bdf0d40d.jpg",
   "issue_integral": "50",
+  "issue_integral_count" : "3",//
   "comment_integral": "5",
+  "comment_integral_count" : "3",//
+  "ratio_integral": "",
   "service_charge_integral": "10",
   "sign_in_integral": {
     "1": "10",

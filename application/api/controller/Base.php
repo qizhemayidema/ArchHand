@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use think\Controller;
+use think\Exception;
 use think\Request;
 use think\Response;
 use app\api\model\User as UserModel;
@@ -10,6 +11,8 @@ use app\api\model\UserIntegralHistory as IntegralHistoryModel;
 
 class Base extends Controller
 {
+    const WEB_SITE_PATH = CONFIG_PATH . 'web_site.json';
+
     private $userInfo = [];
 
     public function initialize()
@@ -54,8 +57,29 @@ class Base extends Controller
             'user_id'   => $this->userInfo['id'],
             'create_time' => time(),
         ];
-
         (new IntegralHistoryModel())->insert($result);
     }
 
+    /**
+     * 获取配置信息
+     * @param $name
+     * @return mixed
+     */
+    protected function getConfig($name)
+    {
+        $configObject = json_decode(file_get_contents(self::WEB_SITE_PATH));
+        $configPath = explode('.',$name);
+        $temp = $configObject;
+        try{
+            foreach ($configPath as $key => $value){
+                $temp = $temp->$value;
+            }
+            if (!$temp) throw new Exception();
+        }catch (Exception $e){
+            header('Content-type: application/json');
+            exit(json_encode(['code'=>0,'msg'=>'获取配置失败'],256));
+        }
+
+        return $temp;
+    }
 }
