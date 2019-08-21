@@ -52,6 +52,7 @@ Route::group('/api',function(){
         Route::post('/listMore','api/Classes/listMore');
     });
     Route::group('/Class_comment',function(){
+        Route::post('/add','api/ClassesComment/add');
         Route::post('/remove','api/ClassesComment/remove');
     });
 

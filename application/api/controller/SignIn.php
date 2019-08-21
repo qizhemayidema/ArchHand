@@ -9,13 +9,12 @@ use app\api\model\User as UserModel;
 
 class SignIn extends Base
 {
-    const WEB_SITE_PATH = CONFIG_PATH . 'web_site.json';
     /**
      * 签到动作
      */
     public function getIntegral(Request $request)
     {
-        $integral_list = json_decode(file_get_contents(self::WEB_SITE_PATH),true)['sign_in_integral'];
+        $integral_list = json_decode(json_encode($this->getConfig('sign_in_integral'),256),true);
         if ($this->userInfo['last_sign_in_num'] == 0){
             //第一次签到
             (new UserModel())->where(['id'=>$this->userInfo['id']])->update([
