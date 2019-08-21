@@ -126,7 +126,7 @@ class Library extends Base
         $config = \HTMLPurifier_Config::createDefault();
         $purifier = new \HTMLPurifier($config);
         $data['desc'] = $purifier->purify($data['desc']);
-        $data['data_size'] = $data['data_size']/1024/1024;
+        $data['data_size'] = round($data['data_size']/1024/1024,2);
         dump($data['data_size']);
 
 
