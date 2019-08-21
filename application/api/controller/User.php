@@ -19,7 +19,7 @@ class User extends Base
     public function basicInfo()
     {
         $userInfo = (new UserModel())->where(['id'=>$this->userInfo['id']])
-            ->field('avatar_url,real_name,sex,birthday,profession,address')->find();
+            ->field('avatar_url,nickname,integral,real_name,sex,birthday,profession,address')->find();
 
         return json(['code'=>'0','data'=>$userInfo]);
     }
@@ -63,7 +63,6 @@ class User extends Base
             'address.require'    => '专业必须填写',
             'profession.max'       => '专业最大长度为 40',
             'address.max'       => '地址最大长度为 120',
-
         ];
 
         $avatar_url = '';

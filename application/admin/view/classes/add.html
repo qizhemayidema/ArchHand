@@ -155,6 +155,7 @@
 <script type="text/javascript">
     var chapter_num = 1;        //添加课程视频自增起始
     var video_exts = 'mp4|mkv';
+    var loading;
 
     //是否上传视频
     var is_upload = true;
@@ -262,7 +263,7 @@
         }
 
         $('form').submit(function(){
-            var loading = layer.msg('提交中', {
+            loading = layer.msg('提交中', {
                 icon: 16
                 ,shade: 0.01
                 ,time : 0
@@ -325,9 +326,10 @@
                             $(filename).parents('tr').find('.chapter_video_url').val(data.url);
 
                             if (k + 1 === chapter_video_length){
-                                form_ajax();
+                                setTimeout(function(){
+                                    form_ajax();
+                                },1000)
                             }
-                            layer.close(loading);
                         }).fail(function(res, textStatus, error) {
                             try {
                                 var body = JSON.parse(res.responseText);
@@ -361,7 +363,6 @@
         }
 
         function form_ajax () {
-
             // 拼接 课程表单
             var result = new FormData($('form')[0]);
             //请求后端
@@ -374,6 +375,7 @@
                 contentType: false,
                 success: function (data) {
                     is_upload = false;
+                    layer.close(loading);
                     if (data.code == 0) {
                         layer.msg(data.msg, {icon: 5, time: 1000});
                     } else {
