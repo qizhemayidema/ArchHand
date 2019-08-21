@@ -14,6 +14,7 @@ class Vip extends Validate
      * @var array
      */
     protected $rule = [
+        'vip_name'=>'require|min:2|max:20',
         'price' => 'require|number|integer|unique:vip',
         'discount' => 'require|unique:vip|regex:^[1-9]\.[0-9]{1,1}$',
     ];

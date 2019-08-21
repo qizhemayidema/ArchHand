@@ -25,6 +25,7 @@
             </tr>
             <tr class="text-c">
                 <th width="5%">ID</th>
+                <th width="10%">VIP名称</th>
                 <th width="5%">充值金额 (RMB)</th>
                 <th width="10%">折扣</th>
                 <!--<th width="5%">说明</th>-->
@@ -35,6 +36,7 @@
             {foreach $vip as $v}
             <tr class="text-c">
                 <td>{$v['id']}</td>
+                <td>{$v['vip_name']}</td>
                 <td>{$v['price']}</td>
                 <td><strong style="color: #cc0000;">{$v['discount']} 折<i class="Hui-iconfont" >&#xe6c1;</i></strong></td>
                 <!--<td>{$v['desc']}</td>-->

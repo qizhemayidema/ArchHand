@@ -22,7 +22,9 @@ class Config extends Validate
         'qq' => 'regex:^[1-9][0-9]*$|min:6|max:15',
         'phone' => 'regex:/^1[34578]\d{9}$/',
         'issue_integral' => 'require|regex:^[1-9][0-9]*$',
+        'issue_integral_count' => 'require|regex:^[1-9][0-9]*$',
         'comment_integral' => 'require|regex:^[1-9][0-9]*$',
+        'comment_integral_count' => 'require|regex:^[1-9][0-9]*$',
 //        'ratio_integral' => 'require|integer|intCheck|min:1|max:9',
         'service_charge_integral' => 'require|regex:^[0-9]{1,2}\.{0,1}[0-9]{0,1}$',//百分比小数点前两位 后一位
         'sign_in_integral' => 'require|signCheck',
@@ -46,14 +48,18 @@ class Config extends Validate
         'icp' => 'icp认证必须填写',
         'announcement' => '网站公告必须填写',
         'copyright' => '网站版权信息必须填写',
-        'qq.regex'=>'QQ填写错误',
+        'qq.regex' => 'QQ填写错误',
         'qq.min' => 'QQ不能小于6个数字',
         'qq.max' => 'QQ不能大于15个数字',
         'phone' => '手机格式填写错误',
-        'issue_integral.require' => '发布话题积分必须填写',
-        'issue_integral.regex'=>'发布话题积分必须是正整数',
+        'issue_integral.require' => '发布积分必须填写',
+        'issue_integral.regex' => '发布积分必须是正整数',
+        'issue_integral_count.require' => '发布积分必须填写',
+        'issue_integral_count.regex' => '发布积分必须是正整数',
         'comment_integral.require' => '评论积分必须填写',
-        'comment_integral.regex'=>'评论积分必须是正整数',
+        'comment_integral.regex' => '评论积分必须是正整数',
+        'comment_integral_count.require' => '评论次数必须填写',
+        'comment_integral_count.regex' => '评论次数必须是正整数',
         'ratio_integral.require' => '助手币兑换比例必须填写',
         'ratio_integral.integer' => '助手币兑换比例必须是正整数',
         'ratio_integral.intCheck' => '助手币兑换比例必须是正整数',
@@ -61,13 +67,14 @@ class Config extends Validate
         'ratio_integral.max' => '助手币兑换比例不能大于9位数',
         'service_charge_integral.require' => '手续费必须填写',
         'service_charge_integral.regex' => '手续费填写错误',
-        'sign_in_integral.require'=>'签到积分必须填写',
+        'sign_in_integral.require' => '签到积分必须填写',
         'sign_in_integral.signCheck' => '签到积分填写错误',
 
     ];
 
-    public function intCheck($value,$rule,$data){
-        if(is_numeric($value)){
+    public function intCheck($value, $rule, $data)
+    {
+        if (is_numeric($value)) {
             return true;
         }
         return false;

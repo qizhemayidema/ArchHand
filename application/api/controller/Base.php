@@ -58,6 +58,7 @@ class Base extends Controller
             'create_time' => time(),
         ];
         (new IntegralHistoryModel())->insert($result);
+        (new UserModel())->where(['id'=>$this->userInfo['id']])->setInc('integral',$integral);
     }
 
     /**
