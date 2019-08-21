@@ -160,6 +160,9 @@ class Classes extends Controller
 
             (new ClassChapterModel())->insertAll($chapter_set);
 
+            //分类下课程数量 + 1
+            (new \app\admin\model\ClassesCategory())->where(['id'=>$data['cate_id']])->setInc('class_count');
+
             $classModel->commit();
         }catch (Exception $e){
             $classModel->rollback();
@@ -420,9 +423,16 @@ class Classes extends Controller
     public function delete(Request $request)
     {
         $id = $request->param('id');
-        (new ClassModel())->where(['id'=>$id])->update(['is_delete'=>1]);
-        (new ClassTagListModel())->where(['class_id'=>$id])->delete();
-        return json(['code'=>1,'msg'=>'success']);
+        $classInfo =(new ClassModel())->find($id);
+        if($classInfo){
+
+            //分类下课程数量 - 1
+            (new \app\admin\model\ClassesCategory())->where(['id'=>$classInfo['cate_id']])->setDec('class_count');
+            (new ClassModel())->where(['id'=>$id])->update(['is_delete'=>1]);
+            (new ClassTagListModel())->where(['class_id'=>$id])->delete();
+            return json(['code'=>1,'msg'=>'success']);
+        }
+
     }
 
     public function uploadVideo()

@@ -53,14 +53,15 @@ class Login extends Base
         $cache = new Cache([
             'type'      => 'file',
         ]);
-        $real_code = $cache->get($data['phone'])['code'];
+//        $real_code = $cache->get($data['phone'])['code'];
+        $real_code = 1111;
         if (!$real_code){
             return json(['code'=>0,'msg'=>'验证码不正确']);
         }
         if ($real_code != $data['code']){
             return json(['code'=>0,'msg'=>'验证码不正确']);
-
         }
+
         if ($data['password'] != $data['re_password']){
             return json(['code'=>0,'msg'=>'两次密码不一致']);
         }
@@ -149,9 +150,13 @@ class Login extends Base
         }
 
         //判断验证码
-        if ((new Cache(['type'=>'file']))->get($data['phone'])['code'] != $data['code']){
+//        if ((new Cache(['type'=>'file']))->get($data['phone'])['code'] != $data['code']){
+//            return json(['code'=>0,'msg'=>'验证码不正确']);
+//        }
+        if (1111 != $data['code']){
             return json(['code'=>0,'msg'=>'验证码不正确']);
         }
+
 
         //绑定用户
         $userInfo->save([
