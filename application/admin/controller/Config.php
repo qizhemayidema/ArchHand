@@ -21,7 +21,11 @@ class Config extends Base
         $data = json_decode(file_get_contents(self::WEB_SITE_PATH));
 
         $sign = [];
-//
+
+        if(!$data){
+            return $this->fetch('config/index');
+        }
+
         foreach ($data->sign_in_integral as $k => $v) {
             $sign[$k] = $v;
         }

@@ -24,7 +24,7 @@ Route::group('api',function(){
     //云库显示
     Route::post('library/show','api/Library/show');
     //云库修改
-    Route::post('library/update','api/Library/update');
+    Route::patch('library/update','api/Library/update');
     //云库删除
     Route::delete('library/:id','api/Library/delete');
     //云库点赞

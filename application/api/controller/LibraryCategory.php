@@ -18,11 +18,12 @@ class LibraryCategory extends Controller
     {
         try {
             $cate = LibraryCategoryModel::with(['attribute.attributeValue'])->all();
+            return json(['code'=>1,'msg'=>'查询成功','data'=>$cate],200);
         }catch(\Exception $e){
-            return json();
+            return json(['code'=>0,'msg'=>'查询失败'],500);
         }
 
-        return json(['code'=>1,'msg'=>'查询成功','data'=>$cate],200);
+
     }
 
     /**
