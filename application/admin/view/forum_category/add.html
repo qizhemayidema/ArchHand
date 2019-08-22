@@ -1,0 +1,65 @@
+<!--_meta 作为公共模版分离出 去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    {include file="common/meta"}
+    {include file="common/source"}
+    <title>新建分类</title>
+</head>
+<body>
+<article class="page-container">
+    <form action="" method="post" class="form form-horizontal" id="form-admin-per-add">
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">分类名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text"  name="cate_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <button type="submit" class="btn btn-success radius" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+{include file="common/footer"}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('form').submit(function(){
+
+            var formData = new FormData(document.getElementById('form-admin-per-add'));
+            $.ajax({
+                url:"{:url('/admin/Forum_category/save')}",
+                type:'post',
+                DataType:'json',
+                data:formData,
+                processData:false,
+                contentType:false,
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg,{icon:5,time:1000});
+                    } else {
+                        layer.msg('添加成功',{icon:1,time:1000},function(){
+                            window.parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        });
+
+                    }
+                }
+            })
+            return false;
+        })
+
+    })
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

@@ -124,4 +124,25 @@ class User extends Base
             return jsone(0, $e->getMessage());
         }
     }
+
+    /**
+     * 公共方法 展示用户信息
+     * @param $id
+     * @return mixed
+     */
+    public function userShow($id){
+        try {
+            $user = \app\admin\model\User::where('id', $id)->find();
+
+            if (!$user) {
+                $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
+            }
+            $this->assign('user', $user);
+
+            return $this->fetch('/common/user_show');
+        }catch(\Exception $e){
+            $this->assign('is_exist',$e->getMessage());
+            return $this->fetch('common/user_show');
+        }
+    }
 }

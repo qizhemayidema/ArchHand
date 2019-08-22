@@ -21,7 +21,7 @@ class User extends Base
         $userInfo = (new UserModel())->where(['id'=>$this->userInfo['id']])
             ->field('avatar_url,nickname,integral,real_name,sex,birthday,profession,address')->find();
 
-        return json(['code'=>'0','data'=>$userInfo]);
+        return json(['code'=>'1','data'=>$userInfo]);
     }
 
     /**

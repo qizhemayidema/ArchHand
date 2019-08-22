@@ -299,6 +299,6 @@ class Login extends Base
     {
         $rand = mt_rand(1000000,9999999);
         $salt = env('LOGIN.SALT');
-        return md5($password . $rand . $salt);
+        return md5(md5($password) . $rand . $salt .  microtime() );
     }
 }

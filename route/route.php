@@ -16,7 +16,7 @@ Route::group('/api',function(){
 
     Route::group('/Login',function(){
         Route::post('/getCode','api/Login/getCode');
-        Route::post('/register','api/Login/getCode');
+        Route::post('/register','api/Login/register');
         Route::post('/login','api/Login/login');
         Route::post('/rePwd','api/Login/rePwd');
         Route::post('/getCsrf','api/Login/getCsrf');

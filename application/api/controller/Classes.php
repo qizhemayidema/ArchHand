@@ -13,6 +13,7 @@ use app\api\model\ClassesCategory as CateModel;
 use app\api\model\UserCollect as CollectModel;
 use app\api\model\UserBuyHistory as UserBuyHistoryModel;
 use app\api\model\Vip as VipModel;
+use app\admin\model\ClassesTagList as TagListModel;
 
 
 class Classes extends Base
@@ -129,13 +130,19 @@ class Classes extends Base
         try{
             //获取课程基本信息
             $classInfo = (new ClassModel())->where(['id'=>$data['class_id'],'is_delete'=>0])
-                ->field('id,name,see_num,learn_num,desc,class_pic,free_chapter,chapter_sum,integral,create_time')
+                ->field('id,name,see_num,learn_num,desc,class_pic,free_chapter,chapter_sum,integral,create_time,collect_num')
                 ->find();
             //获取课程视频列表信息
             $chapterInfo = (new ChapterModel())->where(['class_id'=>$data['class_id']])
-                ->field('id,title,pic,chapter_num,source_url')
+                ->field('id,title,pic,chapter_num')
                 ->order('chapter_num')
                 ->select()->toArray();
+            //获取课程标签
+            $taglist = (new TagListModel())->alias('list')
+                                            ->join('class_tag tag','list.tag_id = tag.id')
+                                            ->where(['list.class_id'=>$data['class_id']])
+                                            ->field('tag.tag_img,tag.name')
+                                            ->select();
             //如果用户登陆,获取是否收藏的信息  并且获取当前用户会员价格
             $classInfo['is_collect'] = false;
             $classInfo['is_buy'] = false;
@@ -151,15 +158,11 @@ class Classes extends Base
                 $classInfo['is_buy'] = (new UserBuyHistoryModel())
                     ->where(['user_id'=>$this->userInfo['id'],'type'=>2,'buy_id'=>$data['class_id']])->find() ? true : false;
             }
-            foreach ($chapterInfo as $key => $value){
-                if ($key + 1 > $classInfo['free_chapter']){
-                    unset($chapterInfo[$key]['source_url']);
-                }
-            }
             //免费的能看
             $result = [
                 'class_info' => $classInfo,
                 'chapter_info' => $chapterInfo,
+                'tag_list'  => $taglist
             ];
 
             return json(['code'=>1,'data'=>$result]);
@@ -189,7 +192,8 @@ class Classes extends Base
             $class_id = $chapter_info['class_id'];
             $classInfo = (new ClassModel())->find($class_id);
             if ($chapter_info['chapter_num'] <= $classInfo['free_chapter']){
-                return json(['code'=>1,'msg'=>'success','url'=>$classInfo['source_url']]);
+                (new ClassModel())->where(['id'=>$class_id])->setInc('see_num');
+                return json(['code'=>1,'msg'=>'success','url'=>$chapter_info['source_url']]);
             }
             //查看用户是否购买过
             $buy = new UserBuyHistoryModel();
@@ -197,7 +201,8 @@ class Classes extends Base
             if (!$res){
                 return json(['code'=>0,'msg'=>'请购买观看~']);
             }
-            return json(['code'=>1,'msg'=>'success','url'=>$classInfo['source_url']]);
+            (new ClassModel())->where(['id'=>$class_id])->setInc('see_num');
+            return json(['code'=>1,'msg'=>'success','url'=>$chapter_info['source_url']]);
         }catch(Exception $e){
             return json(['code'=>0,'msg'=>'播放出错,请联系网站管理员']);
         }
@@ -252,6 +257,8 @@ class Classes extends Base
             ]);
             //用户积分变动表   用户自己的表 金额减少
             $this->addUserIntegralHistory(3,$pay_integral);
+            //增加学习人数
+            (new ClassModel())->where(['id'=>$data['class_id']])->setInc('learn_num');
             $buy->commit();
         }catch (Exception $e){
             $buy->rollback();
@@ -277,18 +284,21 @@ class Classes extends Base
             return json(['code'=>0,'msg'=>$validate->getError()]);
         }
         $collectModel = new CollectModel();
-        if ($collectModel->where(['type'=>1,'collect_id'=>$data['class_id']])->find()){
-            return json(['code'=>0,'msg'=>'收藏过就不能再次收藏了哦']);
-        }
+
         $collectModel->startTrans();
         try{
-            $collectModel->insert([
-                'type'  => 1,
-                'collect_id' => $data['class_id'],
-                'user_id' => $this->userInfo['id'],
-                'create_time' => time(),
-            ]);
-            (new ClassModel())->where(['id'=>$data['class_id']])->setInc('collect_num');
+            if ($collectModel->where(['type'=>1,'collect_id'=>$data['class_id']])->find()){
+                \controller(Collect::class)->removeClass($request);
+            }else{
+                $collectModel->insert([
+                    'type'  => 1,
+                    'collect_id' => $data['class_id'],
+                    'user_id' => $this->userInfo['id'],
+                    'create_time' => time(),
+                ]);
+                (new ClassModel())->where(['id'=>$data['class_id']])->setInc('collect_num');
+            }
+
             $collectModel->commit();
         }catch (Exception $e){
             $collectModel->rollback();

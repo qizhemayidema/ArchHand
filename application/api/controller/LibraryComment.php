@@ -46,10 +46,10 @@ class LibraryComment extends Base
         $data['user_id'] = $user['id'];
         $validate = new LibraryCommentValidate();
         if (!$validate->check($data)) {
-            return json(['code' => 0, 'msg' => $validate->getError()],422);
+            return json(['code' => 0, 'msg' => $validate->getError()], 422);
         }
         //加载默认配置
-        $config =  \HTMLPurifier_Config::createDefault();
+        $config = \HTMLPurifier_Config::createDefault();
         //实例化对象
         $purifier = new \HTMLPurifier($config);
         //过滤
@@ -59,16 +59,16 @@ class LibraryComment extends Base
         Db::startTrans();
         try {
 
-            $sql = date('Ymd',time())."-FROM_UNIXTIME(create_time,'%Y%m%d')=0";
+            $sql = date('Ymd', time()) . "-FROM_UNIXTIME(create_time,'%Y%m%d')=0";
 
             $comment_integral_count = Db::name('library_comment')
-                ->where('user_id',$user['id'])
+                ->where('user_id', $user['id'])
                 ->whereRaw($sql)->count('create_time');
 
-            $comment_integral_count = $comment_integral_count?:0;
+            $comment_integral_count = $comment_integral_count ?: 0;
 
             //判断当日可获得积分次数，
-            if($this->getConfig('comment_integral_count')-$comment_integral_count>0){
+            if ($this->getConfig('comment_integral_count') - $comment_integral_count > 0) {
                 $integral = $this->getConfig('comment_integral');
                 $this->addUserIntegralHistory(5, $integral);
             }
@@ -106,16 +106,16 @@ class LibraryComment extends Base
         try {
             if ($comment_id) {
                 $comment_like_user = Db::name('library_comment_like_history')
-                    ->where('comment_id',$comment_id)->where('user_id',$user['id'])
+                    ->where('comment_id', $comment_id)->where('user_id', $user['id'])
                     ->count('comment_id');
 
-                if($comment_like_user){
-                   return json(['code'=>0,'msg'=>'当前评论以点赞，不能重复点赞'],417);
+                if ($comment_like_user) {
+                    return json(['code' => 0, 'msg' => '当前评论以点赞，不能重复点赞'], 417);
                 }
 
                 $comment = (new LibraryCommentModel())->where('id', $comment_id)->find();
-                if(!$comment){
-                    return json(['code'=>0,'msg'=>'数据走丢啦，刷新后试试吧'],404);
+                if (!$comment) {
+                    return json(['code' => 0, 'msg' => '数据走丢啦，刷新后试试吧'], 404);
                 }
                 $comment->like_num = $comment->like_num + 1;
                 $comment->save();
@@ -128,8 +128,8 @@ class LibraryComment extends Base
                 } else {
                     return json(['code' => 0, 'msg' => '点赞失败'], 417);
                 }
-            }else{
-                return json(['code'=>0,'msg'=>'缺少必要参数'],422);
+            } else {
+                return json(['code' => 0, 'msg' => '缺少必要参数'], 422);
             }
         } catch (\Exception $e) {
             Db::rollback();
@@ -145,18 +145,23 @@ class LibraryComment extends Base
     public function delete()
     {
         $comment_id = request()->post('comment_id');
-        if (!$comment_id){ return json(['code'=>0,'msg'=>'缺少comment_id'],422);}
+        if (!$comment_id) {
+            return json(['code' => 0, 'msg' => '缺少comment_id'], 422);
+        }
         $commentModel = new LibraryCommentModel();
-        try{
+        try {
             $commentInfo = $commentModel->find($comment_id);
-            if($commentInfo['user_id'] != $this->userInfo['id']) throw new Exception('只能删除自己的评论');
-            $res = $commentModel->where(['id'=>$comment_id,'user_id'=>$this->userInfo['id'],'status'=>1])->delete();
-            if(!$res) throw new Exception('删除失败');
-            (new LibraryModel())->where(['id'=>$commentInfo['library_id']])->setDec('comment_num');
-        }catch (Exception $e){
-            return json(['code'=>0,'msg'=>'删除失败'],417);
+            if ($commentInfo['user_id'] != $this->userInfo['id']) throw new Exception('只能删除自己的评论');
+            $res = $commentModel->where(['id' => $comment_id, 'user_id' => $this->userInfo['id'], 'status' => 1])->delete();
+            if (!$res) throw new Exception('删除失败');
+            if ($commentInfo['comment_num'] > 0) {
+
+                (new LibraryModel())->where(['id' => $commentInfo['library_id']])->setDec('comment_num');
+            }
+        } catch (Exception $e) {
+            return json(['code' => 0, 'msg' => '删除失败'], 417);
         }
 
-        return json(['code'=>1,'msg'=>'success'],200);
+        return json(['code' => 1, 'msg' => 'success'], 200);
     }
 }
