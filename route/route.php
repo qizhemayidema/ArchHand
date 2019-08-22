@@ -61,7 +61,9 @@ Route::group('/api',function(){
         Route::post('/remove','api/ClassesComment/remove');
         Route::post('/like','api/ClassesComment/like');
     });
-
-    Route::post('/Sign_in/getIntegral','api/Sign_in/getIntegral');
+    Route::group('/Sign_in',function(){
+        Route::post('/getIntegral','api/Sign_in/getIntegral');
+        Route::post('/getSignInDays','api/Sign_in/getSignInDays');
+    });
     Route::post('/Library/uploadVideo','api/Library/uploadVideo');
 });

@@ -27,7 +27,6 @@ class Collect extends Base
             return json(['code' => 0, 'msg' => '操作失败,请刷新后重试']);
         }
         return json(['code' => 1, 'msg' => 'success']);
-
     }
 
     //删除一个收藏文库的记录   2

@@ -129,23 +129,27 @@ class Classes extends Base
         try{
             //获取课程基本信息
             $classInfo = (new ClassModel())->where(['id'=>$data['class_id'],'is_delete'=>0])
-                ->field('name,see_num,learn_num,desc,class_pic,free_chapter,chapter_sum,integral')
+                ->field('id,name,see_num,learn_num,desc,class_pic,free_chapter,chapter_sum,integral')
                 ->find();
             //获取课程视频列表信息
             $chapterInfo = (new ChapterModel())->where(['class_id'=>$data['class_id']])
-                ->field('title,pic,chapter_num,source_url')
+                ->field('id,title,pic,chapter_num,source_url')
                 ->order('chapter_num')
                 ->select()->toArray();
             //如果用户登陆,获取是否收藏的信息  并且获取当前用户会员价格
             $classInfo['is_collect'] = false;
+            $classInfo['is_buy'] = false;
             if ($request->param('token')){
                 $classInfo['is_collect'] = (new CollectModel())->where(['type'=>1,'user_id'=>$this->userInfo['id'],'collect_id'=>$data['class_id']])
                     ->value('id') ? true : false;
                 if ($this->userInfo['vip_id'] != 0){
                     $vipInfo = (new VipModel())->where(['id'=>$this->userInfo['vip_id']])->find();
+                    $classInfo['vip_name'] = $vipInfo['vip_name'];
                     $classInfo['vip_integral'] = floor( $classInfo['integral'] * $vipInfo['discount']);
                     $classInfo['vip_discount'] = $vipInfo['discount'];
                 }
+                $classInfo['is_buy'] = (new UserBuyHistoryModel())
+                    ->where(['user_id'=>$this->userInfo['id'],'type'=>2,'buy_id'=>$data['class_id']])->find() ? true : false;
             }
             foreach ($chapterInfo as $key => $value){
                 if ($key + 1 > $classInfo['free_chapter']){

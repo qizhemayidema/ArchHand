@@ -11,6 +11,10 @@ class SignIn extends Base
 {
     /**
      * 签到动作
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \think\Exception
+     * @throws \think\exception\PDOException
      */
     public function getIntegral(Request $request)
     {
@@ -45,6 +49,28 @@ class SignIn extends Base
         }else{
             return json(['code'=>0,'msg'=>'您今天已经签到过了,不能再次签到哦']);
         }
+    }
+
+    /**
+     * 获取今天的签到状态
+     * @param Request $request
+     * @return \think\response\Json
+     */
+    public function getSignInDays(Request $request)
+    {
+        $user_info = $this->userInfo;
+
+        $result = [
+            'last_sign_in_time' => $user_info['last_sign_in_time'],
+            'last_sign_in_num'  => $user_info['last_sign_in_num'],
+            'is_sign'           => false,
+        ];
+
+        if (date("Y-m-d",$result['last_sign_in_time'] )== date('Y-m-d',time())){
+            $result['is_sign'] = true;
+        }
+        return json(['code'=>1,'data'=>$result]);
+
     }
 }
 

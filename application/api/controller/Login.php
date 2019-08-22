@@ -17,7 +17,6 @@ use app\api\model\User as UserModel;
 
 class Login extends Base
 {
-
     public function register(Request $request)
     {
         $data = $request->post();
@@ -190,7 +189,6 @@ class Login extends Base
         ]);
         $csrf_token = md5(mt_rand(10000000,99999999));
         $cache->set('csrf_' . $data['phone'],$csrf_token);
-
         return json(['code'=>1,'msg'=>$csrf_token]);
     }
 
