@@ -27,7 +27,7 @@ class LibraryComment extends Base
 
             return json(['code' => 1, 'msg' => '查询成功', 'data' => $comment], 200);
         } catch (\Exception $e) {
-            return json(['code' => 0, 'msg' => '查询失败'], 400);
+            return json(['code' => 0, 'msg' => '查询失败'], 500);
         }
     }
 
@@ -46,12 +46,10 @@ class LibraryComment extends Base
         $data['user_id'] = $user['id'];
         $validate = new LibraryCommentValidate();
         if (!$validate->check($data)) {
-            return json(['code' => 0, 'msg' => $validate->getError()]);
+            return json(['code' => 0, 'msg' => $validate->getError()],422);
         }
         //加载默认配置
         $config =  \HTMLPurifier_Config::createDefault();
-        //设置白名单
-        $config->set('HTML.Allowed','p');
         //实例化对象
         $purifier = new \HTMLPurifier($config);
         //过滤
@@ -86,11 +84,11 @@ class LibraryComment extends Base
                 return json(['code' => 1, 'msg' => '发布成功'], 201);
             } else {
                 Db::rollback();
-                return json(['code' => 0, 'msg' => '发布失败'], 400);
+                return json(['code' => 0, 'msg' => '发布失败'], 417);
             }
         } catch (\Exception $e) {
             Db::rollback();
-            return json(['code' => 0, 'msg' => '发布失败'], 400);
+            return json(['code' => 0, 'msg' => '发布失败'], 500);
         }
     }
 
@@ -112,12 +110,12 @@ class LibraryComment extends Base
                     ->count('comment_id');
 
                 if($comment_like_user){
-                   return json(['code'=>0,'msg'=>'当前评论以点赞，不能重复点赞']);
+                   return json(['code'=>0,'msg'=>'当前评论以点赞，不能重复点赞'],417);
                 }
 
                 $comment = (new LibraryCommentModel())->where('id', $comment_id)->find();
                 if(!$comment){
-                    return json(['code'=>0,'msg'=>'数据走丢啦，刷新后试试吧']);
+                    return json(['code'=>0,'msg'=>'数据走丢啦，刷新后试试吧'],404);
                 }
                 $comment->like_num = $comment->like_num + 1;
                 $comment->save();
@@ -128,14 +126,14 @@ class LibraryComment extends Base
                     Db::commit();
                     return json(['code' => 1, 'msg' => '点赞成功'], 200);
                 } else {
-                    return json(['code' => 0, 'msg' => '点赞失败'], 400);
+                    return json(['code' => 0, 'msg' => '点赞失败'], 417);
                 }
             }else{
-                return json(['code'=>0,'msg'=>'缺少必要参数']);
+                return json(['code'=>0,'msg'=>'缺少必要参数'],422);
             }
         } catch (\Exception $e) {
             Db::rollback();
-            return json(['code' => 0, 'msg' => '点赞失败'], 400);
+            return json(['code' => 0, 'msg' => '点赞失败'], 500);
         }
 
     }
@@ -147,7 +145,7 @@ class LibraryComment extends Base
     public function delete()
     {
         $comment_id = request()->post('comment_id');
-        if (!$comment_id){ return json(['code'=>0,'msg'=>'缺少comment_id']);}
+        if (!$comment_id){ return json(['code'=>0,'msg'=>'缺少comment_id'],422);}
         $commentModel = new LibraryCommentModel();
         try{
             $commentInfo = $commentModel->find($comment_id);
@@ -156,9 +154,9 @@ class LibraryComment extends Base
             if(!$res) throw new Exception('删除失败');
             (new LibraryModel())->where(['id'=>$commentInfo['library_id']])->setDec('comment_num');
         }catch (Exception $e){
-            return json(['code'=>0,'msg'=>'删除失败']);
+            return json(['code'=>0,'msg'=>'删除失败'],417);
         }
 
-        return json(['code'=>1,'msg'=>'success']);
+        return json(['code'=>1,'msg'=>'success'],200);
     }
 }
