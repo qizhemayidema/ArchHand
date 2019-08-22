@@ -19,8 +19,9 @@ class Config extends Base
     public function index()
     {
         $data = json_decode(file_get_contents(self::WEB_SITE_PATH));
-//        $signs = json_decode($data->sign_in_integral);
-//        $sign = $data['sign_in_integral'];
+
+        $sign = [];
+//
         foreach ($data->sign_in_integral as $k => $v) {
             $sign[$k] = $v;
         }
@@ -78,10 +79,12 @@ class Config extends Base
             'phone' => trim($form['phone']),
             'qr_code' => trim($form['qr_code']),
             'issue_integral' => trim($form['issue_integral']),
+            'issue_integral_count'=>trim($form['issue_integral_count']),
             'comment_integral' => trim($form['comment_integral']),
-            'ratio_integral' => trim($form['ratio_integral']),
+            'comment_integral_count'=>trim($form['comment_integral_count']),
+//            'ratio_integral' => trim($form['ratio_integral']),
             'service_charge_integral' => trim($form['service_charge_integral']),
-            'sign_in_integral' => json_encode($sign),
+            'sign_in_integral' => $sign,
         ];
 
         $data = json_encode($data);

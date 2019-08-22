@@ -63,7 +63,7 @@
                         <span class="c-red">*</span>
                         网站公告：</label>
                     <div class="formControls col-xs-8 col-sm-9">
-                        <textarea name="announcement" id="announcememt" class="textarea" placeholder="首页公告信息">{$site->announcememt?:null}</textarea>
+                        <textarea name="announcement" id="announcememt" class="textarea" placeholder="首页公告信息">{$site->announcement?:null}</textarea>
                         <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页公告信息</span>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                     <label class="form-label col-xs-4 col-sm-2">QQ：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" id="qq" value="{$site->qq?:null}" class="input-text" name="qq"
-                               placeholder="QQ号码">
+                               placeholder="5687xxxx">
                         <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbspQQ号码</span>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
                     <label class="form-label col-xs-4 col-sm-2">电话：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" class="input-text" value="{$site->phone?:null}" id="phone" name="phone"
-                               placeholder="手机号码">
+                               placeholder="134xxxxxxxx">
                         <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp手机号码</span>
                     </div>
                 </div>
@@ -111,19 +111,37 @@
 
             <div class="tabCon">
                 <div class="row cl">
-                    <label class="form-label col-xs-4 col-sm-2">发帖积分：</label>
+                    <label class="form-label col-xs-4 col-sm-2">发布积分：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" class="input-text" value="{$site->issue_integral?:null}" id="issue_integral" name="issue_integral"
                                placeholder="50">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp社区发布话题获取的助手币</span>
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp发布文库和社区发布话题获取的助手币</span>
                     </div>
                 </div>
+
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">发布积分每日获取次数：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" value="{$site->issue_integral_count?:null}" id="issue_integral_count" name="issue_integral_count"
+                        placeholder="3">
+                    <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp发布文库和社区发布话题每日可获取助手币次数设置，文库与社区次数不共享 1-99次</span>
+                    </div>
+                </div>
+
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">评论积分：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" class="input-text" value="{$site->comment_integral?:null}" id="comment_integral" name="comment_integral"
                                placeholder="30">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp回复他人话题获取的助手币</span>
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp评论他人话题、文库、课程获取的助手币</span>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">评论积分每日获取次数：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" value="{$site->comment_integral_count?:null}" id="comment_integral_count" name="comment_integral_count"
+                               placeholder="3">
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp评论话题、文库、课程每日可获取助手币次数设置，话题、文库、课程评论次数不共享 1-99次</span>
                     </div>
                 </div>
                 <!--<div class="row cl">-->

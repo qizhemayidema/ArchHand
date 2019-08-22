@@ -11,6 +11,14 @@
     <form action="{$vip?'update':'save'}" method="post" class="form form-horizontal" id="form-member-add">
         <input id="id" name="id" value="{$vip?$vip['id']:0}" type="hidden">
         <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>VIP名称：</label>
+            <div class="formControls col-xs-6 col-sm-9">
+                <input type="text" class="input-text" value="{$vip?$vip['vip_name']:null}" placeholder="黄铜"
+                       id="vip_name"
+                       name="vip_name">
+            </div>
+        </div>
+        <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>累计金额：</label>
             <div class="formControls col-xs-6 col-sm-9">
                 <input type="text" class="input-text" value="{$vip?$vip['price']:null}" placeholder="200" id="phone"

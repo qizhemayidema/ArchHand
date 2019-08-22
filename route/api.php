@@ -11,8 +11,10 @@ use think\facade\Route;
 
 
 Route::group('api',function(){
+    //主页
+    Route::get('index','api/Index/index');
     //公共配置
-    Route::get('');
+    Route::get('config','api/Config/index');
     //获取分类和属性
     Route::get('library/category','api/LibraryCategory/index');
     //云库首页
@@ -22,7 +24,7 @@ Route::group('api',function(){
     //云库显示
     Route::post('library/show','api/Library/show');
     //云库修改
-    Route::put('library/update','api/Library/update');
+    Route::post('library/update','api/Library/update');
     //云库删除
     Route::delete('library/:id','api/Library/delete');
     //云库点赞

@@ -40,20 +40,23 @@ class Member extends Base
      */
     public function save(Request $request)
     {
-//        //加载默认配置
-       $config =  \HTMLPurifier_Config::createDefault();
-//       //设置白名单
-       $config->set('HTML.Allowed','p');
-//       //实例化对象
-//        $purifier = new \HTMLPurifier($config);
-//        //过滤
-//        $clean_html = $purifier->purify($html);
-        $form = $request->only('id,price,discount,desc');
+
+        $form = $request->only('id,price,discount,vip_name,desc');
+
 //        dump($form);die;
         $validate = new VipValidate();
         if (!$validate->check($form)) {
             return jsone(0, $validate->getError());
         }
+        if(!$form['desc']){
+            //加载默认配置
+            $config =  \HTMLPurifier_Config::createDefault();
+            //实例化对象
+            $purifier = new \HTMLPurifier($config);
+            //过滤
+            $form['desc'] = $purifier->purify($form['desc']);
+        }
+
         try {
             $vip = Vip::create($form);
             if ($vip) {
@@ -97,13 +100,20 @@ class Member extends Base
      */
     public function update(Request $request, $id)
     {
-        $form = $request->only('id,price,discount,desc');
+        $form = $request->only('id,price,discount,vip_name,desc');
 
         $validate = new VipValidate();
         if (!$validate->check($form)) {
             return jsone(0, $validate->getError());
         }
-
+        if(!$form['desc']){
+            //加载默认配置
+            $config =  \HTMLPurifier_Config::createDefault();
+            //实例化对象
+            $purifier = new \HTMLPurifier($config);
+            //过滤
+            $form['desc'] = $purifier->purify($form['desc']);
+        }
         $vip = Vip::update($form);
         if ($vip) {
             return jsone(1, '编辑成功');

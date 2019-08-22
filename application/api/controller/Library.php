@@ -3,8 +3,13 @@
 namespace app\api\controller;
 
 use think\Controller;
-use think\Request;
 
+
+use think\Db;
+use think\Request;
+use app\api\model\LibraryHaveAttributeValue as LibraryHaveAttributeValueModel;
+use app\api\model\Library as LibraryModel;
+use app\api\validate\Library as LibraryValidate;
 use Upyun\Upyun;
 use Upyun\Config;
 use Upyun\Signature;
@@ -112,7 +117,49 @@ class Library extends Base
      */
     public function save(Request $request)
     {
-        //
+        $user = $this->userInfo;
+        $data = $request->post();
+        $data['user_id'] = $user['id'];
+        $validate = new LibraryValidate();
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
+        }
+
+        $config = \HTMLPurifier_Config::createDefault();
+        $purifier = new \HTMLPurifier($config);
+        $data['desc'] = $purifier->purify($data['desc']);
+        $data['data_size'] = round($data['data_size'] / 1024 / 1024, 2);
+        $data['is_official'] = $user->type == 2 ? 1 : 0;
+        $data['create_time'] = time();
+
+        Db::startTrans();
+        try {
+
+            $sql = date('Ymd', time()) . "-FROM_UNIXTIME(create_time,'%Y%m%d')=0";
+
+            $library_integral_count = Db::name('library')
+                ->where('user_id', $user['id'])
+                ->whereRaw($sql)->count('create_time');
+
+            $library_integral_count = $library_integral_count ?: 0;
+
+            //判断当日可获得积分次数，
+            if ($this->getConfig('issue_integral_count') - $library_integral_count > 0) {
+                $integral = $this->getConfig('issue_integral');
+                $this->addUserIntegralHistory(10, $integral);
+            }
+
+            $library = LibraryModel::create($data);
+
+            Db::commit();
+            return json(['code' => 1, 'msg' => '发布成功']);
+
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['code' => 0, 'msg' => '发布失败'], 400);
+        }
+
+
     }
 
 
@@ -123,9 +170,25 @@ class Library extends Base
      * @param  int $id
      * @return \think\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $user = $this->userInfo;
+        $data = $request->post();
+        dump($data);die;
+        $data['user_id'] = $user['id'];
+        $validate = new LibraryValidate();
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
+        }
+
+        $config = \HTMLPurifier_Config::createDefault();
+        $purifier = new \HTMLPurifier($config);
+        $data['desc'] = $purifier->purify($data['desc']);
+        $data['data_size'] = round($data['data_size'] / 1024 / 1024, 2);
+        $data['is_official'] = $user->type == 2 ? 1 : 0;
+        $data['create_time'] = time();
+
+
     }
 
     /**
@@ -149,16 +212,16 @@ class Library extends Base
         try {
             if ($library_id) {
                 $library_like_user = Db::name('library_like_history')
-                    ->where('library_id',$library_id)->where('user_id',$user['id'])
+                    ->where('library_id', $library_id)->where('user_id', $user['id'])
                     ->count('library_id');
 
-                if($library_like_user){
-                    return json(['code'=>0,'msg'=>'当前云库以点赞，不能重复点赞']);
+                if ($library_like_user) {
+                    return json(['code' => 0, 'msg' => '当前云库以点赞，不能重复点赞']);
                 }
 
                 $library = (new LibraryModel())->where('id', $library_id)->find();
-                if(!$library){
-                    return json(['code'=>0,'msg'=>'数据走丢啦，刷新后试试吧']);
+                if (!$library) {
+                    return json(['code' => 0, 'msg' => '数据走丢啦，刷新后试试吧']);
                 }
                 $library->like_num = $library->like_num + 1;
                 $library->save();
@@ -171,13 +234,15 @@ class Library extends Base
                 } else {
                     return json(['code' => 0, 'msg' => '点赞失败'], 400);
                 }
-            }else{
-                return json(['code'=>0,'msg'=>'缺少必要参数']);
+            } else {
+                return json(['code' => 0, 'msg' => '缺少必要参数']);
             }
         } catch (\Exception $e) {
             Db::rollback();
             return json(['code' => 0, 'msg' => '点赞失败'], 400);
         }
+
+
     }
 
     /**
