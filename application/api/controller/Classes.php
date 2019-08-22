@@ -129,7 +129,7 @@ class Classes extends Base
         try{
             //获取课程基本信息
             $classInfo = (new ClassModel())->where(['id'=>$data['class_id'],'is_delete'=>0])
-                ->field('id,name,see_num,learn_num,desc,class_pic,free_chapter,chapter_sum,integral')
+                ->field('id,name,see_num,learn_num,desc,class_pic,free_chapter,chapter_sum,integral,create_time')
                 ->find();
             //获取课程视频列表信息
             $chapterInfo = (new ChapterModel())->where(['class_id'=>$data['class_id']])
