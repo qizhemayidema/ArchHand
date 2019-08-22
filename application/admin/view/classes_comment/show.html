@@ -1,0 +1,20 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+
+	{include file="common/source"}
+<title>查看评论</title>
+</head>
+<body>
+<div class="page-container">
+	{if !isset($is_exist)}
+	{$comment->comment|raw}
+	{else/}
+	<div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>{$is_exist}</div>
+	{/if}
+</div>
+<!--_footer 作为公共模版分离出去-->
+{include file="common/footer"}
+
+</body>
+</html>
