@@ -65,5 +65,8 @@ Route::group('/api',function(){
         Route::post('/getIntegral','api/Sign_in/getIntegral');
         Route::post('/getSignInDays','api/Sign_in/getSignInDays');
     });
+    Route::group('/Forum',function(){
+        Route::post('/getAllPlate','api/Forum/getAllPlate');
+    });
     Route::post('/Library/uploadVideo','api/Library/uploadVideo');
 });
