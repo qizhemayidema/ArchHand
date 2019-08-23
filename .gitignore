@@ -7,4 +7,5 @@
 /public/uploads
 composer.lock
 composer.json
+/public/static/uploads
 
