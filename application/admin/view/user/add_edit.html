@@ -161,6 +161,7 @@
             mimeTypes: 'image/jpg,image/jpeg,image/png'
         },
         'onUploadSuccess': function (file, data, response) {
+
             $("#data_photo").val(data);
             $("#img_data").attr('src',data).show();
         }
