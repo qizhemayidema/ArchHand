@@ -19,12 +19,14 @@ class Library extends Model
         return $this->belongsTo('LibraryCategory', 'cate_id');
     }
 
-    public function attribute(){
-        return $this->hasMany('LibraryHaveAttributeValue','library_id','id');
+    public function attribute()
+    {
+        return $this->hasMany('LibraryHaveAttributeValue', 'library_id', 'id');
     }
 
-    public function cate(){
-        return $this->belongsTo('LibraryCategory','cate_id','id');
+    public function cate()
+    {
+        return $this->belongsTo('LibraryCategory', 'cate_id', 'id');
     }
 
     public function getStatusAttr($value)
@@ -43,6 +45,7 @@ class Library extends Model
     {
         return date('Y-m-d H:i:s', $value);
     }
+
     public function getDescAttr($value){
         return Common::imgSrcToRealUrl($value);
     }

@@ -3,6 +3,7 @@
 namespace app\api\model;
 
 
+use app\common\model\Common;
 use think\facade\Request;
 
 use think\Model;
@@ -19,6 +20,7 @@ class Library extends Model
 
     public function getDescAttr($value)
     {
+
         return CommonModel::imgSrcToRealUrl($value);
     }
 

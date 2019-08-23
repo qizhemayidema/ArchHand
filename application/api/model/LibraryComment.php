@@ -3,6 +3,7 @@
 namespace app\api\model;
 
 
+use app\common\model\Common;
 use think\facade\Request;
 use think\Model;
 use app\common\model\Common as CommonModel;
@@ -23,8 +24,9 @@ class LibraryComment extends Model
         return $this->belongsTo('User', 'user_id', 'id');
     }
 
-    public function getCommentAttr($value){
-        return CommonModel::imgSrcToRealUrl($value);
+    public function getComment($value)
+    {
+        return Common::imgSrcToRealUrl($value);
     }
 
 }

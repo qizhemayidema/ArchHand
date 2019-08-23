@@ -57,7 +57,7 @@ class Library extends Base
         } else if ($filtrate == 2) {
             //精华
             $filtrate = 'is_classics';
-        }else{
+        } else {
             $filtrate = 0;
         }
         try {
@@ -249,6 +249,8 @@ class Library extends Base
 
             $library = (new LibraryModel())->where('id', $data['id'])->find();
 
+            $upyunPath = $library->source_url;
+
             if ($library->cate_id != $data['cate_id']) {
                 $library_cate = (new LibraryCategoryModel())->where('id', $library->cate_id)
                     ->where('count', '>', 0)->setDec('count');
@@ -310,6 +312,18 @@ class Library extends Base
             unset($data['attr_value_ids']);
             $library = (new LibraryModel())->save($data, ['id' => $data['id']]);
             if ($library) {
+                //删除又拍云文件
+                $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
+                $upyun = new Upyun($config);
+                $has = $upyun->has($upyunPath);
+                if ($has) {
+                    //删除
+                    $del = $upyun->delete($library['source_url']);
+                    if (!$del) {
+                        return json(['code' => 0, 'msg' => '文件删除失败'], 400);
+                    }
+                }
+
                 Db::commit();
                 return json(['code' => 1, 'msg' => '修改成功'], 200);
             } else {
@@ -445,6 +459,52 @@ class Library extends Base
     }
 
     /**
+     * 收藏
+     * @param Request $request
+     * @return \think\response\Json
+     */
+    public function collect(Request $request)
+    {
+        $user = $this->userInfo;
+        $library_id = $request->post('id');
+        if (!$library_id) {
+            return json(['code' => 0, 'msg' => '缺少必要参数'], 422);
+        }
+        Db::startTrans();
+        try {
+            $user_collect = Db::name('user_collect')->where('type', 2)
+                ->where('collect_id', $library_id)->count('id');
+            if ($user_collect) {
+                return json(['code' => 0, 'msg' => '当前文库以收藏，不能重复收藏'], 417);
+            }
+
+            $library = (new LibraryModel())->where('id', $library_id)->find();
+            if (!$library) {
+                return json(['code' => 0, 'msg' => '数据丢失了，刷新后试试吧'], 404);
+            }
+
+            $library->collect_num = $library->collect_num + 1;
+            $library->save();
+
+            $user_collect = Db::name('user_collect')->insert([
+                'type' => 2, 'user_id' => $user['id'], 'collect_id' => $library_id, 'create_time' => time()
+            ]);
+
+            if ($user_collect) {
+                Db::commit();
+                return json(['code' => 1, 'msg' => '收藏成功'], 200);
+            } else {
+                Db::rollback();
+                return json(['code' => 0, 'msg' => '收藏失败'], 417);
+            }
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['code' => 0, 'msg' => '收藏失败'], 500);
+        }
+
+    }
+
+    /**
      * 购买
      * @param Request $request
      * @return \think\response\Json
@@ -468,8 +528,8 @@ class Library extends Base
             //查找是否有文件
             $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
             $upyun = (new Upyun($config))->has($library['source_url']);
-            if(!$upyun){
-                return json(['code'=>0,'msg'=>'当前文件已经删除啦'],417);
+            if (!$upyun) {
+                return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 417);
             }
 
             //判断是否以购买过
@@ -515,7 +575,7 @@ class Library extends Base
                 $user_integral_history = (new UserIntegralHistory())->saveAll($user_history);
 
                 Db::commit();
-                return json(['code' => 1, 'msg' => '购买成功', 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]],200);
+                return json(['code' => 1, 'msg' => '购买成功', 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]], 200);
             } else {
                 Db::rollback();
                 return json(['code' => 0, 'msg' => '当前助手币不足'], 400);
@@ -537,12 +597,12 @@ class Library extends Base
     {
         $user = $this->userInfo;
         $id = $request->post('id');
-        if(!$id){
-            return json(['code'=>0,'msg'=>'缺少必要参数'],422);
+        if (!$id) {
+            return json(['code' => 0, 'msg' => '缺少必要参数'], 422);
         }
-        $user_buy_history = UserBuyHistory::where('buy_id',$id)->where('user_id',$user['id'])->count('id');
-        if(!$user_buy_history){
-            return json(['code'=>0,'msg'=>'您还没有购买过，不能下载哦'],400);
+        $user_buy_history = UserBuyHistory::where('buy_id', $id)->where('user_id', $user['id'])->count('id');
+        if (!$user_buy_history) {
+            return json(['code' => 0, 'msg' => '您还没有购买过，不能下载哦'], 400);
         }
 
         try {
