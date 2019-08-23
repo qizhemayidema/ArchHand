@@ -11,6 +11,7 @@
 <body>
 <article class="page-container">
     <form action="" method="post" class="form form-horizontal" id="form-admin-per-add">
+        <input type="hidden" name="plate_img" value="{$plate_info.plate_img}">
         <input type="hidden" name="id" value="{$plate_info.id}">
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限所属节点：</label>
@@ -22,6 +23,20 @@
                       {/foreach}
                   </select>
                 </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>板块封面：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div id="uploader-demo">
+                    <!--用来存放item-->
+                    <div id="fileList" class="uploader-list">
+                        <div id="WU_FILE_0" class="file-item thumbnail">
+                            <img src="{$plate_info.plate_img}" style="width: 100px;height: 100px;">
+                        </div>
+                    </div>
+                    <div id="filePicker">选择图片</div>
+                </div>
             </div>
         </div>
         <div class="row cl">
@@ -81,6 +96,67 @@
             })
             return false;
         })
+        var uploader  = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: true,
+
+            // swf文件路径
+            swf: '__STATIC__/lib/webuploader/0.1.5/Uploader.swf',
+
+
+            // 文件接收服务端。
+            server: "{:url('/admin/Forum_plate/uploadPic')}",
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker',
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        $list = $("#fileList"),
+            $btn = $("#btn-star"),
+            state = "pending",
+            thumbnailWidth = thumbnailHeight = 100,
+            uploader;
+
+        uploader .on( 'fileQueued', function( file ) {
+            var $li = $(
+                '<div id="' + file.id + '" class="file-item thumbnail">' +
+                '<img>' +
+                '<div class="info">' + file.name + '</div>' +
+                '</div>'
+                ),
+                $img = $li.find('img');
+
+
+            // $list为容器jQuery实例
+            $list.html( $li );
+
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            // thumbnailWidth x thumbnailHeight 为 100 x 100
+
+            uploader.makeThumb( file, function( error, src ) {
+                if ( error ) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+
+                $img.attr( 'src', src );
+            }, thumbnailWidth, thumbnailHeight );
+        });
+
+        //上传成功
+        uploader.on('uploadAccept', function (file, response) {
+            if (response.code == 1){
+                $('input[name=plate_img]').val(response.msg);
+            }
+        });
     })
 </script>
 <!--/请在上方写此页面业务相关的脚本-->

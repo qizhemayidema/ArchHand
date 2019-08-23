@@ -30,6 +30,7 @@
             <th width="40">ID</th>
             <th>所属分类</th>
             <th>板块名称</th>
+            <th>板块封面</th>
             <th>版主</th>
             <th>帖子数量</th>
             <th>回复数量</th>
@@ -42,6 +43,8 @@
             <td>{$value.id}</td>
             <td>{$value.cate_name}</td>
             <td>{$value.plate_name}</td>
+            <td><img src="{$value.plate_img}" alt="" style="width: 70px;"></td>
+
             <td>
                 <a href="javascript:void(0);" onclick="member_show('{$value.nickname}','{:url('/admin/User/userShow',['id'=>$value.user_id])}','10001','360','400')">
                     <i class="avatar size-L radius">

@@ -3,7 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\model\ForumManager;
-use function Composer\Autoload\includeFile;
+use app\common\controller\UploadPic;
 use think\Exception;
 use think\Request;
 use app\admin\model\ForumCategory as CateModel;
@@ -24,10 +24,9 @@ class ForumPlate extends Base
         }
         $plateInfo = $plateInfo->join('forum_manager manager','manager.plate_id = plate.id')
             ->join('user user','user.id = manager.user_id')
-            ->field('cate.cate_name,user.id user_id,user.avatar_url,user.nickname,plate.id,plate.plate_name,plate.forum_num,plate.comment_num')
+            ->field('plate.plate_img,cate.cate_name,user.id user_id,user.avatar_url,user.nickname,plate.id,plate.plate_name,plate.forum_num,plate.comment_num')
             ->order('id','desc')
             ->paginate(20,false,['query'=>$request->param()]);
-
 
         $cateInfo = (new CateModel())->select();
 
@@ -51,12 +50,14 @@ class ForumPlate extends Base
         $data = $request->post();
 
         $rules = [
+            'plate_img'      => 'require',
             'cate_id'        => 'require',
             'plate_name'       => 'require',
             'plate_man_phone'  => 'require|max:11|regex:/^1[34578]\d{9}$/',
         ];
 
         $messages = [
+            'plate_img.require'     => '板块封面必须上传',
             'cate_id.require'       => 'error',
             'plate_name.require'    => '名称必须填写',
             'plate_man_phone.require'       => '必须选择一个版主',
@@ -89,6 +90,7 @@ class ForumPlate extends Base
             $plateModel->insert([
                 'plate_name'    => $data['plate_name'],
                 'cate_id'       => $data['cate_id'],
+                'plate_img'     => $data['plate_img'],
             ]);
             $plate_id = $plateModel->getLastInsID();
             (new ForumManager())->insert([
@@ -131,6 +133,7 @@ class ForumPlate extends Base
 
         $rules = [
             'id'             => 'require',
+            'plate_img'      => 'require',
             'cate_id'        => 'require',
             'plate_name'       => 'require',
             'plate_man_phone'  => 'require|max:11|regex:/^1[34578]\d{9}$/',
@@ -139,6 +142,7 @@ class ForumPlate extends Base
         $messages = [
             'id.require'            => 'error',
             'cate_id.require'       => 'error',
+            'plate_img.require'     => '必须上传封面图',
             'plate_name.require'    => '名称必须填写',
             'plate_man_phone.require' => '必须选择一个版主',
             'plate_man_phone.max'   => '版主手机号最长位数 11位',
@@ -171,6 +175,7 @@ class ForumPlate extends Base
             $plateModel->where(['id'=>$data['id']])->update([
                 'plate_name'    => $data['plate_name'],
                 'cate_id'       => $data['cate_id'],
+                'plate_img'    => $data['plate_img'],
             ]);
             $plate_id = $data['id'];
             if($flag){
@@ -207,7 +212,7 @@ class ForumPlate extends Base
 
     public function uploadPic()
     {
-        $path = 'class_tag/';
+        $path = 'forum_plate/';
         return (new UploadPic())->uploadOnePic($path);
     }
 }

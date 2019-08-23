@@ -11,7 +11,7 @@
 <body>
 <article class="page-container">
     <form action="" method="post" class="form form-horizontal" id="form-admin-per-add">
-        <input type="hidden" name="tag_img">
+        <input type="hidden" name="plate_img">
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限所属节点：</label>
             <div class="formControls col-xs-8 col-sm-9">
@@ -22,6 +22,16 @@
                       {/foreach}
                   </select>
                 </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>板块封面：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div id="uploader-demo">
+                    <!--用来存放item-->
+                    <div id="fileList" class="uploader-list"></div>
+                    <div id="filePicker">选择图片</div>
+                </div>
             </div>
         </div>
         <div class="row cl">
@@ -94,7 +104,7 @@
 
 
         // 文件接收服务端。
-        server: "{:url('/admin/Classes_tag/uploadPic')}",
+        server: "{:url('/admin/Forum_plate/uploadPic')}",
 
         // 选择文件的按钮。可选。
         // 内部根据当前运行是创建，可能是input元素，也可能是flash.
@@ -143,7 +153,7 @@
     uploader.on('uploadAccept', function (file, response) {
         console.log(response);
         if (response.code == 1){
-            $('input[name=tag_img]').val(response.msg);
+            $('input[name=plate_img]').val(response.msg);
         }else{
             layer.msg(response.msg,{icon:5,time:1000});
         }
