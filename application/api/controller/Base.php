@@ -59,13 +59,13 @@ class Base extends Controller
             'create_time' => time(),
         ];
         (new IntegralHistoryModel())->insert($result);
-        $upArr = [1,2,5,6,7,8,9,10];
-        $downArr = [3,4];
-        $userModel =(new UserModel())->where(['id'=>$this->userInfo['id']]);
-        if (in_array($type,$upArr)){
-            $userModel->setInc('integral',$integral);
-        }else if(in_array($type,$downArr)){
-            $userModel->setDec('integral',$integral);
+        $upArr = [1, 2, 5, 6, 7, 8, 9, 10];
+        $downArr = [3, 4];
+        $userModel = (new UserModel())->where(['id' => $this->userInfo['id']]);
+        if (in_array($type, $upArr)) {
+            $userModel->setInc('integral', $integral);
+        } else if (in_array($type, $downArr)) {
+            $userModel->setDec('integral', $integral);
         }
     }
 

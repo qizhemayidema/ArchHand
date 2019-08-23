@@ -217,8 +217,8 @@
         },
 
         'onUploadSuccess': function (file, data, response) {
-            $("#data_photo").val(data._raw);
-            $("#img_data").attr('src', data._raw).show();
+            $("#data_photo").val(data);
+            $("#img_data").attr('src', data).show();
         }
     });
 

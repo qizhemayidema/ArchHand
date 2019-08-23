@@ -17,7 +17,8 @@ class Official extends Base
      */
     public function index()
     {
-        $user = UserModel::where('type', 2)->where('is_delete', 1)->paginate(15);
+        $user = UserModel::where('type', 2)->where('is_delete', 1)
+            ->order('id desc')->paginate(15);
 
         $this->assign('users', $user);
         return $this->fetch();
@@ -55,6 +56,10 @@ class Official extends Base
         }
         $form['type'] = 2;
         $form['birthday'] = strTotime($form['birthday']);
+
+        $rand = mt_rand(1000000,9999999);
+        $salt = env('LOGIN.SALT');
+        $form['token'] = md5(md5($form['password']) . $rand . $salt .  microtime() );
         $form['create_time'] = time();
 
         $user = (new UserModel())->save($form);

@@ -22,7 +22,8 @@ class Library extends Base
     {
 
         $libraries = (new LibraryModel)->where('is_delete', 0)
-            ->where('status', '<>', -1)->order('status asc')->paginate(15);
+            ->where('status', '<>', -1)->order('status asc,is_classics desc')
+            ->paginate(15);
         $this->assign('libraries', $libraries);
         return $this->fetch();
 
