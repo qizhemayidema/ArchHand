@@ -41,7 +41,7 @@
                     <label for="sex-1">男</label>
                 </div>
                 <div class="radio-box">
-                    <input type="radio" id="sex-2" name="sex" value="0" {if isset($user)&&$user->getData('sex')==0}checked{/if}>
+                    <input type="radio" id="sex-2" name="sex" value="2" {if isset($user)&&$user->getData('sex')==2}checked{/if}>
                     <label for="sex-2">女</label>
                 </div>
             </div>
@@ -166,8 +166,8 @@
         },
 
         'onUploadSuccess': function (file, data, response) {
-            $("#data_photo").val(data._raw);
-            $("#img_data").attr('src',data._raw).show();
+            $("#data_photo").val(data);
+            $("#img_data").attr('src',data).show();
         }
     });
 
