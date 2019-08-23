@@ -88,8 +88,13 @@
                 dataType: 'json',
                 data: {'id': id},
                 success: function (data) {
-                    $(obj).parents("tr").remove();
-                    layer.msg('已删除!', {icon: 1, time: 1000});
+                    if(data.code===0){
+                        $(obj).parents("tr").remove();
+                        layer.msg(data.msg, {icon: 2, time: 2000});
+                    }else {
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!', {icon: 1, time: 1000});
+                    }
                 },
                 error: function (data) {
                     console.log(data.msg);

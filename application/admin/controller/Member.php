@@ -48,9 +48,9 @@ class Member extends Base
         if (!$validate->check($form)) {
             return jsone(0, $validate->getError());
         }
-        if(!$form['desc']){
+        if (!$form['desc']) {
             //加载默认配置
-            $config =  \HTMLPurifier_Config::createDefault();
+            $config = \HTMLPurifier_Config::createDefault();
             //实例化对象
             $purifier = new \HTMLPurifier($config);
             //过滤
@@ -84,8 +84,8 @@ class Member extends Base
             }
             $this->assign('vip', $vip);
             return $this->fetch('member/add_edit');
-        }catch(\Exception $e){
-            $this->assign('is_exist',$e->getMessage());
+        } catch (\Exception $e) {
+            $this->assign('is_exist', $e->getMessage());
             return $this->fetch('member/add_edit');
         }
     }
@@ -106,9 +106,9 @@ class Member extends Base
         if (!$validate->check($form)) {
             return jsone(0, $validate->getError());
         }
-        if(!$form['desc']){
+        if (!$form['desc']) {
             //加载默认配置
-            $config =  \HTMLPurifier_Config::createDefault();
+            $config = \HTMLPurifier_Config::createDefault();
             //实例化对象
             $purifier = new \HTMLPurifier($config);
             //过滤
@@ -129,6 +129,16 @@ class Member extends Base
      */
     public function delete($id)
     {
-        //
+
+        try {
+            $user = \app\admin\model\User::where('vip_id', $id)->count('id');
+            if ($user) {
+                return json(['code' => 0, 'msg' => '当前VIP禁止删除']);
+            }
+            $vip = Vip::destroy($id);
+            return json(['code'=>1,'msg'=>'删除成功']);
+        } catch (\Exception $e) {
+            return json(['code' => 0, 'msg' => '系统错误'], 500);
+        }
     }
 }

@@ -12,7 +12,8 @@ class Upload extends Base
     //图片上传
     public function upload(Request $request)
     {
-        $upload = (new UploadPic())->uploadOnePic();
+        $path = $request->param('path');
+        $upload = (new UploadPic())->uploadOnePic($path.'/');
 
         $upload = $upload->getData();
         if ($upload['code'] == 1) {
@@ -25,9 +26,10 @@ class Upload extends Base
     //会员头像上传
     public function uploadUser()
     {
-        $pic = (new UploadPic())->uploadOnePic();
+        $path = \think\facade\Request::param('path');
+        $pic = (new UploadPic())->uploadOnePic($path.'/');
         $path = $pic->getData();
-        echo $path['msg'];
+        return json($path['msg']);
     }
 
 }

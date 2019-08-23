@@ -60,8 +60,6 @@ class Base extends Controller
         ];
         (new IntegralHistoryModel())->insert($result);
 
-        (new UserModel())->where(['id' => $this->userInfo['id']])->setInc('integral', $integral);
-
         $upArr = [1, 2, 5, 6, 7, 8, 9, 10];
         $downArr = [3, 4];
         $userModel = (new UserModel())->where(['id' => $this->userInfo['id']]);
