@@ -6,6 +6,7 @@ use think\Controller;
 use think\Request;
 use think\Validate;
 use app\api\model\UserIntegralHistory as UserIntegralHistoryModel;
+use app\api\model\UserDownloadLibraryHistory as DownloadModel;
 use app\api\model\Vip as VipModel;
 
 class MyUser extends Base
@@ -21,9 +22,12 @@ class MyUser extends Base
         }else{
             $vip_name = (new VipModel())->where(['id'=>$this->userInfo['vip_id']])->value('vip_name');
         }
+
+        $count = (new DownloadModel())->where(['user_id'=>$this->userInfo['id']])->count();
         $result = [
             'vip_name'  => $vip_name,
             'integral'  => $this->userInfo['integral'],
+            'count'     => $count,
         ];
 
         return json(['code'=>1,'data'=>$result]);

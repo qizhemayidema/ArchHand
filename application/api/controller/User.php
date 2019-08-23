@@ -18,10 +18,23 @@ class User extends Base
      */
     public function basicInfo()
     {
-        $userInfo = (new UserModel())->where(['id'=>$this->userInfo['id']])
-            ->field('avatar_url,nickname,integral,real_name,sex,birthday,profession,address')->find();
-
-        return json(['code'=>'1','data'=>$userInfo]);
+        $user_info = $this->userInfo;
+        $result = [
+            'avatar_url'    => $user_info['avatar_url'],
+            'nickname'    => $user_info['nickname'],
+            'integral'    => $user_info['integral'],
+            'real_name'    => $user_info['real_name'],
+            'sex'            => $user_info['sex'],
+            'birthday'            => $user_info['birthday'],
+            'profession'            => $user_info['profession'],
+            'address'            => $user_info['address'],
+        ];
+        if ($result['birthday'] == 0){
+            $result['birthday'] = date('Y-m-d',time());
+        }else{
+            $result['birthday'] = date('Y-m-d',$result['birthday']);
+        }
+        return json(['code'=>'1','data'=>$result]);
     }
 
     /**
@@ -39,9 +52,7 @@ class User extends Base
             'nickname'      => 'require|max:40',
             'real_name'     => 'require|max:10',
             'sex'           => 'require|integer',
-            'year'          => 'require|integer',
-            'month'         => 'require|integer',
-            'day'           => 'require|integer',
+            'birthday'      => 'require',
             'profession'    => 'require|max:40',
             'address'       => 'require|max:120',
         ];
@@ -53,12 +64,7 @@ class User extends Base
             'real_name.max'         => '真实姓名最大长度为 10',
             'sex.require'           => '性别必须选择',
             'sex.integer'           => '性别非法',
-            'year.require'          => '年必须选择',
-            'year.integer'          => '年非法',
-            'month.require'         => '月必须选择',
-            'month.integer'         => '月非法',
-            'day.require'           => '日必须选择',
-            'day.integer'           => '日非法',
+            'birthday.require'          => '生日必须填写',
             'profession.require'    => '专业必须填写',
             'address.require'    => '专业必须填写',
             'profession.max'       => '专业最大长度为 40',
@@ -78,7 +84,7 @@ class User extends Base
             $avatar_url = $avatar_url['msg'];
         }
 
-        $birthday = strtotime($data['year'] . '-' . $data['month'] . '-' . $data['day']);
+        $birthday = strtotime($data['birthday']);
 
         $result = [
             'real_name'     => $data['real_name'],

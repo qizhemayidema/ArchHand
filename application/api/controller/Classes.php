@@ -266,12 +266,13 @@ class Classes extends Base
 //            return json(['code'=>0,'msg'=>$e->getMessage()]);
         }
 
-        return json(['code'=>1,'msg'=>'success']);
+        return json(['code'=>1,'msg'=>'success','pay_integral'=>$pay_integral]);
     }
 
-    //添加收藏
+    //添加收藏 or 删除收藏
     public function collect(Request $request)
     {
+        $user_info = $this->userInfo;
         $data = $request->post();
         $rules = [
             'class_id'  => 'require',
@@ -287,7 +288,7 @@ class Classes extends Base
 
         $collectModel->startTrans();
         try{
-            if ($collectModel->where(['type'=>1,'collect_id'=>$data['class_id']])->find()){
+            if ($collectModel->where(['type'=>1,'collect_id'=>$data['class_id'],'user_id'=>$user_info['id']])->find()){
                 \controller(Collect::class)->removeClass($request);
             }else{
                 $collectModel->insert([
