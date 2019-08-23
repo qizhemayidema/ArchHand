@@ -27,6 +27,7 @@ class Library extends Validate
         'data_size' => 'require|number',
         'is_original' => 'require|number',
         'is_classics' => 'require|number',
+        'attr_value_ids' => 'require|attrJson'
     ];
 
     /**
@@ -52,7 +53,7 @@ class Library extends Validate
         'integral.number' => '下载所需积分填写错误',
         'source_url.require' => '资源路径错误',
         'desc.require' => '请填写正文信息',
-        'desc.min'=>'正文字数过少',
+        'desc.min' => '正文字数过少',
         'library_pid.require' => '请上传封面图',
         'suffix.require' => '文件格式错误',
         'suffix.alpha' => '文件格式错误11',
@@ -62,6 +63,8 @@ class Library extends Validate
         'is_original.number' => '原创信息填写错误',
         'is_classics.require' => '请填写是否加精',
         'is_classics.number' => '加精信息错误',
+        'attr_value_ids.require' => '文库属性必须填写',
+        'attr_value_ids.attrJson' => '文库属性填写错误',
     ];
 
     public function cateCheck($value, $rule, $data)
@@ -80,5 +83,12 @@ class Library extends Validate
             return true;
         }
         return false;
+    }
+
+    public function attrJson($value, $rule, $data)
+    {
+        json_decode($value);
+        return (json_last_error() == JSON_ERROR_NONE) ;
+
     }
 }

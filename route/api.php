@@ -21,7 +21,7 @@ Route::group('api',function(){
     Route::get('library/category','api/LibraryCategory/index');
 
     //云库首页
-    Route::get('library','api/Library/index');
+    Route::get('library/index','api/Library/index');
     //云库添加
     Route::post('library/save','api/Library/save');
     //云库显示
@@ -38,7 +38,7 @@ Route::group('api',function(){
     Route::post('library/download','api/Library/download');
 
     //云库评论
-    Route::get('library/comment/index','api/LibraryComment/index');
+    Route::get('library/comment','api/LibraryComment/index');
     //云库评论发布
     Route::post('library/comment/save','api/LibraryComment/save');
     //云库评论点赞

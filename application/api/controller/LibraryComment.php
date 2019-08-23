@@ -21,7 +21,7 @@ class LibraryComment extends Base
     {
         $library_id = $request->get('library_id');
         try {
-            $comment = LibraryCommentModel::field('u.nickname,u.avatar_url,l.id,l.comment,l.like_num,l.create_time')->alias('l')
+            $comment = LibraryCommentModel::field('u.id as user_id,u.nickname,u.avatar_url,l.id as comment_id,l.comment,l.like_num,l.create_time')->alias('l')
                 ->join('user u', 'l.user_id=u.id')
                 ->where('status', 1)->where('library_id', $library_id)->paginate(15);
 
