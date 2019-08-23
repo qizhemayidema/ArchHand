@@ -49,4 +49,5 @@ Route::group('api',function(){
     //获取VIP
     Route::get('vip','api/Vip/index');
 
+
 });

@@ -2,112 +2,112 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    {include file="common/meta,common/source"}
-    <title>{$user?'编辑官方用户':'新增官方用户'}</title>
+  {include file="common/meta,common/source"}
+  <title>{$user?'编辑官方用户':'新增官方用户'}</title>
 </head>
 <body>
 <article class="page-container">
-    {if !isset($is_exist)}
-    <form action="{$user?'update':'save'}" method="post" class="form form-horizontal" id="form-member-add">
-        <input id="id" name="id" value="{$user?$user['id']:null}" type="hidden">
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机号：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="text" class="input-text" value="{$user?$user['phone']:null}" placeholder="" id="phone"
-                       name="phone">
-            </div>
+  {if !isset($is_exist)}
+  <form action="{$user?'update':'save'}" method="post" class="form form-horizontal" id="form-member-add">
+    <input id="id" name="id" value="{$user?$user['id']:null}" type="hidden">
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机号：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="text" class="input-text" value="{$user?$user['phone']:null}" placeholder="" id="phone"
+               name="phone">
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>昵称：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="text" class="input-text" value="{$user?$user['nickname']:null}" placeholder=""
+               id="nickname"
+               name="nickname">
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>真实姓名：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="text" class="input-text" value="{$user?$user['real_name']:null}" placeholder=""
+               id="real_name"
+               name="real_name">
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>性别：</label>
+      <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+        <div class="radio-box">
+          <input name="sex" type="radio" id="sex-1" value="1" {if isset($user)&& $user->getData('sex')==1}checked{else/}checked{/if}>
+          <label for="sex-1">男</label>
         </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>昵称：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="text" class="input-text" value="{$user?$user['nickname']:null}" placeholder=""
-                       id="nickname"
-                       name="nickname">
-            </div>
+        <div class="radio-box">
+          <input type="radio" id="sex-2" name="sex" value="2" {if isset($user)&&$user->getData('sex')==2}checked{/if}>
+          <label for="sex-2">女</label>
         </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>真实姓名：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="text" class="input-text" value="{$user?$user['real_name']:null}" placeholder=""
-                       id="real_name"
-                       name="real_name">
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>性别：</label>
-            <div class="formControls col-xs-8 col-sm-9 skin-minimal">
-                <div class="radio-box">
-                    <input name="sex" type="radio" id="sex-1" value="1" {if isset($user)&& $user->getData('sex')==1}checked{else/}checked{/if}>
-                    <label for="sex-1">男</label>
-                </div>
-                <div class="radio-box">
-                    <input type="radio" id="sex-2" name="sex" value="2" {if isset($user)&&$user->getData('sex')==2}checked{/if}>
-                    <label for="sex-2">女</label>
-                </div>
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>生日：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="text" name="birthday" onfocus="WdatePicker({literal}{ minDate:'',maxDate:'%y-%M-%d' }{/literal})"
-                       id="logmax" class="input-text Wdate" style="width:120px;"
-                        value="{$user?$user['birthday']:null}"
-                >
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>专业：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="text" class="input-text" value="{$user?$user['profession']:null}" placeholder=""
-                       id="profession"
-                       name="profession">
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>地址：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="text" class="input-text" value="{$user?$user['address']:null}" placeholder="" id="address"
-                       name="address">
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>邮箱：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="text" class="input-text" value="{$user?$user['email']:null}" placeholder="" id="email"
-                       name="email">
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>密码：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="password" class="input-text" value="{$user?$user['password']:null}" placeholder=""
-                       id="password"
-                       name="password">
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>密码确认：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="password" class="input-text" value="{$user?$user['password']:null}" placeholder=""
-                       id="repassword"
-                       name="repassword">
-            </div>
-        </div>
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>生日：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="text" name="birthday" onfocus="WdatePicker({literal}{ minDate:'',maxDate:'%y-%M-%d' }{/literal})"
+               id="logmax" class="input-text Wdate" style="width:120px;"
+               value="{$user?$user['birthday']:null}"
+        >
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>专业：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="text" class="input-text" value="{$user?$user['profession']:null}" placeholder=""
+               id="profession"
+               name="profession">
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>地址：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="text" class="input-text" value="{$user?$user['address']:null}" placeholder="" id="address"
+               name="address">
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>邮箱：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="text" class="input-text" value="{$user?$user['email']:null}" placeholder="" id="email"
+               name="email">
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>密码：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="password" class="input-text" value="{$user?$user['password']:null}" placeholder=""
+               id="password"
+               name="password">
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>密码确认：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="password" class="input-text" value="{$user?$user['password']:null}" placeholder=""
+               id="repassword"
+               name="repassword">
+      </div>
+    </div>
 
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3">头像：</label>
-            <div class="formControls col-xs-8 col-sm-9">
-                <input type="hidden" id="data_photo" name="avatar_url">
-                <div id="fileList" class="uploader-list" style=""></div>
-                <div id="imgPicker" style="float:left">选择图片</div>
-                <img id="img_data" height="100px" style="margin-left: 10px;margin-top: 50px;"
-                     src="{$user?($user['avatar_url']?$user['avatar_url']:'__STATIC__/static/h-ui.admin/images/no_img.jpg'):'__STATIC__/static/h-ui.admin/images/no_img.jpg'}"/>
-            </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3">头像：</label>
+      <div class="formControls col-xs-8 col-sm-9">
+        <input type="hidden" id="data_photo" name="avatar_url">
+        <div id="fileList" class="uploader-list" style=""></div>
+        <div id="imgPicker" style="float:left">选择图片</div>
+        <img id="img_data" height="100px" style="margin-left: 10px;margin-top: 50px;"
+             src="{$user?($user['avatar_url']?$user['avatar_url']:'__STATIC__/static/h-ui.admin/images/no_img.jpg'):'__STATIC__/static/h-ui.admin/images/no_img.jpg'}"/>
+      </div>
 
-        </div>
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3">VIP充值：</label>
-            <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3">VIP充值：</label>
+      <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
 				<select class="select" size="1" name="vip_id">
 					<option value="0" selected>不开通</option>
                     {foreach $vip as $v}
@@ -117,27 +117,27 @@
                     {/foreach}
 				</select>
 				</span> </div>
-        </div>
+    </div>
 
-        <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>助手币：</label>
-            <div class="formControls col-xs-6 col-sm-7">
-                <input type="text" class="input-text" value="{$user?$user['integral']:1000}" placeholder=""
-                       id="integral"
-                       name="integral">
-            </div>
-        </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>助手币：</label>
+      <div class="formControls col-xs-6 col-sm-7">
+        <input type="text" class="input-text" value="{$user?$user['integral']:1000}" placeholder=""
+               id="integral"
+               name="integral">
+      </div>
+    </div>
 
-        <div class="row cl">
-            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
-            </div>
-        </div>
-    </form>
+    <div class="row cl">
+      <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+        <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+      </div>
+    </div>
+  </form>
 
-    {else/}
-    <div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>{$is_exist}</div>
-    {/if}
+  {else/}
+  <div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>{$is_exist}</div>
+  {/if}
 </article>
 
 <!--_footer 作为公共模版分离出去-->
@@ -148,63 +148,50 @@
         format: "yyyy-mm-dd hh:ii",
         autoclose: true
     });
-
     var $list = $('#fileList');
     //上传图片,初始化WebUploader
     var uploader = WebUploader.create({
-
         auto: true,// 选完文件后，是否自动上传。
         swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
         server: "{:url('Upload/uploadUser','path=users')}",// 文件接收服务端。
         duplicate: true,// 重复上传图片，true为可重复false为不可重复
         pick: '#imgPicker',// 选择文件的按钮。可选。
-
         accept: {
             title: 'Images',
             extensions: 'gif,jpg,jpeg,bmp,png',
             mimeTypes: 'image/jpg,image/jpeg,image/png'
         },
-
         'onUploadSuccess': function (file, data, response) {
             $("#data_photo").val(data);
             $("#img_data").attr('src',data).show();
         }
     });
-
     uploader.on('fileQueued', function (file) {
         $list.html('<div id="' + file.id + '" class="item">' +
             '<h4 class="info">' + file.name + '</h4>' +
             '<p class="state">正在上传...</p>' +
             '</div>');
     });
-
     // 文件上传成功
     uploader.on('uploadSuccess', function (file) {
         $('#' + file.id).find('p.state').text('上传成功！');
     });
-
     // 文件上传失败，显示上传出错。
     uploader.on('uploadError', function (file) {
         $('#' + file.id).find('p.state').text('上传出错!');
     });
-
     $(function () {
-
-
         $('.skin-minimal input').iCheck({
             checkboxClass: 'icheckbox-blue',
             radioClass: 'iradio-blue',
             increaseArea: '20%'
         });
-
-
         $(function () {
             $('#form-member-add').ajaxForm({
                 //beforeSubmit: checkForm, // 此方法主要是提交前执行的方法，根据需要设置
                 success: complete, // 这是提交后的方法
                 dataType: 'json'
             });
-
             function complete(data) {
                 console.log(data)
                 if (data.code == 1) {
@@ -218,10 +205,7 @@
                     return false;
                 }
             }
-
         });
-
-
     });
 </script>
 <!--/请在上方写此页面业务相关的脚本-->
