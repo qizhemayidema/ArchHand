@@ -31,5 +31,5 @@ class Upload extends Base
         $path = $pic->getData();
         return json($path['msg']);
     }
-
+    
 }

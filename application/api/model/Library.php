@@ -6,6 +6,7 @@ namespace app\api\model;
 use think\facade\Request;
 
 use think\Model;
+use app\common\model\Common as CommonModel;
 
 class Library extends Model
 {
@@ -18,11 +19,7 @@ class Library extends Model
 
     public function getDescAttr($value)
     {
-        //替换img src路径
-        $http = Request::domain();
-        $regex = "/src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?/";
-        $src = "src=\'" . $http . '${1}\'';
-        return $content = preg_replace($regex, $src, $value);
+        return CommonModel::imgSrcToRealUrl($value);
     }
 
 }

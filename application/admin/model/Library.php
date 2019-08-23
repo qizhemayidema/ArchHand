@@ -2,6 +2,7 @@
 
 namespace app\admin\model;
 
+use app\common\model\Common;
 use think\Model;
 
 class Library extends Model
@@ -42,5 +43,7 @@ class Library extends Model
     {
         return date('Y-m-d H:i:s', $value);
     }
-
+    public function getDescAttr($value){
+        return Common::imgSrcToRealUrl($value);
+    }
 }

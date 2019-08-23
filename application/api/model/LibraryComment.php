@@ -5,6 +5,7 @@ namespace app\api\model;
 
 use think\facade\Request;
 use think\Model;
+use app\common\model\Common as CommonModel;
 
 
 class LibraryComment extends Model
@@ -22,12 +23,8 @@ class LibraryComment extends Model
         return $this->belongsTo('User', 'user_id', 'id');
     }
 
-    public function getComment($value){
-        //替换img src路径
-        $http = Request::domain();
-        $regex = "/src=[\'|\"](.*?(?:[\.jpg|\.jpeg|\.png|\.gif|\.bmp]))[\'|\"].*?[\/]?/";
-        $src = "src=\'".$http.'${1}\'';
-        return $content =  preg_replace($regex, $src, $value);
+    public function getCommentAttr($value){
+        return CommonModel::imgSrcToRealUrl($value);
     }
 
 }

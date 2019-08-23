@@ -48,7 +48,6 @@ class User extends Base
     {
         $data = $request->post();
         $rules = [
-            'avatar_url'    => 'require',
             'nickname'      => 'require|max:40',
             'real_name'     => 'require|max:10',
             'sex'           => 'require|integer',
@@ -72,10 +71,12 @@ class User extends Base
         ];
 
         $avatar_url = '';
+
         $validate = new Validate($rules,$messages);
         if(!$validate->check($data)){
             return json(['code'=>0,'msg'=>$validate->getError()]);
         }
+
         if ($data['avatar_url']){
             $avatar_url = $this->uploadUserAvatarBase64($data['avatar_url']);
             if ($avatar_url['code'] == 0){
@@ -97,7 +98,7 @@ class User extends Base
 
         if($avatar_url){
             $result['avatar_url'] = $avatar_url;
-            if (file_exists('.' . $this->userInfo['avatar_url'])){
+            if ($this->userInfo['avatar_url'] && file_exists('.' . $this->userInfo['avatar_url'])){
                 unlink('.'.$this->userInfo['avatar_url']);
             }
         }
@@ -162,6 +163,5 @@ class User extends Base
         $path = 'user/' . $user_id . '/';
         return (new UploadPic())->uploadBase64Pic($base64_content,$path);
     }
-
 
 }

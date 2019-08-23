@@ -50,26 +50,4 @@ Route::group('api',function(){
     Route::get('vip','api/Vip/index');
 
 
-
-    Route::post('library/create',function(){
-        $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
-        $path = '/library/1/ff.zip';
-
-        //上传
-        $file = file_get_contents(CONFIG_PATH.'5abb62f3N9227880c.zip');
-//        dump($file);die;
-        $upyun = (new Upyun($config))->write($path,$file);
-           $upyun =(new Upyun($config))->has($path);
-
-
-        if($upyun){
-            return json(['code'=>1,'msg'=>'成功','data'=>$upyun]);
-        }else{
-            return json(['code'=>0,'msg'=>'失败']);
-        }
-    });
-
-
-
-
 });

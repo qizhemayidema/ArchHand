@@ -133,7 +133,6 @@ class User extends Base
     public function userShow($id){
         try {
             $user = \app\admin\model\User::where('id', $id)->find();
-
             if (!$user) {
                 $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
             }
