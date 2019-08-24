@@ -29,8 +29,4 @@ class LibraryComment extends Model
         return Common::imgSrcToRealUrl($value);
     }
 
-    public function getCommentAttr($value){
-        return Common::imgSrcToRealUrl($value);
-    }
-
 }

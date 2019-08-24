@@ -26,6 +26,7 @@ class ForumPlate extends Base
             ->join('user user','user.id = manager.user_id')
             ->field('plate.plate_img,cate.cate_name,user.id user_id,user.avatar_url,user.nickname,plate.id,plate.plate_name,plate.forum_num,plate.comment_num')
             ->order('id','desc')
+            ->where(['plate.is_delete'=>0])
             ->paginate(20,false,['query'=>$request->param()]);
 
         $cateInfo = (new CateModel())->select();
@@ -52,7 +53,7 @@ class ForumPlate extends Base
         $rules = [
             'plate_img'      => 'require',
             'cate_id'        => 'require',
-            'plate_name'       => 'require',
+            'plate_name'       => 'require|max:20',
             'plate_man_phone'  => 'require|max:11|regex:/^1[34578]\d{9}$/',
         ];
 
@@ -60,6 +61,7 @@ class ForumPlate extends Base
             'plate_img.require'     => '板块封面必须上传',
             'cate_id.require'       => 'error',
             'plate_name.require'    => '名称必须填写',
+            'plate_name.max'        => '名称最大长度为20',
             'plate_man_phone.require'       => '必须选择一个版主',
             'plate_man_phone.max'   => '版主手机号最长位数 11位',
             'plate_man_phone.regex' => '手机号不合法',
@@ -135,7 +137,7 @@ class ForumPlate extends Base
             'id'             => 'require',
             'plate_img'      => 'require',
             'cate_id'        => 'require',
-            'plate_name'       => 'require',
+            'plate_name'       => 'require|max:20',
             'plate_man_phone'  => 'require|max:11|regex:/^1[34578]\d{9}$/',
         ];
 
@@ -144,6 +146,7 @@ class ForumPlate extends Base
             'cate_id.require'       => 'error',
             'plate_img.require'     => '必须上传封面图',
             'plate_name.require'    => '名称必须填写',
+            'plate_name.max'        => '名称最大长度为20',
             'plate_man_phone.require' => '必须选择一个版主',
             'plate_man_phone.max'   => '版主手机号最长位数 11位',
             'plate_man_phone.regex' => '手机号不合法',
@@ -196,17 +199,9 @@ class ForumPlate extends Base
 
     public function delete(Request $request)
     {
-        $id = $request->param('tag_id');
+        $id = $request->param('plate_id');
 
-        $tagInfo = (new TagModel())->find($id);
-        if(file_exists($tagInfo['tag_img'])){
-            unlink('.' . $tagInfo['tag_img']);
-        }
-        //删除tag表
-        (new TagModel())->where(['id'=>$id])->delete();
-        //删除课程 tag_list
-        (new TagListModel())->where(['tag_id'=>$id])->delete();
-
+        (new PlateModel())->where(['id'=>$id])->update(['is_delete'=>1]);
         return json(['code'=>1,'msg'=>'success']);
     }
 

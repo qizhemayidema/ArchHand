@@ -67,6 +67,9 @@ Route::group('/api',function(){
     });
     Route::group('/Forum',function(){
         Route::post('/getAllPlate','api/Forum/getAllPlate');
+        Route::post('/getPlateForCate','api/Forum/getPlateForCate');
+        Route::post('/getCate','api/Forum/getCate');
+        Route::post('/save','api/Forum/save');
     });
     Route::post('/Library/uploadVideo','api/Library/uploadVideo');
 });

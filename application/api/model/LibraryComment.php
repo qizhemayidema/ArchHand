@@ -24,7 +24,7 @@ class LibraryComment extends Model
         return $this->belongsTo('User', 'user_id', 'id');
     }
 
-    public function getComment($value)
+    public function getCommentAttr($value)
     {
         return Common::imgSrcToRealUrl($value);
     }

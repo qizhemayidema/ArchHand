@@ -152,7 +152,7 @@
     var uploader = WebUploader.create({
         auto: true,// 选完文件后，是否自动上传。
         swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
-        server: "{:url('Upload/uploadUser','path=users')}",// 文件接收服务端。
+        server: "/admin/Upload/uploadUser?path=user/{$user?$user->id:''}",// 文件接收服务端。
         duplicate: true,// 重复上传图片，true为可重复false为不可重复
         pick: '#imgPicker',// 选择文件的按钮。可选。
         accept: {
@@ -161,13 +161,7 @@
             mimeTypes: 'image/jpg,image/jpeg,image/png'
         },
         'onUploadSuccess': function (file, data, response) {
-<<<<<<< HEAD
             $("#data_photo").val(data);
-
-=======
-
-            $("#data_photo").val(data);
->>>>>>> 87fcf43b3161ca0e6f9719f6f7f97ccf817861a8
             $("#img_data").attr('src',data).show();
         }
     });

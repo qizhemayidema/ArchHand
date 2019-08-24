@@ -100,7 +100,7 @@ class ForumCategory extends Base
     {
         $id = $request->param('id');
         //判断他下面是否有板块
-        if ((new PlateModel())->where(['cate_id'=>$id])->find()){
+        if ((new PlateModel())->where(['cate_id'=>$id,'is_delete'=>0])->find()){
             return json(['code'=>0,'msg'=>'请确认该分类下没有任何板块']);
         }
 

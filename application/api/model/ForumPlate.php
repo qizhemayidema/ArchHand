@@ -24,7 +24,7 @@ class ForumPlate extends Model
     {
         $list =  (new CateModel())->field('id,cate_name')->select()->toArray();
         foreach ($list as $key => $value){
-            $list[$key]['plate'] = $this->where(['cate_id'=>$value['id']])->select()->toArray();
+            $list[$key]['plate'] = $this->where(['cate_id'=>$value['id'],'is_delete'=>0])->select()->toArray();
         }
 
         return $list;

@@ -20,8 +20,6 @@ class Library extends Model
 
     public function getDescAttr($value)
     {
-
         return CommonModel::imgSrcToRealUrl($value);
     }
-
 }

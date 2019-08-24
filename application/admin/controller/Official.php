@@ -52,10 +52,11 @@ class Official extends Base
         }
         $form['password'] = md5($form['password']);
         if ($form['avatar_url'] == '') {
-            $form['avatar_url'] = 'static/uploads/user/default/20150828225753jJ4Fc.jpeg';
+            $form['avatar_url'] = '/static/uploads/user/default/20150828225753jJ4Fc.jpeg';
         }
         $form['type'] = 2;
         $form['birthday'] = strTotime($form['birthday']);
+        $form['last_login_time'] = time();
 
         $rand = mt_rand(1000000,9999999);
         $salt = env('LOGIN.SALT');

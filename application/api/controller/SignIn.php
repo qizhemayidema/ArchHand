@@ -59,18 +59,20 @@ class SignIn extends Base
     public function getSignInDays(Request $request)
     {
         $user_info = $this->userInfo;
-
         $result = [
+            'is_sign'           => true,
             'last_sign_in_time' => $user_info['last_sign_in_time'],
+            'sign_in_integral'  => $this->getConfig('sign_in_integral'),
             'last_sign_in_num'  => $user_info['last_sign_in_num'],
-            'is_sign'           => false,
         ];
 
-        if (date("Y-m-d",$result['last_sign_in_time'] )== date('Y-m-d',time())){
-            $result['is_sign'] = true;
+        $today = date('Y-m-d',time());
+
+        if (date("Y-m-d",$result['last_sign_in_time'] ) != date('Y-m-d',time()) &&
+            date("Y-m-d",$result['last_sign_in_time'] - 86400 ) != date('Y-m-d',time())){
+            $result['is_sign'] = false;
         }
         return json(['code'=>1,'data'=>$result]);
-
     }
 }
 
