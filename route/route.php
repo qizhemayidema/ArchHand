@@ -70,6 +70,12 @@ Route::group('/api',function(){
         Route::post('/getPlateForCate','api/Forum/getPlateForCate');
         Route::post('/getCate','api/Forum/getCate');
         Route::post('/save','api/Forum/save');
+        Route::post('/plate','api/Forum/plate');
+        Route::post('/info','api/Forum/info');
+        Route::post('/collect','api/Forum/collect');
+        Route::post('/like','api/Forum/like');
+        Route::post('/likeComment','api/Forum/likeComment');
+        Route::post('/comment','api/Forum/comment');
     });
     Route::post('/Library/uploadVideo','api/Library/uploadVideo');
 });

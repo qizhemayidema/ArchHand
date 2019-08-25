@@ -166,7 +166,7 @@ class Classes extends Base
             ];
 
             return json(['code'=>1,'data'=>$result]);
-        }catch (Exception $e){
+        }catch (\Exception $e){
             return json(['code'=>0,'msg'=>'获取失败']);
         }
     }
@@ -203,7 +203,7 @@ class Classes extends Base
             }
             (new ClassModel())->where(['id'=>$class_id])->setInc('see_num');
             return json(['code'=>1,'msg'=>'success','url'=>$chapter_info['source_url']]);
-        }catch(Exception $e){
+        }catch(\Exception $e){
             return json(['code'=>0,'msg'=>'播放出错,请联系网站管理员']);
         }
     }
@@ -260,7 +260,7 @@ class Classes extends Base
             //增加学习人数
             (new ClassModel())->where(['id'=>$data['class_id']])->setInc('learn_num');
             $buy->commit();
-        }catch (Exception $e){
+        }catch (\Exception $e){
             $buy->rollback();
             return json(['code'=>0,'msg'=>'购买失败,请刷新后重试']);
 //            return json(['code'=>0,'msg'=>$e->getMessage()]);
@@ -301,7 +301,7 @@ class Classes extends Base
             }
 
             $collectModel->commit();
-        }catch (Exception $e){
+        }catch (\Exception $e){
             $collectModel->rollback();
             return json(['code'=>0,'msg'=>'操作失误,请刷新后重试']);
         }

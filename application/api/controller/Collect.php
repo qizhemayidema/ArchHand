@@ -22,7 +22,7 @@ class Collect extends Base
             (new UserCollectModel())->where(['user_id' => $user_id, 'type' => 1, 'collect_id' => $class_id])->delete();
             (new ClassModel())->where(['id' => $class_id])->setDec('collect_num');
             $classModel->commit();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $classModel->rollback();
             return json(['code' => 0, 'msg' => '操作失败,请刷新后重试']);
         }
@@ -40,7 +40,7 @@ class Collect extends Base
             (new UserCollectModel())->where(['user_id' => $user_id, 'type' => 2, 'collect_id' => $lib_id])->delete();
             $lib_model->where(['id' => $lib_id])->setDec('collect_num');
             $lib_model->commit();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $lib_model->rollback();
             return json(['code' => 0, 'msg' => '操作失败,请刷新后重试']);
         }

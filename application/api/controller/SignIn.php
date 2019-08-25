@@ -68,6 +68,7 @@ class SignIn extends Base
 
         $today = date('Y-m-d',time());
 
+
         if (date("Y-m-d",$result['last_sign_in_time'] ) != date('Y-m-d',time()) &&
             date("Y-m-d",$result['last_sign_in_time'] - 86400 ) != date('Y-m-d',time())){
             $result['is_sign'] = false;

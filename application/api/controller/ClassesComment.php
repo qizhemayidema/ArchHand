@@ -64,8 +64,9 @@ class ClassesComment extends Base
             (new ClassesModel())->where(['id' => $data['class_id']])->setInc('comment_num');
 
             $commentModel->commit();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $commentModel->rollback();
+            return json(['code'=>0,'msg'=>'操作失败']);
         }
 
         return json(['code' => 1, 'msg' => 'success']);
@@ -142,7 +143,7 @@ class ClassesComment extends Base
             }
             $commentModel->where(['id' => $comment_id])->delete();
             $commentModel->commit();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $commentModel->rollback();
             return json(['code' => 0, 'msg' => '删除失败']);
         }
@@ -183,7 +184,7 @@ class ClassesComment extends Base
                 'user_id' => $user_info['id'],
             ]);
             $commentModel->commit();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $commentModel->rollback();
             return json(['code' => 0, 'msg' => '操作失误']);
         }

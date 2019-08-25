@@ -2,19 +2,24 @@
 
 namespace app\api\controller;
 
-use think\Controller;
 use think\Exception;
 use think\Request;
+use think\Validate;
 use app\api\model\ForumPlate as PlateModel;
 use app\api\model\ForumCategory as CateModel;
 use app\api\model\Forum as ForumModel;
 use app\admin\model\ForumManager as ForumManagerModel;
-use think\Validate;
+use app\api\model\User as UserModel;
+use app\api\model\ForumComment as ForumCommentModel;
+use app\api\model\UserCollect as UserCollectModel;
+use app\api\model\ForumLikeHistory as LikeHistoryModel;
+use app\api\model\ForumCommentLikeHistory as CommentLikeHistoryModel;
+use app\api\model\UserIntegralHistory as UserIntegralHistoryModel;
 
 class Forum extends Base
 {
     /**
-     * 获取二级分类
+     * 获取所有分类
      * @return \think\response\Json
      */
     public function getAllPlate()
@@ -112,12 +117,24 @@ class Forum extends Base
         $result['create_time'] = time();
         $result['desc'] = htmlentities($data['desc']);
 
-        (new ForumModel())->insert($result);
-
+        $forumModel = new ForumModel();
+        $forumModel->startTrans();
+        try{
+            (new ForumModel())->insert($result);
+            (new PlateModel())->where(['id'=>$plateInfo['id']])->setInc('forum_num');
+            $forumModel->commit();
+        }catch (\Exception $e){
+            $forumModel->rollback();
+            return json(['code'=>0,'msg'=>'操作失败']);
+        }
         return json(['code'=>1,'msg'=>'success']);
     }
 
-
+    /**
+     * 列表
+     * @param Request $request
+     * @return \think\response\Json
+     */
     public function plate(Request $request)
     {
         $data =$request->post();
@@ -216,9 +233,307 @@ class Forum extends Base
 
     }
 
-    //详情页
+    /**
+     * 详情
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function info(Request $request)
     {
+        $data = $request->post();
+        $rules = [
+            'forum_id'  => 'require',
+            'page'      => 'require|number',
+            'page_length' => 'require|number',
+        ];
+        $validate = new Validate($rules);
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+        $forum_info = (new ForumModel())->where(['id'=>$data['forum_id'],'is_delete'=>0])->find();
+        if (!$forum_info) return json(['code'=>0,'msg'=>'不存在']);
+        $forum_info->setInc('see_num');
+        $is_manager = false;
+        //是否板块管理者
+        if($request->param('token')){
+            $user_info = $this->userInfo;
+            //只查看 是否是管理组成员 给个flag
+            $temp = (new ForumManagerModel())->where(['plate_id'=>$forum_info['plate_id'],'user_id'=>$user_info])->find();
+            if ($temp){
+                $is_manager = true;
+            }
+        }
+        //文章内容
+        $forum = [
+            'id'        => $forum_info['id'],
+            'name'      => $forum_info['name'],
+            'is_classics' => $forum_info['is_classics'],
+            'is_top'      => $forum_info['is_top'],
+            'is_original' => $forum_info['is_original'],
+            'tag_str'     => $forum_info['tag_str'],
+            'content'     => $forum_info['content'],
+            'collect_num'   => $forum_info['collect_num'],
+            'comment_num'   => $forum_info['collect_num'],
+            'create_time'   => $forum_info['create_time'],
+            'user_name'     => (new UserModel())->where(['id'=>$forum_info['user_id']])->value('nickname'),
+        ];
+
+        //评论
+        $comment = (new ForumCommentModel())->alias('comment')
+            ->join('user user','user.id = comment.user_id')
+            ->where(['comment.status'=>1])
+            ->where(['comment.forum_id'=>$forum['id']])
+            ->order('comment.create_time')
+            ->field('user.avatar_url,user.nickname,comment.content,comment.create_time,comment.like_num');
+        $comment_count = $comment->count();
+
+        $start = $data['page'] * $data['page_length'] - $data['page_length'];
+        $comment = $comment->order($start,$data['page_length'])->select();
+
+        //热门
+        $hot_forum = (new ForumModel())->where(['is_delete'=>0])->order('see_num','desc')
+            ->field('name,pic,id')->limit(8)->select();
+
+        return json(['code'=>1,'data'=>[
+            'forum' => $forum,
+            'comment' => $comment,
+            'comment_count' => $comment_count,
+            'hot_forum' =>$hot_forum,
+            'is_manager' => $is_manager,
+        ]]);
+    }
+
+    //收藏
+    public function collect(Request $request)
+    {
+        $data = $request->post();
+
+        $rules = [
+            'forum_id'  => 'require|number',
+        ];
+
+        $validate = new Validate($rules);
+
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $user_info = $this->userInfo;
+
+        $userCollectModel = new UserCollectModel();
+        $forum_info = (new ForumModel())->where(['is_delete'=>0,'id'=>$data['forum_id']])
+            ->field('id,collect_num')->find();
+        if (!$forum_info){
+            return json(['code'=>0,'msg'=>'该帖不存在']);
+        }
+        $collect = $userCollectModel
+            ->where(['user_id'=>$user_info['id'],'collect_id'=>$data['forum_id'],'type'=>3])
+            ->find();
+        $userCollectModel->startTrans();
+        try{
+            if ($collect){
+                $collect->delete();
+                if ($forum_info['collect_num'] > 0){
+                    $forum_info->setDec('collect_num');
+                }
+            }else{
+                $userCollectModel->insert([
+                    'type'  => 3,
+                    'user_id' => $user_info['id'],
+                    'collect_id' =>  $data['forum_id'],
+                    'create_time' => time(),
+                ]);
+                $forum_info->setInc('collect_num');
+            }
+            $userCollectModel->commit();
+        }catch (\Exception $e){
+            $userCollectModel->rollback();
+            return json(['code'=>0,'msg'=>'操作失败']);
+        }
+        return json(['code'=>1,'msg'=>'success']);
+    }
+
+    //点赞
+    public function like(Request $request)
+    {
+        $data = $request->post();
+
+        $rules = [
+            'forum_id'  => 'require|number',
+        ];
+
+        $validate = new Validate($rules);
+
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $user_info = $this->userInfo;
+
+        $likeHistoryModel = new LikeHistoryModel();
+        $forum_info = (new ForumModel())->where(['is_delete'=>0,'id'=>$data['forum_id']])
+            ->field('id,like_num')->find();
+        if (!$forum_info){
+            return json(['code'=>0,'msg'=>'该帖不存在']);
+        }
+        $like = $likeHistoryModel
+            ->where(['user_id'=>$user_info['id'],'forum_id'=>$data['forum_id']])
+            ->find();
+        $likeHistoryModel->startTrans();
+        try{
+            if ($like){
+                $like->delete();
+                if ($forum_info['like_num'] > 0){
+                    $forum_info->setDec('like_num');
+                }
+            }else{
+                (new LikeHistoryModel())->insert([
+                    'user_id' => $user_info['id'],
+                    'forum_id' =>  $data['forum_id'],
+                    'create_time' => time(),
+                ]);
+                $forum_info->setInc('like_num');
+            }
+            $likeHistoryModel->commit();
+        }catch (\Exception $e){
+            $likeHistoryModel->rollback();
+            return json(['code'=>0,'msg'=>'操作失败']);
+        }
+
+        return json(['code'=>1,'msg'=>'success']);
+    }
+
+    //点赞评论
+    public function likeComment(Request $request)
+    {
+        $data = $request->post();
+
+        $rules = [
+            'forum_comment_id'  => 'require|number',
+        ];
+
+        $validate = new Validate($rules);
+
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $user_info = $this->userInfo;
+
+        $commentLikeHistoryModel = new CommentLikeHistoryModel();
+        $comment_info =(new ForumCommentModel())->find($data['forum_comment_id']);
+        if (!$comment_info){
+            return json(['code'=>0,'msg'=>'该评论不存在']);
+        }
+        $like = $commentLikeHistoryModel
+            ->where(['comment_id'=>$data['forum_comment_id'],'user_id'=>$user_info['id']])
+            ->find();
+        $commentLikeHistoryModel->startTrans();
+        try{
+            if ($like){
+                $like->delete();
+                if ($comment_info['like_num'] > 0){
+                    $comment_info->setDec('like_num');
+                }
+            }else{
+                (new CommentLikeHistoryModel())->insert([
+                    'user_id' => $user_info['id'],
+                    'comment_id' =>  $data['forum_comment_id'],
+                ]);
+                $comment_info->setInc('like_num');
+            }
+            $commentLikeHistoryModel->commit();
+        }catch (\Exception $e){
+            $commentLikeHistoryModel->rollback();
+            return json(['code'=>0,'msg'=>'操作失败']);
+        }
+
+        return json(['code'=>1,'msg'=>'success']);
+    }
+
+
+    //评论
+    public function comment(Request $request){
+
+        $data = $request->post();
+
+        $rules = [
+            'forum_id'  => 'require|number',
+            'comment'   => 'require',
+        ];
+
+        $messages = [
+            'comment.require'   => '评论不能为空'
+        ];
+
+        $validate = new Validate($rules,$messages);
+
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $user_info = $this->userInfo;
+
+        //判断帖子是否存在
+        $forumInfo = (new ForumModel())->where(['id'=>$data['forum_id'],'is_delete'=>0])->find();
+        if (!$forumInfo){
+            return json(['code'=>0,'msg'=>'评论的帖子不存在']);
+        }
+
+        //加载默认配置
+        $config = \HTMLPurifier_Config::createDefault();
+//       //设置白名单
+//        $config->set('HTML.Allowed','p');
+//       //实例化对象
+        $purifier = new \HTMLPurifier($config);
+        $data['comment'] = $purifier->purify($data['comment']);
+
+        $forumModel = new ForumModel();
+        $forumModel->startTrans();
+
+        try{
+            //入表
+            $forumComment = [
+                'user_id' => $user_info['id'],
+                'forum_id' => $data['forum_id'],
+                'content'   => $data['comment'],
+                'create_time' => time(),
+            ];
+
+            (new ForumCommentModel())->insert($forumComment);
+
+            //判断是否加筑手币
+            $today = strtotime(date('Y-m-d',time()));
+            $count = $this->getConfig('comment_integral_count');
+            $onceIntegral = $this->getConfig('comment_integral');
+
+            $today_count = (new UserIntegralHistoryModel())
+                ->where(['user_id' => $user_info['id'], 'type' => 7])
+                ->where('create_time', '>', $today)
+                ->limit($count)->count();
+
+            if ($today_count != $count){
+                //如果加 筑手币  需要录入积分变动记录
+                $this->addUserIntegralHistory(7,$onceIntegral);
+            }
+
+            //帖子 评论数量 + 1
+            $forumInfo->setInc('comment_num');
+
+            //板块评论数量 + 1
+            (new PlateModel())->where(['id'=>$forumInfo['plate_id']])->setInc('comment_num');
+
+            $forumModel->commit();
+        }catch (\Exception $e){
+            $forumModel->rollback();
+            return json(['code'=>0,'msg'=>'操作失败']);
+        }
+
+        return json(['code'=>0,'msg'=>'success']);
 
     }
 
