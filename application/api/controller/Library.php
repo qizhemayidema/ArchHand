@@ -7,6 +7,7 @@ use app\api\model\UserBuyHistory;
 use app\api\model\UserDownloadLibraryHistory;
 use app\api\model\UserIntegralHistory;
 use app\api\model\Vip;
+use app\common\controller\UploadPic;
 use think\Controller;
 
 
@@ -38,7 +39,7 @@ class Library extends Base
         //分类 ID
         $pageSize = $request->get('pageSize');
 
-        if(!$pageSize){
+        if (!$pageSize) {
             $pageSize = 16;
         }
         $cate = $request->get('cate_id');
@@ -48,11 +49,6 @@ class Library extends Base
         }
 
         $search = $request->get('search');
-
-        if (!$search) {
-
-        }
-
         //属性ID 以逗号分隔
         $attr = $request->get('attr_ids');
         //筛选
@@ -92,7 +88,7 @@ class Library extends Base
                 return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
             } else {
                 $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
-                    ->where('status', 1)->where('cate_id',$cate)->where($filtrate, 1)
+                    ->where('status', 1)->where('cate_id', $cate)->where($filtrate, 1)
                     ->order('create_time desc')->paginate($pageSize);
                 return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
             }
@@ -158,6 +154,10 @@ class Library extends Base
     {
         $user = $this->userInfo;
         $data = $request->post();
+        //上传图片
+        $image_base64 = $data['library_pic'];
+        $library_pic_path = (new UploadPic())->uploadBase64Pic($image_base64, 'library/' . $user['id'] . '/');
+        $data['library_pic'] = $library_pic_path['msg'];
 
         $data['user_id'] = $user['id'];
         $validate = new LibraryValidate();
@@ -175,60 +175,58 @@ class Library extends Base
         Db::startTrans();
         try {
 
-            $sql = date('Ymd', time()) . "-FROM_UNIXTIME(create_time,'%Y%m%d')=0";
+        $sql = date('Ymd', time()) . "-FROM_UNIXTIME(create_time,'%Y%m%d')=0";
 
-            $library_integral_count = Db::name('library')
-                ->where('user_id', $user['id'])
-                ->whereRaw($sql)->count('create_time');
+        $library_integral_count = Db::name('library')
+            ->where('user_id', $user['id'])
+            ->whereRaw($sql)->count('create_time');
 
-            $library_integral_count = $library_integral_count ?: 0;
+        $library_integral_count = $library_integral_count ?: 0;
 
-            //判断当日可获得积分次数，
-            if ($this->getConfig('issue_integral_count') - $library_integral_count > 0) {
-                $integral = $this->getConfig('issue_integral');
-                $this->addUserIntegralHistory(10, $integral);
+        //判断当日可获得积分次数，
+        if ($this->getConfig('issue_integral_count') - $library_integral_count > 0) {
+            $integral = $this->getConfig('issue_integral');
+            $this->addUserIntegralHistory(10, $integral);
+        }
+
+        $library = LibraryModel::create($data);
+        //转换属性
+        $attr_value_ids = json_decode($data['attr_value_ids'], true);
+        //提取属性ID和属性值ID
+        foreach ($attr_value_ids as $k => $v) {
+            foreach ($v as $key => $item) {
+                $value_id[] = $item;
+                $have_attr_value[] = [
+                    'attr_id' => $k,
+                    'attr_value' => $item,
+                    'library_id' => $library['id'],
+                ];
             }
+        }
+        //批量插入属性
+        $library_have_attribute_value = (new LibraryHaveAttributeValueModel())->saveAll($have_attr_value);
+        if (!$library_have_attribute_value) {
+            Db::rollback();
+            return json(['code' => 0, 'msg' => '发布失败'], 417);
+        }
 
-            $library = LibraryModel::create($data);
-            //转换属性
-            $attr_value_ids = json_decode($data['attr_value_ids'], true);
-            //提取属性ID和属性值ID
-            foreach ($attr_value_ids as $k => $v) {
-                foreach ($v as $key => $item) {
-                    $value_id[] = $item;
-                    $have_attr_value[] = [
-                        'attr_id' => $k,
-                        'attr_value' => $item,
-                        'library_id' => $library['id'],
-                    ];
-                }
-            }
-            //批量插入属性
-            $library_have_attribute_value = (new LibraryHaveAttributeValueModel())->saveAll($have_attr_value);
-            if (!$library_have_attribute_value) {
-                Db::rollback();
-                return json(['code' => 0, 'msg' => '发布失败'], 417);
-            }
+        //增加分类数量
+        $category = (new LibraryCategoryModel())->where('id', $library['cate_id'])->setInc('count');
+        if (!$category) {
+            Db::rollback();
+            return json(['code' => 0, 'msg' => '发布失败'], 417);
+        }
 
-            //增加分类数量
-            $category = (new LibraryCategoryModel())->where('id', $library['cate_id'])->setInc('count');
-            if (!$category) {
-                Db::rollback();
-                return json(['code' => 0, 'msg' => '发布失败'], 417);
-            }
+        //批量更新属性文库数量
+        $library_attribute_value = (new LibraryAttributeValue())->where('id', 'in', $value_id)->setInc('library_num');
 
-            //批量更新属性文库数量
-            $library_attribute_value = (new LibraryAttributeValue())->where('id', 'in', $value_id)->setInc('library_num');
-
-            Db::commit();
-            return json(['code' => 1, 'msg' => '发布成功'], 201);
+        Db::commit();
+        return json(['code' => 1, 'msg' => '发布成功'], 201);
 
         } catch (\Exception $e) {
             Db::rollback();
             return json(['code' => 0, 'msg' => '发布失败'], 500);
         }
-
-
     }
 
 
