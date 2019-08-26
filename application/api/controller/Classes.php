@@ -152,7 +152,7 @@ class Classes extends Base
                 if ($this->userInfo['vip_id'] != 0){
                     $vipInfo = (new VipModel())->where(['id'=>$this->userInfo['vip_id']])->find();
                     $classInfo['vip_name'] = $vipInfo['vip_name'];
-                    $classInfo['vip_integral'] = floor( $classInfo['integral'] * $vipInfo['discount']);
+                    $classInfo['vip_integral'] = floor( $classInfo['integral'] * ( $vipInfo['discount'] / 10));
                     $classInfo['vip_discount'] = $vipInfo['discount'];
                 }
                 $classInfo['is_buy'] = (new UserBuyHistoryModel())
@@ -242,7 +242,8 @@ class Classes extends Base
             $pay_integral = $classInfo['integral'];
             if ($user_info['vip_id'] != 0){
                 $vip_info = $vipModel->where(['id'=>$user_info['vip_id']])->find();
-                $pay_integral = floor($pay_integral * $vip_info['discount']);
+                $pay_integral = floor($pay_integral * ($vip_info['discount'] / 10));
+                if ($pay_integral <= 0) $pay_integral = 1;
             }
             if ($user_integral < $pay_integral){
                 return json(['code'=>0,'msg'=>'您的筑手币不足,请及时充值']);

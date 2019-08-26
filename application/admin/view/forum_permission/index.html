@@ -28,7 +28,7 @@
         {foreach $permission_list as $key => $value}
         <tr class="text-c">
             <td> {$value.id}</td>
-            <td  style="text-align: left;"> {:str_repeat('---',$value.level)} {$value.name}</td>
+            <td  style="text-align: left;"> {$value.name}</td>
             <td>{$value.controller} / {$value.action}</td>
             <td><a title="编辑" href="javascript:;" onclick="admin_permission_edit('权限编辑','{:url('/admin/forum_permission/read',['id'=>$value.id])}','1','','310')" class="ml-5" style="text-decoration:none">
                 <i class="Hui-iconfont">&#xe6df;</i></a>

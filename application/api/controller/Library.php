@@ -53,6 +53,20 @@ class Library extends Base
         $attr = $request->get('attr_ids');
         //筛选
         $filtrate = $request->get('filtrate');
+        $length = 0;
+        if($attr){
+            //筛选属性
+            $array_attr = explode(',', $attr);
+            $attr_value = [];
+
+            foreach ($array_attr as $value) {
+                if ($value > 0) {
+                    $attr_value[] = $value;
+                }
+            }
+            $length = count($attr_value);
+        }
+
         if ($filtrate == 1) {
             //原创
             $filtrate = 'is_original';
@@ -69,17 +83,9 @@ class Library extends Base
                     ->where('status', 1)->where('name', 'like', '%' . $search . '%')
                     ->order('is_top desc,create_time desc')->paginate($pageSize);
                 return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
-            } else if ($attr) {
-                //筛选属性
-                $array_attr = explode(',', $attr);
-                $attr_value = [];
+            }
 
-                foreach ($array_attr as $value) {
-                    if ($value > 0) {
-                        $attr_value[] = $value;
-                    }
-                }
-                $length = count($attr_value);
+            if($length){
                 $library = LibraryModel::field('id,library_pic,name')->where('id', 'in', function ($query) use ($attr_value, $length) {
                     //查询出拥有特定属性的云库ID
                     $library_id = $query->name('library_have_attribute_value')->field('library_id')
@@ -87,6 +93,8 @@ class Library extends Base
                 })->where('is_delete', 0)->where('status', 1)->where($filtrate, 1)
                     ->order('is_top desc,create_time desc')->paginate($pageSize);
                 return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
+
+
             } else {
                 $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
                     ->where('status', 1)->where('cate_id', $cate)->where($filtrate, 1)
@@ -191,10 +199,12 @@ class Library extends Base
 
             $library_integral_count = $library_integral_count ?: 0;
 
+            $exist = '';
             //判断当日可获得积分次数，
             if ($this->getConfig('issue_integral_count') - $library_integral_count > 0) {
                 $integral = $this->getConfig('issue_integral');
                 $this->addUserIntegralHistory(10, $integral);
+                $exist = '，助手币加'.$integral;
             }
 
             $library = LibraryModel::create($data);
@@ -229,7 +239,7 @@ class Library extends Base
             $library_attribute_value = (new LibraryAttributeValue())->where('id', 'in', $value_id)->setInc('library_num');
 
             Db::commit();
-            return json(['code' => 1, 'msg' => '发布成功'], 201);
+            return json(['code' => 1, 'msg' => '发布成功'.$exist], 201);
 
         } catch (\Exception $e) {
             Db::rollback();
@@ -560,16 +570,16 @@ class Library extends Base
             }
 
             //查找是否有文件
-            $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
-            $upyun = (new Upyun($config))->has($library['source_url']);
-            if (!$upyun) {
-                return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 200);
-            }
+//            $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
+//            $upyun = (new Upyun($config))->has($library['source_url']);
+//            if (!$upyun) {
+//                return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 200);
+//            }
 
             //判断是否以购买过
             $is_user_buy_history = UserBuyHistory::where('type', 1)->where('buy_id', $library['id'])->where('user_id', $user['id'])->count('id');
             if ($is_user_buy_history) {
-                return json(['code' => 1, 'msg' => '以购买过', 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]]);
+                return json(['code' => 1, 'msg' => '以购买过','buy'=>1, 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]]);
             }
             //判断积分
             if ($user['vip_id']) {
@@ -579,6 +589,10 @@ class Library extends Base
                 }
                 //计算价格
                 $discount_integral = floor($library['integral'] * ($vip['discount'] / 10));
+                if($discount_integral<=0){
+                    $discount_integral = 1;
+                }
+
             } else {
                 $discount_integral = $library['integral'];
             }
@@ -600,11 +614,15 @@ class Library extends Base
                 $user_vendor = \app\api\model\User::where('id', $library['user_id'])->find();
                 //计算手续费
                 $user_vendor_discount_integral = floor($discount_integral - $this->getConfig('service_charge_integral') / 100 * $discount_integral);
+                if($user_vendor_discount_integral<=0){
+                    $user_vendor_discount_integral=1;
+                }
+
                 //文库主人加积分
                 $user_vendor_integral = $this->addUserIntegralHistory(9, $user_vendor_discount_integral, $library['user_id']);
 
                 Db::commit();
-                return json(['code' => 1, 'msg' => '购买成功', 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]], 200);
+                return json(['code' => 1, 'msg' => '购买成功', 'buy'=>2, 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]], 200);
             } else {
                 Db::rollback();
                 return json(['code' => 0, 'msg' => '当前助手币不足'], 400);

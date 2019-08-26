@@ -101,7 +101,7 @@ class ForumManager extends ForumManagerBase
         if (!$forumInfo) {
             return json(['code' => 0, 'msg' => '该帖子不存在']);
         }
-        (new ForumCommentModel())->where(['id' => $data['forum_comment_id']])->delete();
+        (new ForumCommentModel())->where(['id' => $data['forum_comment_id']])->update(['status'=>0]);
         return json(['code' => 1, 'msg' => 'success']);
     }
 

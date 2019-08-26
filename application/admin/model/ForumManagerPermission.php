@@ -9,9 +9,9 @@ class ForumManagerPermission extends Model
     //获取所有权限  返回一维数组
     public function getPermissionList()
     {
-        $permissionList = $this->select()->toArray();
+        return $this->select()->toArray();
 
-        return $this->getList($permissionList);
+//        return $this->getList($permissionList);
     }
     //获取所有权限 返回多维数组
     public function getPermissionArray()

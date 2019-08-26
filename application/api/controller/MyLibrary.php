@@ -18,48 +18,62 @@ class MyLibrary extends Base
     {
         $data = $request->post();
         $rules = [
-            'page'      => 'require',
+            'page' => 'require',
             'page_length' => 'require',
-            'status'    => 'require|integer',
+            'status' => 'require',
         ];
 
         $messages = [
-            'page.require'        => 'page必须携带',
+            'page.require' => 'page必须携带',
             'page_length.require' => 'page_length必须携带',
-            'status.require'      => 'status必须携带',
-            'status.integer'       => 'status 必须为数字',
+            'status.require' => 'status必须携带',
+//            'status.integer'       => 'status 必须为数字',
         ];
-        $validate = new Validate($rules,$messages);
-        if (!$validate->check($data)){
-            return json(['code'=>0,'msg'=>$validate->getError()]);
+        $validate = new Validate($rules, $messages);
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
         }
         $user_id = $this->userInfo['id'];
         $start = $data['page'] * $data['page_length'] - $data['page_length'];
 
         //如果是未通过 说明未通过原因
-        if ($data['status'] == -1){
+        if ($data['status'] == -1) {
             $list = (new LibraryModel())->alias('library')
-                    ->join('library_check_history history','history.library_id = library.id')
-                    ->where(['library.user_id'=>$user_id,'library.status'=>$data['status']])
-                ->field('library.name,library.see_num,library.name_status,library.library_pic,library.like_num,library.collect_num,library.comment_num,library.create_time,library.is_original,library.is_classics')
+                ->join('library_check_history history', 'history.library_id = library.id')
+                ->where(['library.user_id' => $user_id, 'library.status' => $data['status']])
+                ->field('library.id,library.name,library.see_num,library.name_status,library.library_pic,library.like_num,library.collect_num,library.comment_num,library.create_time,library.is_original,library.is_classics')
                 ->field('history.because')
-                ->where(['library.is_delete'=>1])
-                ->order('library.id','desc')
-                ->limit($start,$data['page_length'])
+                ->where(['library.is_delete' => 0])
+                ->order('library.id', 'desc')
+                ->limit($start, $data['page_length'])
                 ->select();
-        }else{
-            $list = (new LibraryModel())->where(['user_id'=>$user_id,'status'=>$data['status']])
-                ->field('name,see_num,name_status,library_pic,like_num,collect_num,comment_num,create_time,is_original,is_classics')
-                ->where(['is_delete'=>1])
-                ->order('id','desc')
-                ->limit($start,$data['page_length'])
+        } else {
+            $list = (new LibraryModel())
+                ->where(['user_id' => $user_id, 'status' => $data['status']])
+                ->field('id,name,see_num,name_status,library_pic,like_num,collect_num,comment_num,create_time,is_original,is_classics')
+                ->where(['is_delete' => 0])
+                ->order('id', 'desc')
+                ->limit($start, $data['page_length'])
                 ->select();
         }
 
-        $count = (new LibraryModel())->where(['user_id'=>$user_id,'status'=>$data['status'],'is_delete'=>1])->count();
+        $status = [
+            '1' => 0,
+            '-1' => 0,
+            '0' => 0,
+        ];
+        $res = (new LibraryModel())->field('status,count(status) count')->group('status')->select()->toArray();
 
+        foreach ($res as $key => $value) {
+            $status[$value['status']] = $value['count'];
+        }
+        $status_real = [];
+        foreach ($status as $key => $value) {
+            $status_real[] = $value;
+        }
+        $count = (new LibraryModel())->where(['user_id' => $user_id, 'status' => $data['status'], 'is_delete' => 0])->count();
 
-        return json(['code'=>1,'data'=>$list,'count'=>$count]);
+        return json(['code' => 1, 'data' => $list, 'count' => $count, 'status' => $status_real]);
     }
 
     //我的评论
@@ -67,28 +81,28 @@ class MyLibrary extends Base
     {
         $data = $request->post();
         $rules = [
-            'page'      => 'require',
+            'page' => 'require',
             'page_length' => 'require',
         ];
 
         $messages = [
-            'page.require'        => 'page必须携带',
+            'page.require' => 'page必须携带',
             'page_length.require' => 'page_length必须携带',
         ];
-        $validate = new Validate($rules,$messages);
-        if (!$validate->check($data)){
-            return json(['code'=>0,'msg'=>$validate->getError()]);
+        $validate = new Validate($rules, $messages);
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
         }
         $start = $data['page'] * $data['page_length'] - $data['page_length'];
-        $comment = (new LibraryCommentModel())->where(['user_id'=>$this->userInfo['id']]);
+        $comment = (new LibraryCommentModel())->where(['user_id' => $this->userInfo['id'],'status'=>1]);
 
-        $commentList = $comment->field('comment,status,create_time')->order('id','desc')
-                        ->limit($start,$data['page_length'])
-                        ->select();
+        $commentList = $comment->field('id,comment,status,create_time')->order('id', 'desc')
+            ->limit($start, $data['page_length'])
+            ->select();
 
         $count = $comment->count();
 
-        return json(['code'=>1,'data'=>$commentList,'count'=>$count]);
+        return json(['code' => 1, 'data' => $commentList, 'count' => $count]);
 
     }
 
@@ -97,32 +111,30 @@ class MyLibrary extends Base
     {
         $data = $request->post();
         $rules = [
-            'page'      => 'require',
+            'page' => 'require',
             'page_length' => 'require',
         ];
 
         $messages = [
-            'page.require'        => 'page必须携带',
+            'page.require' => 'page必须携带',
             'page_length.require' => 'page_length必须携带',
         ];
-        $validate = new Validate($rules,$messages);
-        if (!$validate->check($data)){
-            return json(['code'=>0,'msg'=>$validate->getError()]);
+        $validate = new Validate($rules, $messages);
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
         }
 
         $start = $data['page'] * $data['page_length'] - $data['page_length'];
 
-        $download = (new UDLHModel())->alias('download')->where(['download.user_id'=>$this->userInfo['id']]);
+        $download = (new UDLHModel())->alias('download')->where(['download.user_id' => $this->userInfo['id']]);
         $count = $download->count();
-        $downloadList = $download->join('library library','download.library_id = library.id')
-                        ->field('library.name,library.id,download.create_time')
-                        ->order('download.id','desc')
-                        ->limit($start,$data['page_length'])
-                        ->select();
+        $downloadList = $download->join('library library', 'download.library_id = library.id')
+            ->field('library.name,library.id,download.create_time')
+            ->order('download.id', 'desc')
+            ->limit($start, $data['page_length'])
+            ->select();
 
-        return json(['code'=>1,'data'=>$downloadList,'count'=>$count]);
-
-
+        return json(['code' => 1, 'data' => $downloadList, 'count' => $count]);
     }
 
     //我的收藏记录
@@ -130,30 +142,30 @@ class MyLibrary extends Base
     {
         $data = $request->post();
         $rules = [
-            'page'      => 'require',
+            'page' => 'require',
             'page_length' => 'require',
         ];
 
         $messages = [
-            'page.require'        => 'page必须携带',
+            'page.require' => 'page必须携带',
             'page_length.require' => 'page_length必须携带',
         ];
-        $validate = new Validate($rules,$messages);
-        if (!$validate->check($data)){
-            return json(['code'=>0,'msg'=>$validate->getError()]);
+        $validate = new Validate($rules, $messages);
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
         }
 
         $start = $data['page'] * $data['page_length'] - $data['page_length'];
 
-        $collect = (new UserCollectModel())->alias('collect')->where(['collect.user_id'=>$this->userInfo['id']])
-                ->where(['type'=>'2']);
+        $collect = (new UserCollectModel())->alias('collect')->where(['collect.user_id' => $this->userInfo['id']])
+            ->where(['type' => '2']);
         $count = $collect->count();
-        $collectList = $collect->join('library library','collect.collect_id = library.id')
+        $collectList = $collect->join('library library', 'collect.collect_id = library.id')
             ->field('library.name,library.id,collect.create_time')
-            ->order('collect.id','desc')
-            ->limit($start,$data['page_length'])
+            ->order('collect.id', 'desc')
+            ->limit($start, $data['page_length'])
             ->select();
-        return json(['code'=>1,'data'=>$collectList,'count'=>$count]);
+        return json(['code' => 1, 'data' => $collectList, 'count' => $count]);
     }
 
     //我的购买记录
@@ -161,31 +173,32 @@ class MyLibrary extends Base
     {
         $data = $request->post();
         $rules = [
-            'page'      => 'require',
+            'page' => 'require',
             'page_length' => 'require',
         ];
 
         $messages = [
-            'page.require'        => 'page必须携带',
+            'page.require' => 'page必须携带',
             'page_length.require' => 'page_length必须携带',
         ];
-        $validate = new Validate($rules,$messages);
-        if (!$validate->check($data)){
-            return json(['code'=>0,'msg'=>$validate->getError()]);
+        $validate = new Validate($rules, $messages);
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
         }
         $start = $data['page'] * $data['page_length'] - $data['page_length'];
         $userBuy = (new UserBuyHistoryModel())->alias('buy')
-            ->where(['buy.type'=>1])
-            ->where(['buy.user_id'=>$this->userInfo['id']]);
-        $count =$userBuy->count();
-        $buyInfo = $userBuy->join('library library','library.id = buy.buy_id')
+            ->where(['buy.type' => 1])
+            ->where(['buy.user_id' => $this->userInfo['id']]);
+        $count = $userBuy->count();
+
+        $buyInfo = $userBuy->join('library library', 'library.id = buy.buy_id')
             ->field('library.id library_id,library.name,library.library_pic')
             ->field('buy.integral,buy.create_time')
-            ->order('buy.id','desc')
-            ->limit($start,$data['page_length'])
+            ->order('buy.id', 'desc')
+            ->limit($start, $data['page_length'])
             ->select();
 
-        return json(['code'=>1,'data'=>$buyInfo,'count'=>$count]);
+        return json(['code' => 1, 'data' => $buyInfo, 'count' => $count]);
 
     }
 }
