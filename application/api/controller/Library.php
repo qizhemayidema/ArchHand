@@ -7,6 +7,7 @@ use app\api\model\UserBuyHistory;
 use app\api\model\UserDownloadLibraryHistory;
 use app\api\model\UserIntegralHistory;
 use app\api\model\Vip;
+use app\common\controller\UploadPic;
 use think\Controller;
 
 
@@ -36,17 +37,18 @@ class Library extends Base
         //SELECT library_id FROM zhu_library_have_attribute_value
         //WHERE attr_value IN (1,2) GROUP BY library_id HAVING COUNT(attr_value) = 2 ORDER BY library_id DESC LIMIT 0,1
         //分类 ID
+        $pageSize = $request->get('pageSize');
+
+        if (!$pageSize) {
+            $pageSize = 16;
+        }
         $cate = $request->get('cate_id');
 
-        $search = $request->get('search');
-        if ($cate) {
-            $cate_field = 'cate_id';
-            $operator = '=';
-        } else {
-            $cate_field = $search ? 'name' : '';
-            $cate = $cate_field ? '%' . $search . '%' : '';
-            $operator = 'like';
+        if (!$cate) {
+            $cate = 1;
         }
+
+        $search = $request->get('search');
         //属性ID 以逗号分隔
         $attr = $request->get('attr_ids');
         //筛选
@@ -61,23 +63,36 @@ class Library extends Base
             $filtrate = 0;
         }
         try {
-            if (!$attr || $search) {
-
+            //搜索
+            if ($search) {
                 $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
-                    ->where('status', 1)->where($cate_field, $operator, $cate)->where($filtrate, 1)
-                    ->order('create_time desc')->paginate(16);
-            } else {
-                $attr_value = explode(',', $attr);
+                    ->where('status', 1)->where('name', 'like', '%' . $search . '%')
+                    ->order('is_top desc,create_time desc')->paginate($pageSize);
+                return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
+            } else if ($attr) {
+                //筛选属性
+                $array_attr = explode(',', $attr);
+                $attr_value = [];
+
+                foreach ($array_attr as $value) {
+                    if ($value > 0) {
+                        $attr_value[] = $value;
+                    }
+                }
                 $length = count($attr_value);
                 $library = LibraryModel::field('id,library_pic,name')->where('id', 'in', function ($query) use ($attr_value, $length) {
                     //查询出拥有特定属性的云库ID
                     $library_id = $query->name('library_have_attribute_value')->field('library_id')
-                        ->where('attr_value', 'in', $attr_value)->group('library_id')->having('count(attr_value)=' . $length);
+                        ->where('attr_value_id', 'in', $attr_value)->group('library_id')->having('count(attr_value_id)=' . $length);
                 })->where('is_delete', 0)->where('status', 1)->where($filtrate, 1)
-                    ->order('create_time desc')->paginate(16);
+                    ->order('is_top desc,create_time desc')->paginate($pageSize);
+                return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
+            } else {
+                $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
+                    ->where('status', 1)->where('cate_id', $cate)->where($filtrate, 1)
+                    ->order('is_top desc,create_time desc')->paginate($pageSize);
+                return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
             }
-
-            return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
         } catch (\Exception $e) {
             return json(['code' => 0, 'msg' => '查询失败'], 500);
         }
@@ -87,8 +102,9 @@ class Library extends Base
     public function show(Request $request)
     {
         //获取用户信息
-        $user = $this->userInfo;
-
+        if ($token = $request->post('token')) {
+            $user = $this->userInfo;
+        }
         if (!$id = $request->post('id')) {
             return json(['code' => 0, 'msg' => '参数错误'], 422);
         }
@@ -97,7 +113,7 @@ class Library extends Base
             //name user_id name_status create_time see_num integral source_url gehsi size desc
             //like_num collect_num comment_num is_classics is_official
             $library = LibraryModel::field('id,name,user_id,name_status,create_time,see_num,integral,suffix,data_size,desc,
-        like_num,collect_num,comment_num,is_classics,is_official')
+        like_num,collect_num,comment_num,is_classics,is_official,is_original,is_top')
                 ->where('id', $id)->where('is_delete', 0)->where('status', 1)->find();
 
             if ($library) {
@@ -106,11 +122,17 @@ class Library extends Base
                 } else {
                     $library->nickname = Db::name('user')->where('id', $library->user_id)->value('nickname');
                 }
-                //查询用户点赞和收藏
-                $library->like = Db::name('library_like_history')->where('library_id', $library->id)
-                    ->where('user_id', $user['id'])->count('library_id');
-                $library->collect = Db::name('user_collect')->where('type', 2)
-                    ->where('user_id', $user['id'])->where('collect_id', $library->id)->count('id');
+                if ($token) {
+                    //查询用户点赞和收藏
+                    $library->like = Db::name('library_like_history')->where('library_id', $library->id)
+                        ->where('user_id', $user['id'])->count('library_id');
+                    $library->collect = Db::name('user_collect')->where('type', 2)
+                        ->where('user_id', $user['id'])->where('collect_id', $library->id)->count('id');
+                } else {
+                    $library->like = 0;
+                    $library->collect = 0;
+                }
+
 
                 //查询热门案例
                 $hot = LibraryModel::field('id,name,library_pic')->where('is_delete', 0)
@@ -118,7 +140,7 @@ class Library extends Base
                     ->order('collect_num desc,like_num desc,comment_num desc,see_num desc create_time asc')
                     ->limit(0, 10)->select();
             } else {
-                return json(['code' => 0, 'msg' => '查询数据不存在'], 404);
+                return json(['code' => 0, 'msg' => '查询数据不存在'], 200);
             }
 //            print_r($library);die;
             $data = ['library' => $library, 'hot' => $hot];
@@ -140,6 +162,10 @@ class Library extends Base
     {
         $user = $this->userInfo;
         $data = $request->post();
+        //上传图片
+        $image_base64 = $data['library_pic'];
+        $library_pic_path = (new UploadPic())->uploadBase64Pic($image_base64, 'library/' . $user['id'] . '/');
+        $data['library_pic'] = $library_pic_path['msg'];
 
         $data['user_id'] = $user['id'];
         $validate = new LibraryValidate();
@@ -180,7 +206,7 @@ class Library extends Base
                     $value_id[] = $item;
                     $have_attr_value[] = [
                         'attr_id' => $k,
-                        'attr_value' => $item,
+                        'attr_value_id' => $item,
                         'library_id' => $library['id'],
                     ];
                 }
@@ -189,14 +215,14 @@ class Library extends Base
             $library_have_attribute_value = (new LibraryHaveAttributeValueModel())->saveAll($have_attr_value);
             if (!$library_have_attribute_value) {
                 Db::rollback();
-                return json(['code' => 0, 'msg' => '发布失败'], 417);
+                return json(['code' => 0, 'msg' => '发布失败'], 200);
             }
 
             //增加分类数量
             $category = (new LibraryCategoryModel())->where('id', $library['cate_id'])->setInc('count');
             if (!$category) {
                 Db::rollback();
-                return json(['code' => 0, 'msg' => '发布失败'], 417);
+                return json(['code' => 0, 'msg' => '发布失败'], 200);
             }
 
             //批量更新属性文库数量
@@ -209,8 +235,6 @@ class Library extends Base
             Db::rollback();
             return json(['code' => 0, 'msg' => '发布失败'], 500);
         }
-
-
     }
 
 
@@ -228,6 +252,16 @@ class Library extends Base
 
         if (!array_key_exists('id', $data)) {
             return json(['code' => 0, 'msg' => '缺少必要参数'], 422);
+        }
+
+        //判断是否是base64
+        $library_pic = preg_match('/^(data:\s*image\/(\w+);base64,)/', $data['library_pic'], $result);
+
+        if ($library_pic) {
+            //上传图片
+            $image_base64 = $data['library_pic'];
+            $library_pic_path = (new UploadPic())->uploadBase64Pic($image_base64, 'library/' . $user['id'] . '/');
+            $data['library_pic'] = $library_pic_path['msg'];
         }
 
         $data['user_id'] = $user['id'];
@@ -265,7 +299,7 @@ class Library extends Base
                     $value_id[] = $item;
                     $have_attr_value[] = [
                         'attr_id' => $k,
-                        'attr_value' => $item,
+                        'attr_value_id' => $item,
                         'library_id' => $library['id'],
                     ];
                 }
@@ -277,7 +311,7 @@ class Library extends Base
 
             for ($i = 0; $i < $count; $i++) {
                 if (!empty($have_attr_value[$i]) && !empty($library_have_attribute_value[$i])) {
-                    if ($have_attr_value[$i]['attr_value'] == $library_have_attribute_value[$i]['attr_value']) {
+                    if ($have_attr_value[$i]['attr_value_id'] == $library_have_attribute_value[$i]['attr_value_id']) {
                         //相同的干掉，不需要更改
                         unset($have_attr_value[$i]);
                         unset($library_have_attribute_value[$i]);
@@ -289,7 +323,7 @@ class Library extends Base
             $ids = [];
             foreach ($library_have_attribute_value as $v) {
                 $ids[] = $v['id'];
-                $attribute_value_ids[] = $v['attr_value'];
+                $attribute_value_ids[] = $v['attr_value_id'];
             }
 
             //删除多余属性
@@ -303,7 +337,7 @@ class Library extends Base
             if ($have_attr_value) {
                 $library_have_attribute_value = (new LibraryHaveAttributeValueModel())->saveAll($have_attr_value);
                 foreach ($have_attr_value as $v) {
-                    $att_ids[] = $v['attr_value'];
+                    $att_ids[] = $v['attr_value_id'];
                 }
 
                 $attribute_value = (new LibraryAttributeValue())->where('id', 'in', $att_ids)->setInc('library_num');
@@ -355,7 +389,7 @@ class Library extends Base
             //查询云库是否存在
             $library = LibraryModel::where('id', $id)->where('is_delete', 0)->where('status', 1)->find();
             if (!$library) {
-                return json(['code' => 0, 'msg' => '当前云库内容不存在'], 404);
+                return json(['code' => 0, 'msg' => '当前云库内容不存在'], 200);
             }
 
             //删除又拍云
@@ -378,7 +412,7 @@ class Library extends Base
             //获取属性
             $have_attribute_value = LibraryHaveAttributeValueModel::where('library_id', $library['id'])->all();
             foreach ($have_attribute_value as $v) {
-                $value_ids [] = $v['attr_value'];
+                $value_ids [] = $v['attr_value_id'];
                 $ids[] = $v['id'];
             }
 
@@ -429,12 +463,12 @@ class Library extends Base
                     ->count('library_id');
 
                 if ($library_like_user) {
-                    return json(['code' => 0, 'msg' => '当前云库以点赞，不能重复点赞'], 417);
+                    return json(['code' => 0, 'msg' => '当前云库以点赞，不能重复点赞'], 200);
                 }
 
                 $library = (new LibraryModel())->where('id', $library_id)->find();
                 if (!$library) {
-                    return json(['code' => 0, 'msg' => '数据走丢啦，刷新后试试吧'], 404);
+                    return json(['code' => 0, 'msg' => '数据走丢啦，刷新后试试吧'], 200);
                 }
                 $library->like_num = $library->like_num + 1;
                 $library->save();
@@ -445,7 +479,7 @@ class Library extends Base
                     Db::commit();
                     return json(['code' => 1, 'msg' => '点赞成功'], 200);
                 } else {
-                    return json(['code' => 0, 'msg' => '点赞失败'], 417);
+                    return json(['code' => 0, 'msg' => '点赞失败'], 200);
                 }
             } else {
                 return json(['code' => 0, 'msg' => '缺少必要参数'], 422);
@@ -475,12 +509,12 @@ class Library extends Base
             $user_collect = Db::name('user_collect')->where('type', 2)
                 ->where('collect_id', $library_id)->count('id');
             if ($user_collect) {
-                return json(['code' => 0, 'msg' => '当前文库以收藏，不能重复收藏'], 417);
+                return json(['code' => 0, 'msg' => '当前文库以收藏，不能重复收藏'], 200);
             }
 
             $library = (new LibraryModel())->where('id', $library_id)->find();
             if (!$library) {
-                return json(['code' => 0, 'msg' => '数据丢失了，刷新后试试吧'], 404);
+                return json(['code' => 0, 'msg' => '数据丢失了，刷新后试试吧'], 200);
             }
 
             $library->collect_num = $library->collect_num + 1;
@@ -495,7 +529,7 @@ class Library extends Base
                 return json(['code' => 1, 'msg' => '收藏成功'], 200);
             } else {
                 Db::rollback();
-                return json(['code' => 0, 'msg' => '收藏失败'], 417);
+                return json(['code' => 0, 'msg' => '收藏失败'], 200);
             }
         } catch (\Exception $e) {
             Db::rollback();
@@ -522,14 +556,14 @@ class Library extends Base
             $library = LibraryModel::where('id', $id)->where('is_delete', 0)->where('status', 1)->find();
 
             if (!$library) {
-                return json(['code' => 0, 'msg' => '云库不存在'], 404);
+                return json(['code' => 0, 'msg' => '云库不存在'], 200);
             }
 
             //查找是否有文件
             $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
             $upyun = (new Upyun($config))->has($library['source_url']);
             if (!$upyun) {
-                return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 417);
+                return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 200);
             }
 
             //判断是否以购买过
@@ -551,7 +585,8 @@ class Library extends Base
             $time = time();
             if (($user_integral = $user['integral'] - $discount_integral) >= 0) {
                 //扣除用户积分
-                $user_buyer = \app\api\model\User::update(['id' => $user['id'], 'integral' => $user_integral]);
+//                $user_buyer = \app\api\model\User::update(['id' => $user['id'], 'integral' => $user_integral]);
+                $this->addUserIntegralHistory(4, $discount_integral);
                 //更新购买记录表
                 $user_buy_history = UserBuyHistory::create([
                     'type' => 1,
@@ -566,13 +601,7 @@ class Library extends Base
                 //计算手续费
                 $user_vendor_discount_integral = floor($discount_integral - $this->getConfig('service_charge_integral') / 100 * $discount_integral);
                 //文库主人加积分
-                $user_vendor_integral = \app\api\model\User::update(['id' => $user_vendor['id'], 'integral' => $user_vendor['integral'] + $user_vendor_discount_integral]);
-                //更新积分变动表 (购买者和文库主人的记录)，购买 4 被下载 9
-                $user_history = [
-                    ['type' => 4, 'integral' => $discount_integral, 'user_id' => $user['id'], 'create_time' => $time,],
-                    ['type' => 9, 'integral' => $user_vendor_discount_integral, 'user_id' => $user_vendor['id'], 'create_time' => $time,]
-                ];
-                $user_integral_history = (new UserIntegralHistory())->saveAll($user_history);
+                $user_vendor_integral = $this->addUserIntegralHistory(9, $user_vendor_discount_integral, $library['user_id']);
 
                 Db::commit();
                 return json(['code' => 1, 'msg' => '购买成功', 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]], 200);

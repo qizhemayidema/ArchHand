@@ -13,7 +13,6 @@
 use think\facade\Route;
 
 Route::group('/api',function(){
-
     Route::group('/Login',function(){
         Route::post('/getCode','api/Login/getCode');
         Route::post('/register','api/Login/register');
@@ -76,6 +75,23 @@ Route::group('/api',function(){
         Route::post('/like','api/Forum/like');
         Route::post('/likeComment','api/Forum/likeComment');
         Route::post('/comment','api/Forum/comment');
+    });
+
+    Route::group('/Forum_manager',function(){
+        Route::post('/classics','api/Forum_manager/classics');
+        Route::post('/top','api/Forum_manager/top');
+        Route::post('/delForum','api/Forum_manager/delForum');
+        Route::post('/delComment','api/Forum_manager/delComment');
+        Route::post('/saveRole','api/Forum_manager/saveRole');
+        Route::post('/updateRole','api/Forum_manager/updateRole');
+        Route::post('/delRole','api/Forum_manager/delRole');
+        Route::post('/permission','api/Forum_manager/permission');
+        Route::post('/roleList','api/Forum_manager/roleList');
+        Route::post('/role','api/Forum_manager/role');
+        Route::post('/giveRole','api/Forum_manager/giveRole');
+        Route::post('/shotOffManager','api/Forum_manager/shotOffManager');
+        Route::post('/checkManagerJoin','api/Forum_manager/checkManagerJoin');
+        Route::post('/changeJoinChannel','api/Forum_manager/changeJoinChannel');
     });
     Route::post('/Library/uploadVideo','api/Library/uploadVideo');
 });

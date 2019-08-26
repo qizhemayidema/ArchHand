@@ -93,6 +93,17 @@ class Forum extends Base
         if (!$plateInfo || $plateInfo['is_delete'] == 1)
             return json(['code'=>0,'msg'=>'所选板块不存在']);
 
+        $expTagStr = explode(',',$data['tag_str']);
+        if (count($expTagStr) > 5){
+            return json(['code'=>0,'msg'=>'标签最多只能有五个']);
+        }
+
+        foreach ($expTagStr as $key => $value){
+            if (count($value) > 10){
+                return json(['code'=>0,'msg'=>'每个标签最多长度为10']);
+            }
+        }
+
         $result = [];
 
         if (isset($data['is_original'])){
@@ -454,7 +465,6 @@ class Forum extends Base
 
         return json(['code'=>1,'msg'=>'success']);
     }
-
 
     //评论
     public function comment(Request $request){

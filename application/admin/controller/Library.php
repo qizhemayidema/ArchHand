@@ -33,7 +33,7 @@ class Library extends Base
     {
 //        try {
         $library = LibraryModel::with(['cate', 'attribute' => function ($query) {
-            $query->field('id,attr_value,library_id')->with(['attributeValue' => function ($query) {
+            $query->field('id,attr_value_id,library_id')->with(['attributeValue' => function ($query) {
                 $query->field('id,value');
             }]);
         }])->get($id);
