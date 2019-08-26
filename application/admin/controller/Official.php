@@ -52,7 +52,7 @@ class Official extends Base
         }
         $form['password'] = md5($form['password']);
         if ($form['avatar_url'] == '') {
-            $form['avatar_url'] = 'static/uploads/user/default/20150828225753jJ4Fc.jpeg';
+            $form['avatar_url'] = '/static/uploads/user/default/20150828225753jJ4Fc.jpeg';
         }
         $form['type'] = 2;
         $form['birthday'] = strTotime($form['birthday']);

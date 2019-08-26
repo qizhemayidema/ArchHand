@@ -36,17 +36,23 @@ class Library extends Base
         //SELECT library_id FROM zhu_library_have_attribute_value
         //WHERE attr_value IN (1,2) GROUP BY library_id HAVING COUNT(attr_value) = 2 ORDER BY library_id DESC LIMIT 0,1
         //分类 ID
+        $pageSize = $request->get('pageSize');
+
+        if(!$pageSize){
+            $pageSize = 16;
+        }
         $cate = $request->get('cate_id');
 
-        $search = $request->get('search');
-        if ($cate) {
-            $cate_field = 'cate_id';
-            $operator = '=';
-        } else {
-            $cate_field = $search ? 'name' : '';
-            $cate = $cate_field ? '%' . $search . '%' : '';
-            $operator = 'like';
+        if (!$cate) {
+            $cate = 1;
         }
+
+        $search = $request->get('search');
+
+        if (!$search) {
+
+        }
+
         //属性ID 以逗号分隔
         $attr = $request->get('attr_ids');
         //筛选
@@ -61,12 +67,20 @@ class Library extends Base
             $filtrate = 0;
         }
         try {
-            if (!$attr || $search) {
-
+            //搜索
+            if ($search) {
                 $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
-                    ->where('status', 1)->where($cate_field, $operator, $cate)->where($filtrate, 1)
-                    ->order('create_time desc')->paginate(16);
-            } else {
+                    ->where('status', 1)->where('name', 'like', '%' . $search . '%')
+                    ->order('create_time desc')->paginate($pageSize);
+                return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
+            } else if ($attr == -1) {
+                //默认点击分类
+                $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
+                    ->where('status', 1)->where('cate_id', $cate)->where($filtrate, 1)
+                    ->order('create_time desc')->paginate($pageSize);
+                return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
+            } else if ($attr && $attr != -1) {
+                //筛选属性
                 $attr_value = explode(',', $attr);
                 $length = count($attr_value);
                 $library = LibraryModel::field('id,library_pic,name')->where('id', 'in', function ($query) use ($attr_value, $length) {
@@ -74,10 +88,14 @@ class Library extends Base
                     $library_id = $query->name('library_have_attribute_value')->field('library_id')
                         ->where('attr_value', 'in', $attr_value)->group('library_id')->having('count(attr_value)=' . $length);
                 })->where('is_delete', 0)->where('status', 1)->where($filtrate, 1)
-                    ->order('create_time desc')->paginate(16);
+                    ->order('create_time desc')->paginate($pageSize);
+                return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
+            } else {
+                $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
+                    ->where('status', 1)->where('cate_id',$cate)->where($filtrate, 1)
+                    ->order('create_time desc')->paginate($pageSize);
+                return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
             }
-
-            return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
         } catch (\Exception $e) {
             return json(['code' => 0, 'msg' => '查询失败'], 500);
         }

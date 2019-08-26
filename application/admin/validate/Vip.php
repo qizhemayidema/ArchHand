@@ -14,7 +14,7 @@ class Vip extends Validate
      * @var array
      */
     protected $rule = [
-        'vip_name'=>'require|min:2|max:20',
+        'vip_name' => 'require|min:2|max:20',
         'price' => 'require|number|integer|unique:vip',
         'discount' => 'require|unique:vip|regex:^[1-9]\.[0-9]{1,1}$',
     ];
@@ -26,6 +26,9 @@ class Vip extends Validate
      * @var array
      */
     protected $message = [
+        'vip.require' => 'Vip名称必须填写',
+        'vip.min' => 'Vip名称不能小于2',
+        'vip.max' => 'Vip名称不能大于20个字',
         'price.require' => '充值金额必须填写',
         'price.number' => '充值金额填写错误',
         'price.integer' > '充值金额必须是整数',
@@ -34,9 +37,6 @@ class Vip extends Validate
         'discount.regex' => '折扣填写错误',
         'discount.unique' => '当前折扣以存在',
     ];
-
-
-
 
 
 }
