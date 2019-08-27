@@ -22,7 +22,7 @@ class Library extends Base
     {
 
         $libraries = (new LibraryModel)->where('is_delete', 0)
-            ->where('status', '<>', -1)->order('status asc,is_classics desc')
+            ->where('status', '<>', -1)->order('status asc,is_classics desc,create_time desc')
             ->paginate(15);
         $this->assign('libraries', $libraries);
         return $this->fetch();
@@ -31,9 +31,9 @@ class Library extends Base
 
     public function show($id)
     {
-//        try {
+        try {
         $library = LibraryModel::with(['cate', 'attribute' => function ($query) {
-            $query->field('id,attr_value,library_id')->with(['attributeValue' => function ($query) {
+            $query->field('id,attr_value_id,library_id')->with(['attributeValue' => function ($query) {
                 $query->field('id,value');
             }]);
         }])->get($id);
@@ -44,10 +44,10 @@ class Library extends Base
         }
         $this->assign('library', $library);
         return $this->fetch();
-//        } catch (\Exception $e) {
-//            $this->assign('is_exist', $e->getMessage());
-//            return $this->fetch();
-//        }
+        } catch (\Exception $e) {
+            $this->assign('is_exist', $e->getMessage());
+            return $this->fetch();
+        }
 
 
     }

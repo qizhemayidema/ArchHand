@@ -20,6 +20,8 @@
                 <span>基本设置</span>
                 <span>右侧导航设置</span>
                 <span>助手币管理</span>
+                <span>今日力推</span>
+                <span>合作方管理</span>
             </div>
             <div class="tabCon">
                 <div class="row cl">
@@ -170,6 +172,66 @@
                 </div>
             </div>
 
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">标题：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" value="{$site->today_recommend->today_title?:null}"
+                               id="today_title" name="today_title"
+                               placeholder="">
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页今日力推标题</span>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">链接：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" value="{$site->today_recommend->today_url?:null}"
+                               id="today_url" name="today_url"
+                               placeholder="http://www.xxx.com https://www.xxx.com">
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页今日力推超链接</span>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">内容：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor" placeholder="" autofocus name="today_content">{$site->today_recommend->today_content?:null}</textarea>
+
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页今日力推内容</span>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">封面：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="hidden" id="data_url" name="today_pic" value="{$site->today_recommend->today_pic?:null}">
+                        <div id="fileList_url" class="uploader-list" style=""></div>
+                        <div id="imgPicker_url" style="float:left">选择图片</div>
+                        <img id="img_data_url" height="100px" style="margin-left: 10px;margin-top: 50px;"
+                             src="{$site->today_recommend->today_pic?:'__STATIC__/static/h-ui.admin/images/no_img.jpg'}"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">合作方名称：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" value="{$site->today_recommend->today_title?:null}"
+                               id="partner_name" name="today_title"
+                               placeholder="">
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页底部导航合作方名称</span>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">合作方名称：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" value="{$site->today_recommend->today_title?:null}"
+                               id="partner_url" name="today_title"
+                               placeholder="">
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页底部导航合作方链接地址</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div class="row cl">
             <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
@@ -200,44 +262,107 @@
         });
     });
 
-    var $list = $('#fileList');
-    //上传图片,初始化WebUploader
-    var uploader = WebUploader.create({
-
-        auto: true,// 选完文件后，是否自动上传。
-        swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
-        server: "{:url('Upload/uploadUser','path=qr_code')}",// 文件接收服务端。
-        duplicate: true,// 重复上传图片，true为可重复false为不可重复
-        pick: '#imgPicker',// 选择文件的按钮。可选。
-
-        accept: {
-            title: 'Images',
-            extensions: 'gif,jpg,jpeg,bmp,png',
-            mimeTypes: 'image/jpg,image/jpeg,image/png'
+    let editor = new Simditor({
+        textarea:$('#editor'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
         },
-
-        'onUploadSuccess': function (file, data, response) {
-            $("#data_photo").val(data);
-            $("#img_data").attr('src', data).show();
-        }
+        placeholder:'',
+        imageButton:['upload'],
     });
 
-    uploader.on('fileQueued', function (file) {
-        $list.html('<div id="' + file.id + '" class="item">' +
-            '<h4 class="info">' + file.name + '</h4>' +
-            '<p class="state">正在上传...</p>' +
-            '</div>');
+
+    $('#birthday').datetimepicker({
+        language: "zh-cn",
+        format: "yyyy-mm-dd hh:ii",
+        autoclose: true
     });
 
-    // 文件上传成功
-    uploader.on('uploadSuccess', function (file) {
-        $('#' + file.id).find('p.state').text('上传成功！');
-    });
+    let list = $('#fileList');
+    let list_url = $('#fileList_url');
 
-    // 文件上传失败，显示上传出错。
-    uploader.on('uploadError', function (file) {
-        $('#' + file.id).find('p.state').text('上传出错!');
-    });
+        //上传图片,初始化WebUploader
+        var uploader = WebUploader.create({
+            auto: true,// 选完文件后，是否自动上传。
+            swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
+            server: "{:url('Upload/uploadUser','path=qr_code')}",// 文件接收服务端。
+            duplicate: true,// 重复上传图片，true为可重复false为不可重复
+            pick: '#imgPicker',// 选择文件的按钮。可选。
+
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/jpg,image/jpeg,image/png'
+            },
+
+            'onUploadSuccess': function (file, data, response) {
+                $("#data_photo").val(data);
+                $("#img_data").attr('src', data).show();
+            }
+        });
+
+        uploader.on('fileQueued', function (file) {
+            list.html('<div id="' + file.id + '" class="item">' +
+                '<h4 class="info">' + file.name + '</h4>' +
+                '<p class="state">正在上传...</p>' +
+                '</div>');
+        });
+
+        // 文件上传成功
+        uploader.on('uploadSuccess', function (file) {
+            $('#' + file.id).find('p.state').text('上传成功！');
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader.on('uploadError', function (file) {
+            $('#' + file.id).find('p.state').text('上传出错!');
+        });
+
+
+        //上传图片,初始化WebUploader
+        var uploader_url = WebUploader.create({
+
+            auto: true,// 选完文件后，是否自动上传。
+            swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
+            server: "{:url('Upload/uploadUser','path=today_recommend')}",// 文件接收服务端。
+            duplicate: true,// 重复上传图片，true为可重复false为不可重复
+            pick: '#imgPicker_url',// 选择文件的按钮。可选。
+
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/jpg,image/jpeg,image/png'
+            },
+
+            'onUploadSuccess': function (file, data, response) {
+                $("#data_url").val(data);
+                $("#img_data_url").attr('src', data).show();
+            }
+        });
+
+        uploader_url.on('fileQueued', function (file) {
+            list_url.html('<div id="' + file.id + '" class="item">' +
+                '<h4 class="info">' + file.name + '</h4>' +
+                '<p class="state">正在上传...</p>' +
+                '</div>');
+        });
+
+        // 文件上传成功
+        uploader_url.on('uploadSuccess', function (file) {
+            $('#' + file.id).find('p.state').text('上传成功！');
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader_url.on('uploadError', function (file) {
+            $('#' + file.id).find('p.state').text('上传出错!');
+        });
+
 
 
     $(function () {

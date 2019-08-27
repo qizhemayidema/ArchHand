@@ -1,0 +1,116 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    {include file="common/meta,common/source"}
+    <title>{$help?'编辑板块':'新增板块'}</title>
+</head>
+<body>
+<article class="page-container">
+    {if !isset($is_exist)}
+    <form action="{$help?'update':'save'}" method="post" class="form form-horizontal" id="form-member-add">
+        <input id="id" name="id" value="{$help?$help['id']:''}" type="hidden">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>板块名称：</label>
+            <div class="formControls col-xs-6 col-sm-9">
+                <input type="text" class="input-text" value="{$help?$help['cate_name']:null}" placeholder=""
+                       id="cate_name"
+                       name="cate_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>板块内容：</label>
+            <div class="formControls col-xs-6 col-sm-9">
+                <textarea id="editor1" placeholder="" autofocus name="desc">{$help?$help['desc']:''}</textarea>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>常见问题：</label>
+            <div class="formControls col-xs-6 col-sm-9">
+                <textarea id="editor2" placeholder="" autofocus name="question">{$help?$help['question']:''}</textarea>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-6 col-xs-offset-4 col-sm-offset-6">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+
+    {else/}
+    <div class="Huialert Huialert-error"><i class="Hui-iconfont">&#xe6a6;</i>{$is_exist}</div>
+    {/if}
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+{include file="common/footer"}
+
+<script type="text/javascript">
+
+    let editor1 = new Simditor({
+        textarea:$('#editor1'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor2 = new Simditor({
+        textarea:$('#editor2'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+
+
+
+    $(function () {
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+        $(function () {
+            $('#form-member-add').ajaxForm({
+                //beforeSubmit: checkForm, // 此方法主要是提交前执行的方法，根据需要设置
+                success: complete, // 这是提交后的方法
+                dataType: 'json'
+            });
+
+            function complete(data) {
+                console.log(data)
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 6, time: 1500, shade: 0.1}, function (index) {
+                        window.parent.location.reload();
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.msg(data.msg, {icon: 5, time: 1500});
+                    return false;
+                }
+            }
+
+        });
+
+
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

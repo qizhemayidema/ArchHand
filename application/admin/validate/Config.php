@@ -28,6 +28,10 @@ class Config extends Validate
 //        'ratio_integral' => 'require|integer|intCheck|min:1|max:9',
         'service_charge_integral' => 'require|regex:^[0-9]{1,2}\.{0,1}[0-9]{0,1}$',//百分比小数点前两位 后一位
         'sign_in_integral' => 'require|signCheck',
+        'today_title'=>'require|min:3|max:20',
+        'today_url'=>'require|url',
+        'today_content'=>'require|min:15',
+        'today_pic'=>'require'
 
     ];
 
@@ -69,7 +73,14 @@ class Config extends Validate
         'service_charge_integral.regex' => '手续费填写错误',
         'sign_in_integral.require' => '签到积分必须填写',
         'sign_in_integral.signCheck' => '签到积分填写错误',
-
+        'today_title.require'=>'今日力推标题必须填写',
+        'today_title.min'=>'今日力推标题不能小于3个字',
+        'today_title.max'=>'今日力推标题不能大于20个字',
+        'today_url.require'=>'今日力推URL必须填写',
+        'today_url.url'=>'今日力推URL不是有效的地址',
+        'today_content.require'=>'今日力推内容必须填写',
+        'today_content.min'=>'今日力推内容不能小于15个字',
+        'today_pic.require'=>'今日力推封面必须上传',
     ];
 
     public function intCheck($value, $rule, $data)

@@ -50,25 +50,25 @@ class Base extends Controller
      * 添加 积分变动记录到表中
      * @param $integral
      */
-    protected function addUserIntegralHistory($type, $integral)
+    protected function addUserIntegralHistory($type, $integral,$user_id = null)
     {
+        $user_id = $user_id ? $user_id : $this->userInfo['id'];
+
         $result = [
             'type' => $type,
             'integral' => $integral,
-            'user_id' => $this->userInfo['id'],
+            'user_id' => $user_id,
             'create_time' => time(),
         ];
         (new IntegralHistoryModel())->insert($result);
-
         $upArr = [1, 2, 5, 6, 7, 8, 9, 10];
         $downArr = [3, 4];
-        $userModel = (new UserModel())->where(['id' => $this->userInfo['id']]);
+        $userModel = (new UserModel())->where(['id' => $user_id]);
         if (in_array($type, $upArr)) {
             $userModel->setInc('integral', $integral);
         } else if (in_array($type, $downArr)) {
             $userModel->setDec('integral', $integral);
         }
-
     }
 
     /**

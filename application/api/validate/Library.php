@@ -26,7 +26,7 @@ class Library extends Validate
         'suffix' => 'require|alpha',
         'data_size' => 'require|number',
         'is_original' => 'require|number',
-        'is_classics' => 'require|number',
+        'is_classics' => 'require|number|in:0,2',
         'attr_value_ids' => 'require|attrJson'
     ];
 
@@ -63,6 +63,7 @@ class Library extends Validate
         'is_original.number' => '原创信息填写错误',
         'is_classics.require' => '请填写是否加精',
         'is_classics.number' => '加精信息错误',
+        'is_classics.in' => '加精信息错误',
         'attr_value_ids.require' => '文库属性必须填写',
         'attr_value_ids.attrJson' => '文库属性填写错误',
     ];

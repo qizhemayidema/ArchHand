@@ -1,0 +1,320 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    {include file="common/meta,common/source"}
+    <title>帮助页配置</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页
+    <span class="c-gray en">&gt;</span>
+    网站设置
+    <span class="c-gray en">&gt;</span>
+    帮助页配置
+    <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+       href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a>
+</nav>
+<div class="page-container">
+    <form class="form form-horizontal" id="form-member-add" method="post" action="save">
+        <div id="tab-system" class="HuiTab">
+            <div class="tabBar cl">
+                <span>资源平台</span>
+                <span>助手云库</span>
+                <span>课堂平台</span>
+                <span>常用软件</span>
+                <span>知名门户</span>
+            </div>
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        板块说明：</label>
+                    <input name="cate_name_1" value="资源平台" type="hidden"/>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor1" placeholder="" autofocus name="desc_1">{}</textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        常见问题：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor2" placeholder="" autofocus name="question_1">{}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        板块说明：</label>
+                    <input name="cate_name_2" value="助手云库" type="hidden"/>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor3" placeholder="" autofocus name="desc_2">{}</textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        常见问题：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor4" placeholder="" autofocus name="question_2">{}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        板块说明：</label>
+                    <input name="cate_name_3" value="课堂平台" type="hidden"/>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor5" placeholder="" autofocus name="desc_3">{}</textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        常见问题：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor6" placeholder="" autofocus name="question_3">{}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        板块说明：</label>
+                    <input name="cate_name_4" value="常用软件" type="hidden"/>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor7" placeholder="" autofocus name="desc_4">{}</textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        常见问题：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor8" placeholder="" autofocus name="question_4">{}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabCon">
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        板块说明：</label>
+                    <input name="cate_name_5" value="知名门户" type="hidden"/>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor9" placeholder="" autofocus name="desc_5">{}</textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">
+                        <span class="c-red">*</span>
+                        常见问题：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor10" placeholder="" autofocus name="question_5">{}</textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+                <button onClick="layer_close();" class="btn btn-default radius" type="button">
+                    &nbsp;&nbsp;取消&nbsp;&nbsp;
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/footer"}
+
+<script type="text/javascript">
+
+    function layer_close() {
+        window.location.href = "{:url('config/index')}";
+    }
+
+    $(function () {
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+        $("#tab-system").Huitab({
+            index: 0
+        });
+    });
+
+    let editor1 = new Simditor({
+        textarea:$('#editor1'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor2 = new Simditor({
+        textarea:$('#editor2'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor3 = new Simditor({
+        textarea:$('#editor3'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor4 = new Simditor({
+        textarea:$('#editor4'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor5 = new Simditor({
+        textarea:$('#editor5'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor6 = new Simditor({
+        textarea:$('#editor6'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor7 = new Simditor({
+        textarea:$('#editor7'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor8 = new Simditor({
+        textarea:$('#editor8'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor9 = new Simditor({
+        textarea:$('#editor9'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor10 = new Simditor({
+        textarea:$('#editor10'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'today_recommend'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+
+    $(function () {
+        $('#form-member-add').ajaxForm({
+            //beforeSubmit: checkForm, // 此方法主要是提交前执行的方法，根据需要设置
+            success: complete, // 这是提交后的方法
+            dataType: 'json'
+        });
+
+        function complete(data) {
+            // console.log(11)
+            if (data.code == 1) {
+                layer.msg(data.msg, {icon: 6, time: 1500, shade: 0.1}, function (index) {
+                    window.location.href = "{:url('config/index')}";
+                });
+            } else {
+                layer.msg(data.msg, {icon: 5, time: 1500});
+                return false;
+            }
+        }
+
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
