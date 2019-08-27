@@ -15,6 +15,7 @@ use app\api\model\UserCollect as UserCollectModel;
 use app\api\model\ForumLikeHistory as LikeHistoryModel;
 use app\api\model\ForumCommentLikeHistory as CommentLikeHistoryModel;
 use app\api\model\UserIntegralHistory as UserIntegralHistoryModel;
+use app\api\model\ForumApplyForManager as ApplyModel;
 
 class Forum extends Base
 {
@@ -547,5 +548,55 @@ class Forum extends Base
 
     }
 
+    //申请加入管理团队
+    public function joinInManager(Request $request)
+    {
 
+        $data = $request->post();
+
+        $rules = [
+            'plate_id'  => 'require|number',
+            'content'   => 'require|max:300',
+        ];
+
+        $messages = [
+            'content.require'   => '原因不能为空',
+            'content.max'       => '原因最大长度为300',
+        ];
+
+        $validate = new Validate($rules,$messages);
+
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $user_info = $this->userInfo;
+        //判断模块是否存在
+        $plateInfo = (new PlateModel())->where(['id'=>$data['plate_id'],'is_delete'=>0])->find();
+        if(!$plateInfo){
+            return json(['code'=>0,'msg'=>'该板块不存在']);
+        }
+
+        //判断是否为此板块管理员
+        $manager = (new ForumManagerModel())->where(['user_id'=>$user_info['id'],'plate_id'=>$data['plate_id']])->select();
+        if ($manager){
+            return json(['code'=>0,'msg'=>'您已经存在于管理团队中']);
+        }
+        //如果以前申请过 还未处理 不让他申请
+        $status = (new ApplyModel())->where(['user_id'=>$user_info['id'],'plate_id'=>$data['plate_id'],'status'=>0])->find();
+        if ($status){
+            return json(['code'=>0,'msg'=>'您之前申请的还被未处理,请耐心等待']);
+        }
+        //入库
+        $result = [
+            'plate_id'  => $data['plate_id'],
+            'user_id'   => $user_info['id'],
+            'apply_for_desc' => $data['content'],
+            'status'    => 0,
+            'create_time' => time(),
+        ];
+
+        (new ApplyModel())->insert($result);
+        return json(['code'=>1,'msg'=>'申请成功,请耐心等待审核结果']);
+    }
 }

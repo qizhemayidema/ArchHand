@@ -20,6 +20,8 @@ use app\api\model\ForumApplyForManager as ApplyModel;
 
 class MyForum extends Base
 {
+    public $manager_info = [];
+
     public $is_manager = false;     //是否拥有管理员身份
 
 
@@ -30,9 +32,10 @@ class MyForum extends Base
         //查看用户是否管理组成员
         $user_id = $this->userInfo['id'];
 
-        $managerInfo = (new ForumManagerModel())->where(['id' => $user_id])->select();
+        $managerInfo = (new ForumManagerModel())->where(['id' => $user_id])->select()->toArray();
 
         if ($managerInfo) {
+            $this->manager_info = $managerInfo;
             $this->is_manager = true;
         }
     }
@@ -148,7 +151,7 @@ class MyForum extends Base
 
         $res = (new ApplyModel())->alias('apply')
             ->join('forum_plate plate', 'plate.id = apply.plate_id')
-            ->where(['apply.user_id'=>$this->userInfo['id']]);
+            ->where(['apply.user_id' => $this->userInfo['id']]);
         $count = $res->count();
         $res = $res->field('plate.plate_name,apply.apply_for_desc,apply.create_time')
             ->order('apply.id', 'desc')
@@ -157,18 +160,94 @@ class MyForum extends Base
 
         return json(['code' => 1, 'data' => $res, 'count' => $count]);
 
-
     }
 
     //我的参与
-    public function myJoinIn()
+    public function myJoinIn(Request $request)
     {
+        $user_info = $this->userInfo;
+        $data = $request->post();
+        $rules = [
+            'page' => 'require',
+            'page_length' => 'require',
+        ];
 
+        $messages = [
+            'page.require' => 'page必须携带',
+            'page_length.require' => 'page_length必须携带',
+        ];
+        $validate = new Validate($rules, $messages);
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
+        }
+        $start = $data['page'] * $data['page_length'] - $data['page_length'];
+
+        $managerList = (new ForumManagerModel())->alias('manager')
+            ->join('forum_plate plate', 'plate.id = manager.plate_id')
+            ->leftJoin('forum_manager_role role', 'role.id = manager.role_id')
+            ->where(['manager.user_id' => $user_info['id']]);
+        $count = $managerList->count();
+        $managerList = $managerList->field('plate.plate_img,plate.plate_name,role.role_name,manager.role_id')
+            ->order('manager.role_id')
+            ->limit($start, $data['page_length'])
+            ->select()->toArray();
+        foreach ($managerList as $key => $value) {
+            if ($value['role_id'] == 0) {
+                $managerList[$key]['role_name'] = '版主';
+            }
+        }
+        return json(['code' => 1, 'data' => $managerList, 'count' => $count]);
     }
 
-    //待审核
+    //审核   状态 0 未审核 1 通过 2 拒绝
+    public function applyForStatus(Request $request)
+    {
+        $data = $request->post();
+        $status = [0,1,2];
+        $rules = [
+            'page' => 'require',
+            'page_length' => 'require',
+            'status'    => 'require',
+        ];
 
-    //已通过
+        $messages = [
+            'page.require' => 'page必须携带',
+            'page_length.require' => 'page_length必须携带',
+        ];
+        $validate = new Validate($rules, $messages);
+        if (!$validate->check($data)) {
+            return json(['code' => 0, 'msg' => $validate->getError()]);
+        }
+        if (!in_array($data['status'],$status)){
+            return json(['code'=>0,'msg'=>'操作非法']);
+        }
+        $start = $data['page'] * $data['page_length'] - $data['page_length'];
 
-    //已拒绝
+
+        $banPlateList = [];
+        $applyModel = new ApplyModel();
+        foreach ($this->manager_info as $key => $value) {
+            if ($value['role_id'] == 0) {
+                $banPlateList[] = $value['plate_id'];
+            }
+        }
+        if (!$banPlateList){
+            return json(['code'=>0,'msg'=>'操作越权']);
+        }
+        $applyInfo = $applyModel->alias('apply')
+            ->join('forum_plate plate', 'plate.id = apply.plate_id')
+            ->join('user user', 'user.id = apply.user_id')
+            ->whereIn('apply.plate_id', $banPlateList)
+            ->where(['status'=>$data['status']]);
+        $count = $applyInfo->count();
+        $applyInfo = $applyInfo
+            ->field('plate.plate_name,user.avatar_url,user.nickname,apply.apply_for_desc,apply.create_time')
+            ->order('apply.id')
+            ->limit($start, $data['page_length'])
+            ->select()->toArray();
+
+        return json(['code' => 1, 'data' => $applyInfo, 'count' => $count]);
+    }
+
+
 }

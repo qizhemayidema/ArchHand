@@ -76,7 +76,7 @@ class ForumManagerBase extends Controller
             $this->userInfo = (new UserModel())->where(['token' => $token, 'is_delete' => 1])->find();
             if (!$this->userInfo) {
                 header('Content-type: application/json');
-                exit(json_encode(['code' => 0, 'msg' => '获取用户信息失败'], 256));
+                exit(json_encode(['code' => -1, 'msg' => '获取用户信息失败'], 256));
             }
         }
     }
@@ -107,7 +107,7 @@ class ForumManagerBase extends Controller
         // TODO: Implement __get() method.
         if (!$this->$name) {
             header('Content-type: application/json');
-            exit(json_encode(['code' => 0, 'msg' => '获取用户信息失败'], 256));
+            exit(json_encode(['code' => -1, 'msg' => '获取用户信息失败'], 256));
         }
         return $this->$name;
     }

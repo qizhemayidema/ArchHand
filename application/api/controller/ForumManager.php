@@ -317,7 +317,7 @@ class ForumManager extends ForumManagerBase
         return json(['code' => 1, 'msg' => 'success']);
     }
 
-    //审核进入管理组申请
+    //审核同意用户进入管理组申请
     public function checkManagerJoin(Request $request)
     {
         $data = $request->post();

@@ -30,6 +30,7 @@ Route::group('/api',function(){
         Route::post('/info','api/My_user/info');
 
     });
+
     Route::group('/My_library',function (){
         Route::post('/myPublish','api/My_library/myPublish');
         Route::post('/myComment','api/My_library/myComment');
@@ -75,6 +76,7 @@ Route::group('/api',function(){
         Route::post('/like','api/Forum/like');
         Route::post('/likeComment','api/Forum/likeComment');
         Route::post('/comment','api/Forum/comment');
+        Route::post('/joinInManager','api/Forum/joinInManager');
     });
 
     Route::group('/Forum_manager',function(){

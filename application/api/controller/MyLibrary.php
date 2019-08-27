@@ -62,7 +62,7 @@ class MyLibrary extends Base
             '-1' => 0,
             '0' => 0,
         ];
-        $res = (new LibraryModel())->field('status,count(status) count')->group('status')->select()->toArray();
+        $res = (new LibraryModel())->where(['user_id'=>$user_id])->field('status,count(status) count')->group('status')->select()->toArray();
 
         foreach ($res as $key => $value) {
             $status[$value['status']] = $value['count'];
@@ -109,6 +109,7 @@ class MyLibrary extends Base
     //我的下载
     public function myDownload(Request $request)
     {
+        $user_info = $this->userInfo;
         $data = $request->post();
         $rules = [
             'page' => 'require',
@@ -129,6 +130,7 @@ class MyLibrary extends Base
         $download = (new UDLHModel())->alias('download')->where(['download.user_id' => $this->userInfo['id']]);
         $count = $download->count();
         $downloadList = $download->join('library library', 'download.library_id = library.id')
+            ->where(['download.user_id'=>$user_info['id']])
             ->field('library.name,library.id,download.create_time')
             ->order('download.id', 'desc')
             ->limit($start, $data['page_length'])
@@ -141,6 +143,7 @@ class MyLibrary extends Base
     public function myCollect(Request $request)
     {
         $data = $request->post();
+        $user_info = $this->userInfo;
         $rules = [
             'page' => 'require',
             'page_length' => 'require',
@@ -161,6 +164,7 @@ class MyLibrary extends Base
             ->where(['type' => '2']);
         $count = $collect->count();
         $collectList = $collect->join('library library', 'collect.collect_id = library.id')
+            ->where(['collect.user_id'=>$user_info['id']])
             ->field('library.name,library.id,collect.create_time')
             ->order('collect.id', 'desc')
             ->limit($start, $data['page_length'])
@@ -172,6 +176,7 @@ class MyLibrary extends Base
     public function myBuy(Request $request)
     {
         $data = $request->post();
+        $user_info = $this->userInfo;
         $rules = [
             'page' => 'require',
             'page_length' => 'require',
@@ -192,6 +197,7 @@ class MyLibrary extends Base
         $count = $userBuy->count();
 
         $buyInfo = $userBuy->join('library library', 'library.id = buy.buy_id')
+            ->where(['buy.user_id'=>$user_info['id']])
             ->field('library.id library_id,library.name,library.library_pic')
             ->field('buy.integral,buy.create_time')
             ->order('buy.id', 'desc')
@@ -201,4 +207,6 @@ class MyLibrary extends Base
         return json(['code' => 1, 'data' => $buyInfo, 'count' => $count]);
 
     }
+
+
 }
