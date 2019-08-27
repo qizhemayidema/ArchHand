@@ -21,5 +21,11 @@
     "5": "50",
     "6": "60",
     "7": "70"
+  },
+  "today_recommend": {
+    "today_title": "asdfasd",
+    "today_url": "http:\/\/www.sdfs.com",
+    "today_content": "<p>asdfadfasdfadfadfasdfadfasdf<\/p>",
+    "today_pic": "\/static\/uploads\/today_recommend\/20190826\/b235252c32d88b1e4fbf39fc5435de34.jpg"
   }
 }

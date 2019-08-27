@@ -84,17 +84,14 @@ class Library extends Base
                     ->order('is_top desc,create_time desc')->paginate($pageSize);
                 return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
             }
-
-            if($length){
-                $library = LibraryModel::field('id,library_pic,name')->where('id', 'in', function ($query) use ($attr_value, $length) {
-                    //查询出拥有特定属性的云库ID
-                    $library_id = $query->name('library_have_attribute_value')->field('library_id')
-                        ->where('attr_value_id', 'in', $attr_value)->group('library_id')->having('count(attr_value_id)=' . $length);
-                })->where('is_delete', 0)->where('status', 1)->where($filtrate, 1)
-                    ->order('is_top desc,create_time desc')->paginate($pageSize);
-                return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
-
-
+                if($length){
+                    $library = LibraryModel::field('id,library_pic,name')->where('id', 'in', function ($query) use ($attr_value, $length) {
+                        //查询出拥有特定属性的云库ID
+                        $library_id = $query->name('library_have_attribute_value')->field('library_id')
+                            ->where('attr_value_id', 'in', $attr_value)->group('library_id')->having('count(attr_value_id)=' . $length);
+                    })->where('is_delete', 0)->where('status', 1)->where($filtrate, 1)
+                        ->order('is_top desc,create_time desc')->paginate($pageSize);
+                    return json(['code' => 1, 'msg' => '查询成功', 'data' => $library], 200);
             } else {
                 $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
                     ->where('status', 1)->where('cate_id', $cate)->where($filtrate, 1)
@@ -570,11 +567,15 @@ class Library extends Base
             }
 
             //查找是否有文件
-//            $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
-//            $upyun = (new Upyun($config))->has($library['source_url']);
-//            if (!$upyun) {
-//                return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 200);
-//            }
+            $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
+            $upyun = (new Upyun($config))->has($library['source_url']);
+            if (!$upyun) {
+                return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 200);
+            }
+
+            if($library->user_id==$user['id']){
+                return json(['code'=>1,'msg'=>'查询成功','buy'=>3,'data'=>['source_url'=>Env::get('UPYUN.CDN_URL') . $library['source_url']]]);
+            }
 
             //判断是否以购买过
             $is_user_buy_history = UserBuyHistory::where('type', 1)->where('buy_id', $library['id'])->where('user_id', $user['id'])->count('id');
@@ -647,12 +648,18 @@ class Library extends Base
         if (!$id) {
             return json(['code' => 0, 'msg' => '缺少必要参数'], 422);
         }
-        $user_buy_history = UserBuyHistory::where('buy_id', $id)->where('user_id', $user['id'])->count('id');
-        if (!$user_buy_history) {
-            return json(['code' => 0, 'msg' => '您还没有购买过，不能下载哦'], 400);
-        }
 
         try {
+
+            $library = LibraryModel::where('id',$id)->find();
+
+            if($library->user_id!=$user['id']){
+                $user_buy_history = UserBuyHistory::where('buy_id', $id)->where('user_id', $user['id'])->count('id');
+                if (!$user_buy_history) {
+                    return json(['code' => 0, 'msg' => '您还没有购买过，不能下载'], 400);
+                }
+            }
+
             //增加下载记录
             $download = UserDownloadLibraryHistory::create(['library_id' => $id, 'user_id' => $user['id'], 'create_time' => time()]);
             if ($download) {

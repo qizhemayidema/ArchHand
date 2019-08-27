@@ -21,7 +21,8 @@
         "topthink/think-captcha": "2.*",
         "upyun/sdk": "^3.3",
         "ezyang/htmlpurifier": "^4.11",
-        "alibabacloud/client": "^1.5"
+        "alibabacloud/client": "^1.5",
+        "yansongda/pay": "2.7.8"
     },
     "autoload": {
         "psr-4": {

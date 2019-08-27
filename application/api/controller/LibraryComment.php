@@ -124,7 +124,8 @@ class LibraryComment extends Base
                     ->count('comment_id');
 
                 if($comment_like_user){
-                    return json(['code'=>0,'msg'=>'当前评论以点赞，不能重复点赞'],200);
+
+                   return json(['code'=>0,'msg'=>'当前评论以点赞，不能重复点赞'],200);
                 }
 
                 $comment = (new LibraryCommentModel())->where('id', $comment_id)->find();

@@ -96,7 +96,7 @@ class User extends Base
 
 
         if ($form['avatar_url'] == '') {
-            $form['avatar_url'] = 'static/uploads/user/default/20150828225753jJ4Fc.jpeg';
+            $form['avatar_url'] = '/static/uploads/user/default/20150828225753jJ4Fc.jpeg';
         }
         $user = UserModel::update($form);
         if ($user) {

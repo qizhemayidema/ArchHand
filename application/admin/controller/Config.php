@@ -72,6 +72,17 @@ class Config extends Base
             $sign[$k + 1] = $v;
 
         }
+
+        //今日力推
+
+        $today_recommend = [
+            'today_title'=>$form['today_title'],
+            'today_url'=>$form['today_url'],
+            'today_content'=>$form['today_content'],
+            'today_pic'=>$form['today_pic'],
+        ];
+
+
         $data = [
             'title' => trim($form['title']),
             'keyword' => trim($form['keyword']),
@@ -89,6 +100,7 @@ class Config extends Base
 //            'ratio_integral' => trim($form['ratio_integral']),
             'service_charge_integral' => trim($form['service_charge_integral']),
             'sign_in_integral' => $sign,
+            'today_recommend'=>$today_recommend,
         ];
 
         $data = json_encode($data);
