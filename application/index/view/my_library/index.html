@@ -1,0 +1,473 @@
+{extend name="base/base_solid"}
+
+{block name="title"}我的云库 - {$website_title} {/block}
+
+{block name="source"}
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__STATIC__/js/city-picker.min.js" charset="utf-8"></script>
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<script src="__STATIC__/js/select.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+    .hook{
+        display: none;
+    }
+    p img{
+        max-width: 100%;
+        height: auto;
+    }
+
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="my_box">
+    <div class="w1200">
+        <div class="mybox_H">
+            <div class="mybox_H_inr fl">我的云库</div>
+        </div>
+        <div class="w100 bgf mybox_B">
+            <div class="mybox_L">
+                <div class=" mybox_L_div">我的发布</div>
+                <div class=" mybox_L_div">我的收藏</div>
+                <div class=" mybox_L_div">我的评论</div>
+                <div class=" mybox_L_div">我的购买</div>
+                <div class=" mybox_L_div">下载记录</div>
+            </div>
+            <div class="mybox_R">
+                <!-- 我的发布 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的发布</span>
+                    </div>
+                    <div class="w100">
+                        {if !$library_count}
+                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        {else}
+                        <div id="publish_list_box">
+                            {foreach $library as $key => $value}
+                            <div class="js_list oh bb1 abb_list">
+                                {if $value.status == 1}
+                                <a href="{:url('libraryInfo',['library_id'=>$value.id])}">
+                                    {/if}
+                                    <div class="js_list_img  fl">
+                                        <img src="{$value.library_pic}" alt="">
+                                    </div>
+                                    <div class="js_info fl">
+                                        <div class="js_info_top oh mb20">
+                                            <h3>{$value.name}</h3>
+                                            <p class="fz14 c9">发布于{$value.create_time|date="Y-m-d H:i:s"}
+                                                {if $value.status == -1}
+                                                &nbsp;<span class="fz14 red">已拒绝</span>
+                                                {elseif $value.status == 0}
+                                                &nbsp;<span class="fz14 blue">审批中</span>
+                                                {else}
+                                                &nbsp;<span class="fz14 green">审核通过</span>
+                                                {/if}
+                                            </p>
+                                        </div>
+                                        {if $value.status == 1}
+                                        <div class="abb_list_icon oh">
+                                            <div class="fl oh mr20">
+                                                <img src="/static/index/images/scan.png" alt="" class="fl">
+                                                <span class="fz12 c9">{$value.see_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <img src="/static/index/images/flow.png" alt="" class="fl">
+                                                <span class="fz12 c9">{$value.comment_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <span class="hand" style="width: 12px;height: 13px;"></span>
+                                                <span class="fz12 c9">&nbsp;&nbsp;{$value.like_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <span class="uncollect" style="width: 14px;height: 13px;"></span>
+                                                <span class="fz12 c9">{$value.collect_num}</span>
+                                            </div>
+                                        </div>
+                                        {else if $value.status == -1}
+                                        <span class="fz14">未通过原因 : {$value.because}</span>
+                                        {/if}
+                                    </div>
+                                {if $value.status == 1}
+                                </a>
+                                {/if}
+                                <div class="js_btn">
+                                    <button class="red_btn" type="button" onclick="deletePublish('{$value.id}')">删除</button>
+                                </div>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box1">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 我的收藏 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的收藏</span>
+                    </div>
+                    <div class="w100">
+                        {if !$collect_count}
+                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        {else}
+                        <div id="collect_list_box">
+                            {foreach $collect as $key => $value}
+                            <div class="js_list oh bb1 abb_list">
+                                <a href="{:url('libraryInfo',['library_id'=>$value.library_id])}">
+                                    <div class="js_list_img  fl">
+                                        <img src="{$value.library_pic}" alt="">
+                                    </div>
+                                    <div class="js_info fl">
+                                        <div class="js_info_top oh mb20">
+                                            <h3>{$value.name}</h3>
+                                            <p class="fz14 c9">收藏于{$value.collect_time|date="Y-m-d H:i:s"}</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="js_btn">
+                                    <button class="blue_btn" type="button" onclick="deleteCollect('{$value.id}')">取消</button>
+                                </div>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box2">
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--我的评论-->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的评论</span>
+                    </div>
+                    <div class="w100">
+                        {if !$comment_count}
+                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        {else}
+                        <div id="comment_list_box">
+                            {foreach $comment as $key => $value}
+                            <div class="hf_list oh bb1 ">
+                                <a href="{:url('libraryInfo',['library_id'=>$value.library_id])}">
+                                    <h3 class="fz20 c3 oh1 fw9 mb5">{$value.name}</h3>
+                                    <p class="fz16 c9 oh2 mb10" style="width: 100%;">{$value.comment|raw}</p>
+                                    <div class="oh">
+                                        <!--<div class="hf_list_img">-->
+                                        <!--<img src="__STATIC__/images/banner_01.jpg" alt="">-->
+                                        <!--</div>-->
+                                        <div class="fz12 c9 lh26 fl mr20">评论时间：{$value.create_time|date="Y-m-d H:i:s"} </div>
+                                        <div class="abb_list_icon oh">
+                                            <div class="fl oh mr20">
+                                                <span class="hand" style="width: 12px;height: 13px;"></span>
+                                                <span class="fz12 c9">&nbsp;&nbsp;{$value.like_num}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box3">
+
+                        </div>
+                    </div>
+                </div>
+                <!--购买-->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的购买</span>
+                    </div>
+                    <div class="w100">
+                        {if !$buy_count}
+                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        {else}
+                        <div id="buy_list_box">
+                            {foreach $buy as $key => $value}
+                            <div class="js_list oh bb1 abb_list">
+                                <a href="{:url('libraryInfo',['library_id'=>$value.library_id])}">
+                                    <div class="js_list_img  fl">
+                                        <img src="{$value.library_pic}" alt="">
+                                    </div>
+                                    <div class="js_info fl">
+                                        <div class="js_info_top oh mb20">
+                                            <h3>{$value.library_name}</h3>
+                                            <p class="fz14 c9">购买于{$value.buy_time|date="Y-m-d H:i:s"}</p>
+                                            <p class="fz14 c9">花费 {$value.integral} 筑手币</p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="js_btn">
+                                    <button class="blue_btn" type="button" onclick="abcd('{$value.library_id}')">下载</button>
+                                </div>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box4">
+
+                        </div>
+                    </div>
+                </div>
+                <!--下载-->
+                <div class="mybox_R_one hook">
+                    <table class="w100 my_zsb_msg" border="" cellspacing="" cellpadding="">
+                        <tr>
+                            <th style="width: 50%;">日期</th>
+                            <th>文库</th>
+                        </tr>
+                        <tbody id="download_list_box">
+                        {foreach $download as $key => $value}
+                        <tr class="tac">
+                            <td >{$value.create_time|date="Y-m-d H:i:s"}</td>
+                            <td><a href="{:url('libraryInfo',['library_id'=>$value.id])}">{$value.name}</a></td>
+                        </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box5">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    $(".tx_list").click(function() {
+        var _div = $(this).find('div')
+        if (_div.hasClass('tx_active')) {
+            _div.removeClass('tx_active');
+        } else {
+            _div.addClass('tx_active');
+        }
+    });
+    $(".hook").eq(0).show();
+    $(".mybox_L_div").eq(0).addClass('cur');
+    $(".mybox_L_div").click(function() {
+        var _index = $(".mybox_L_div").index(this);
+        $(".hook").hide();
+        $(".hook").eq(_index).show();
+        $(".mybox_L_div").removeClass('cur');
+        $(".mybox_L_div").eq(_index).addClass('cur');
+    })
+
+    var deletePublish = function(library_id){
+        layer.confirm('您确定删除吗?',function(){
+            $.ajax({
+                url:"{:url('/index/My_library/delLibrary')}",
+                type:'post',
+                dataType:'json',
+                data:{
+                    library_id : library_id,
+                },
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg)
+                    } else{
+                        layer.msg('删除成功')
+                        setTimeout(function(){
+                            window.location.reload()
+                        },750)
+                    }
+                }
+            })
+        })
+    }
+    var deleteCollect = function(library_id){
+        $.ajax({
+            url:"{:url('/index/Library/collect')}",
+            type:'post',
+            dataType:'json',
+            data:{
+                library_id : library_id,
+            },
+            success:function(data){
+                if (data.code == 0){
+                    layer.msg(data.msg)
+                } else{
+                    layer.msg('操作成功')
+                    setTimeout(function(){
+                        window.location.reload()
+                    },750)
+                }
+            }
+        })
+    }
+    var abcd = function(library_id){
+        $.ajax({
+            url:"{:url('/index/Library/buy')}",
+            type:'post',
+            data:{
+                library_id : library_id,
+            },
+            dataType:'json',
+            success:function(data){
+                if (data.code == 1){
+                    if (data.msg == '购买成功'){
+
+                        layer.msg('购买成功');
+                    }else{
+                        layer.msg('请等待...');
+                    }
+                    window.location.href = data.data.source_url
+                }  else{
+                    layer.msg(data.msg);
+                }
+            }
+        })
+    }
+    $(function(){
+        {if $library_count}
+        $('.M-box1').pagination({
+            totalData:{$library_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/My_Library/getMyPublishList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#publish_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+        {if $collect_count}
+        $('.M-box2').pagination({
+                totalData:{$collect_count},
+                showData:{$page_length},
+                // mode: 'fixed',
+                callback: function (api) {
+                    var page=api.getCurrent()
+                    $.ajax({
+                        url:"{:url('/index/My_library/getMyCollectList')}",
+                        type:"post",
+                        data:{
+                            page : page,
+                        },
+                        dataType:"json",
+                        success:function(data){
+                            if (data.code == 0){
+                                layer.msg(data.msg);
+                            } else{
+                                $('#collect_list_box').html(data.data);
+                            }
+                        }
+                    })
+                }
+            })
+        {/if}
+        {if $comment_count}
+        $('.M-box3').pagination({
+                totalData:{$comment_count},
+                showData:{$page_length},
+                // mode: 'fixed',
+                callback: function (api) {
+                    var page=api.getCurrent()
+                    $.ajax({
+                        url:"{:url('/index/My_Library/getMyCommentList')}",
+                        type:"post",
+                        data:{
+                            page : page,
+                        },
+                        dataType:"json",
+                        success:function(data){
+                            if (data.code == 0){
+                                layer.msg(data.msg);
+                            } else{
+                                $('#comment_list_box').html(data.data);
+                            }
+                        }
+                    })
+                }
+            })
+        {/if}
+        {if $buy_count}
+        $('.M-box4').pagination({
+            totalData:{$buy_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/My_Library/getMyBuyList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#buy_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+        {if $download_count}
+        $('.M-box5').pagination({
+            totalData:{$download_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/My_Library/getMyDownloadList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#download_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+    })
+</script>
+{/block}

@@ -88,12 +88,12 @@ class MyForum extends Base
         }
         $start = $data['page'] * $data['page_length'] - $data['page_length'];
         $comment = (new ForumCommentModel())->where(['user_id' => $this->userInfo['id'], 'status' => 1]);
+        $count = $comment->count();
 
         $commentList = $comment->field('content,status,create_time')->order('id', 'desc')
             ->limit($start, $data['page_length'])
             ->select();
 
-        $count = $comment->count();
 
         return json(['code' => 1, 'data' => $commentList, 'count' => $count, 'is_manager' => $this->is_manager]);
     }
@@ -153,7 +153,7 @@ class MyForum extends Base
             ->join('forum_plate plate', 'plate.id = apply.plate_id')
             ->where(['apply.user_id' => $this->userInfo['id']]);
         $count = $res->count();
-        $res = $res->field('plate.plate_name,apply.apply_for_desc,apply.create_time')
+        $res = $res->field('plate.id plate_id,plate.plate_img,plate.plate_name,apply.apply_for_desc,apply.create_time')
             ->order('apply.id', 'desc')
             ->limit($start, $data['page_length'])
             ->select();
@@ -203,11 +203,11 @@ class MyForum extends Base
     public function applyForStatus(Request $request)
     {
         $data = $request->post();
-        $status = [0,1,2];
+        $status = [0, 1, 2];
         $rules = [
             'page' => 'require',
             'page_length' => 'require',
-            'status'    => 'require',
+            'status' => 'require',
         ];
 
         $messages = [
@@ -218,8 +218,8 @@ class MyForum extends Base
         if (!$validate->check($data)) {
             return json(['code' => 0, 'msg' => $validate->getError()]);
         }
-        if (!in_array($data['status'],$status)){
-            return json(['code'=>0,'msg'=>'操作非法']);
+        if (!in_array($data['status'], $status)) {
+            return json(['code' => 0, 'msg' => '操作非法']);
         }
         $start = $data['page'] * $data['page_length'] - $data['page_length'];
 
@@ -231,14 +231,14 @@ class MyForum extends Base
                 $banPlateList[] = $value['plate_id'];
             }
         }
-        if (!$banPlateList){
-            return json(['code'=>0,'msg'=>'操作越权']);
+        if (!$banPlateList) {
+            return json(['code' => 0, 'msg' => '操作越权']);
         }
         $applyInfo = $applyModel->alias('apply')
             ->join('forum_plate plate', 'plate.id = apply.plate_id')
             ->join('user user', 'user.id = apply.user_id')
             ->whereIn('apply.plate_id', $banPlateList)
-            ->where(['status'=>$data['status']]);
+            ->where(['status' => $data['status']]);
         $count = $applyInfo->count();
         $applyInfo = $applyInfo
             ->field('plate.plate_name,user.avatar_url,user.nickname,apply.apply_for_desc,apply.create_time')

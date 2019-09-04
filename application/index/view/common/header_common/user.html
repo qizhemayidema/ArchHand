@@ -1,0 +1,54 @@
+<div class="fr loginbox m768hide">
+    {if $user_info}
+    <div id="cssmenu" class="loginz1 clearfix fl" style="width: auto; margin-top: 20px;">
+        <ul style="width: auto;">
+            <li style="width: auto;">
+                <img src="{$user_info.avatar_url}" alt="" class="dh_tx">
+                <a class="dh_msg" href="mymsg.html">
+                    <p class="dh_msgP1" style="margin: 5px 0;">
+                        {:mb_substr($user_info.nickname,0,5)}
+                        {if strlen($user_info.nickname) > 5}...
+                        {/if}
+                    </p>
+                    <p class="dh_msgP2">筑手币: <span class="cff6600">{$user_info.integral}</span></p>
+                </a>
+                <ul style="top: 45px;">
+                    <li>
+                        <a href="{:url('myInfo')}">我的信息</a>
+                    </li>
+                    <li>
+                        <a href="{:url('myForum')}">我的社区</a>
+                    </li>
+
+                    <li>
+                        <a href="{:url('myLibrary')}">我的云库</a>
+                    </li>
+
+                    <li>
+                        <a href="{:url('myClass')}">我的课程</a>
+                    </li>
+                    <li>
+                        <a href="{:url('myAccount')}">账户信息</a>
+                    </li>
+                    <li>
+                        <a href="{:url('/index/Login/logout')}">退出</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <a class="qiandao fl cf" href="{:url('signIn')}">
+        <img src="__STATIC__/images/qiandao.png" alt="">签到
+        <div class="qdtip">
+            赚筑手币
+        </div>
+    </a>
+    {else}
+    <div class="loginz clearfix fl">
+        <div onclick="showMarks(loginHTML,1);">登录</div>
+        <div>|</div>
+        <div onclick="showMarks(registerHTML,0);">注册</div>
+    </div>
+    {/if}
+
+</div>

@@ -1,0 +1,35 @@
+{foreach $forum_list as $key => $value}
+<div class="tiezi clearfix zhul_sy_zyList cspointer" onclick="window.location.href='{:url('forumInfo',['forum_id'=>$value.id])}'">
+    <img class="tieImg" src="{$value.pic}" alt="">
+    <div class="zhul_nzy_rinfo">
+        <div class="zhul_zy_rtop">
+            <h3 class="zhul_zy_rtit">
+                <a href="###"> {$value.name}</a>
+            </h3>
+            <a href="#" rel="nofollow">
+                {if $value.is_classics}
+                <p class="zhul_zy_jing">精</p>
+                {/if}
+            </a>
+            {if $value.is_top}
+            <p class="zhul_zy_jing">
+                <a class="qxzd">置顶</a>
+            </p>
+            {/if}
+        </div>
+        <!---->
+        <div class="zhul_zy_fbdate" style="line-height: 30px;padding: 0;">
+            <!-- style="width:auto;" -->
+            <!-- style="width:auto;" -->
+            <span class="zhul_sy_headerBox zhul_pop_parent"><span>{$value.nickname}</span></span>
+            发表于<em>{$value.create_time|date="Y-m-d H:i:s"}</em>
+            <img src="__STATIC__/images/scan.png" style="vertical-align: middle;margin-left: 16px">&nbsp;<em>{$value.see_num}</em>人浏览
+            <img src="__STATIC__/images/flow.png" style="vertical-align:middle;padding-bottom: 1px;margin-left: 16px;">&nbsp;
+            <em>{$value.comment_num}</em>人回复&nbsp;&nbsp;
+        </div>
+        <div class="zhul_zy_ltcon2">
+            {$value.desc}
+        </div>
+    </div>
+</div>
+{/foreach}

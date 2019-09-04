@@ -2,6 +2,7 @@
 
 namespace app\api\controller;
 
+use app\common\model\Common;
 use think\Exception;
 use think\Request;
 use think\Validate;
@@ -16,6 +17,7 @@ use app\api\model\ForumLikeHistory as LikeHistoryModel;
 use app\api\model\ForumCommentLikeHistory as CommentLikeHistoryModel;
 use app\api\model\UserIntegralHistory as UserIntegralHistoryModel;
 use app\api\model\ForumApplyForManager as ApplyModel;
+use app\common\controller\UploadPic as UploadPic;
 
 class Forum extends Base
 {
@@ -94,14 +96,14 @@ class Forum extends Base
         if (!$plateInfo || $plateInfo['is_delete'] == 1)
             return json(['code'=>0,'msg'=>'所选板块不存在']);
 
-        $expTagStr = explode(',',$data['tag_str']);
+        $expTagStr = explode('，',$data['tag_str']);
         if (count($expTagStr) > 5){
             return json(['code'=>0,'msg'=>'标签最多只能有五个']);
         }
 
         foreach ($expTagStr as $key => $value){
-            if (count($value) > 10){
-                return json(['code'=>0,'msg'=>'每个标签最多长度为10']);
+            if (strlen($value) > 30){
+                return json(['code'=>0,'msg'=>'每个标签最多长度为30']);
             }
         }
 
@@ -113,6 +115,11 @@ class Forum extends Base
 //        if (!file_exists('.' . $data['pic'])){
 //            return json(['code'=>0,'msg'=>'封面不存在']);
 //        }
+        $pic_temp = (new UploadPic())->uploadBase64Pic($data['pic'],'forum/'.$user_info['id'].'/');
+        if ($pic_temp['code'] == 0){
+            return json(['code'=>0,'msg'=>'上传失败']);
+        }
+
         //加载默认配置
         $config = \HTMLPurifier_Config::createDefault();
         //实例化对象
@@ -123,7 +130,7 @@ class Forum extends Base
         $result['cate_id'] = $plateInfo['cate_id'];
         $result['plate_id'] = htmlentities($plateInfo['id']);
         $result['name'] = htmlentities($data['name']);
-        $result['pic'] = $data['pic'];
+        $result['pic'] = $pic_temp['msg'];
         $result['tag_str'] = htmlentities($data['tag_str']);
         $result['user_id'] = $user_info['id'];
         $result['create_time'] = time();
@@ -132,12 +139,29 @@ class Forum extends Base
         $forumModel = new ForumModel();
         $forumModel->startTrans();
         try{
-            (new ForumModel())->insert($result);
+            $forumModel->insert($result);
             (new PlateModel())->where(['id'=>$plateInfo['id']])->setInc('forum_num');
+
+            //判断是否加筑手币
+            $today = strtotime(date('Y-m-d',time()));
+
+            $count = $this->getConfig('issue_integral_count');
+            $onceIntegral = $this->getConfig('issue_integral');
+
+            $today_count = (new UserIntegralHistoryModel())
+                ->where(['user_id' => $user_info['id'], 'type' => 8])
+                ->where('create_time', '>', $today)
+                ->limit($count)->count();
+
+            if ($today_count != $count){
+                //如果加 筑手币  需要录入积分变动记录
+                $this->addUserIntegralHistory(8,$onceIntegral);
+            }
+
             $forumModel->commit();
         }catch (\Exception $e){
             $forumModel->rollback();
-            return json(['code'=>0,'msg'=>'操作失败']);
+            return json(['code'=>0,'msg'=>$e->getMessage().$e->getLine()]);
         }
         return json(['code'=>1,'msg'=>'success']);
     }
@@ -174,7 +198,7 @@ class Forum extends Base
             return json(['code'=>0,'msg'=>$validate->getError()]);
         }
         $type_arr = [0,1,2,3,4];
-        if (isset($data['type']) && !in_array($data['type'],$type_arr)){
+            if (isset($data['type']) && !in_array($data['type'],$type_arr)){
             return json(['code'=>0,'msg'=>'error2']);
         }
         $plate_info = new PlateModel();
@@ -192,7 +216,7 @@ class Forum extends Base
             if (!isset($data['type'])) $data['type'] = 0;
             $forum_list = $forum_list->alias('forum')
                 ->join('user','forum.user_id = user.id')
-                ->field('forum.name,user.nickname,forum.is_classics,forum.is_top,forum.create_time,forum.comment_num,forum.see_num')
+                ->field('forum.pic,forum.name,user.nickname,forum.is_classics,forum.is_top,forum.create_time,forum.comment_num,forum.see_num')
                 ->field('forum.id,forum.desc')
                 ->where(['forum.is_delete'=>0]);
             switch ($data['type']){
@@ -548,55 +572,5 @@ class Forum extends Base
 
     }
 
-    //申请加入管理团队
-    public function joinInManager(Request $request)
-    {
 
-        $data = $request->post();
-
-        $rules = [
-            'plate_id'  => 'require|number',
-            'content'   => 'require|max:300',
-        ];
-
-        $messages = [
-            'content.require'   => '原因不能为空',
-            'content.max'       => '原因最大长度为300',
-        ];
-
-        $validate = new Validate($rules,$messages);
-
-        if (!$validate->check($data)){
-            return json(['code'=>0,'msg'=>$validate->getError()]);
-        }
-
-        $user_info = $this->userInfo;
-        //判断模块是否存在
-        $plateInfo = (new PlateModel())->where(['id'=>$data['plate_id'],'is_delete'=>0])->find();
-        if(!$plateInfo){
-            return json(['code'=>0,'msg'=>'该板块不存在']);
-        }
-
-        //判断是否为此板块管理员
-        $manager = (new ForumManagerModel())->where(['user_id'=>$user_info['id'],'plate_id'=>$data['plate_id']])->select();
-        if ($manager){
-            return json(['code'=>0,'msg'=>'您已经存在于管理团队中']);
-        }
-        //如果以前申请过 还未处理 不让他申请
-        $status = (new ApplyModel())->where(['user_id'=>$user_info['id'],'plate_id'=>$data['plate_id'],'status'=>0])->find();
-        if ($status){
-            return json(['code'=>0,'msg'=>'您之前申请的还被未处理,请耐心等待']);
-        }
-        //入库
-        $result = [
-            'plate_id'  => $data['plate_id'],
-            'user_id'   => $user_info['id'],
-            'apply_for_desc' => $data['content'],
-            'status'    => 0,
-            'create_time' => time(),
-        ];
-
-        (new ApplyModel())->insert($result);
-        return json(['code'=>1,'msg'=>'申请成功,请耐心等待审核结果']);
-    }
 }

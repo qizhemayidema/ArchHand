@@ -1,0 +1,132 @@
+{extend name="base/base"}
+
+{block name="title"}首页 - {$website_title}{/block}
+
+{block name="body"}
+<!-- banner -->
+<div class="banner_box fz0">
+    <img class="banner" src="__STATIC__/images/banner_01.jpg" alt="">
+    <div class="ssmk">
+        <p class="sstip">搜索精美案例作品</p>
+        <div class="ssbox  m768hide">
+            <img class="sslogo" src="__STATIC__/images/logo1.png" alt="">
+            <input type="text" placeholder="搜索云库" id="search_input"/>
+            <img class="ssbtn" src="__STATIC__/images/ss_03.png" alt="" id="search_button"/>
+        </div>
+    </div>
+    <div class="bannertext m768hide">
+        <div class="main ">
+            【网站公告】：{$announcement}
+        </div>
+    </div>
+</div>
+<!-- / 分类/ -->
+<div class="m768show clearfix pb10">
+    <div class="ssbox">
+        <img class="sslogo" src="__STATIC__/images/logo1.png" alt=""><input type="text" placeholder="搜索云库">
+        <img class="ssbtn cspointer" src="__STATIC__/images/ss_03.png" alt="">
+    </div>
+</div>
+<div class="box2">
+    <div class="inrmain">
+        <div class="inrmk1">
+            <div class="inrtit">
+                <p class="inrtitp">
+                    <span class="text1">今日力推</span>
+                    <span class="text2">/ Recommended today</span>
+                </p>
+            </div>
+            <div class="hengxian"></div>
+            <div class="inrbox1 box_siz clearfix">
+                <img class="inr1img1" src="{$today_recommend.today_pic}" alt="">
+                <div class="inr1text1">
+                    <div class="dname">{$today_recommend.today_title}</div>
+                    <div class="oh4 inr1inr">
+                        {$today_recommend.today_content}
+                    </div>
+                    <a href="{$today_recommend.today_url}" target="_blank" class="more1">
+                        了解更多>>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- /最新分享/ -->
+        <div class="inrmk1">
+            <div class="inrtit">
+                <p class="inrtitp">
+                    <span class="text1">官方云库</span>
+                    <span class="text2">/ official cloud library</span>
+                </p>
+            </div>
+            <div class="hengxian"></div>
+            <div class="inrbox1 box_siz clearfix">
+                {foreach $official_library as $key => $value}
+                <div class="inr2box cspointer" onclick="window.location.href='{:url('libraryInfo',['library_id'=>$value.id])}'">
+                    <p><img src="{$value.library_pic}" alt="">
+                        {if $value.is_official}
+                        <a class="hot"></a>
+                        {/if}
+                    </p>
+                    <div>{$value.name}</div>
+                </div>
+                {/foreach}
+            </div>
+
+        </div>
+        <!-- /最新云库/ -->
+        <div class="inrmk1">
+            <div class="inrtit">
+                <p class="inrtitp">
+                    <span class="text1">最新云库</span>
+                    <span class="text2">/ latest cloud library</span>
+                </p>
+            </div>
+            <div class="hengxian"></div>
+            <div class="inrbox1 box_siz clearfix">
+                {foreach $library as $key => $value}
+                <div class="inr2box cspointer" onclick="window.location.href='{:url('libraryInfo',['library_id'=>$value.id])}'">
+                    <p><img src="{$value.library_pic}" alt=""></p>
+                    <div>{$value.name}</div>
+                </div>
+                {/foreach}
+            </div>
+        </div>
+        <!-- /*最新课程*/ -->
+        <div class="inrmk1">
+            <div class="inrtit">
+                <p class="inrtitp">
+                    <span class="text1">最新课堂</span>
+                    <span class="text2">/ latest course</span>
+                </p>
+            </div>
+            <div class="hengxian"></div>
+            <div class="inrbox1 box_siz clearfix">
+                {foreach $classes as $key => $value}
+                <div class="inr2box cspointer" onclick="window.location.href='{:url('classInfo',['class_id'=>$value.id])}'">
+                    <div class="ccz">
+                        <p><img src="__STATIC__/images/play.png"></p>
+                    </div>
+                    <img src="{$value.class_pic}" alt="">
+                    <div>{$value.name}</div>
+                </div>
+                {/foreach}
+            </div>
+        </div>
+        <!-- /合作方/ -->
+        <div class="inrmk1">
+            <div class="inrtit">
+                <p class="inrtitp">
+                    <span class="text1">合作方</span>
+                    <span class="text2">/ parter</span>
+                </p>
+            </div>
+            <div class="hengxian"></div>
+            <div class="inrbox1 box_siz clearfix">
+                {foreach $partner as $key => $value}
+                <div class="hzf"><a href="{$value.url}" target="_blank">{$value.name}</a></div>
+                {/foreach}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

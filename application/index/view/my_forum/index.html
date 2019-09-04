@@ -1,0 +1,498 @@
+{extend name="base/base_solid"}
+
+{block name="title"}我的社区 - {$website_title} {/block}
+
+{block name="source"}
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__STATIC__/js/city-picker.min.js" charset="utf-8"></script>
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<script src="__STATIC__/js/select.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+    .hook{
+        display: none;
+    }
+    p img{
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="my_box">
+    <div class="w1200">
+        <div class="mybox_H">
+            <div class="mybox_H_inr fl">我的社区</div>
+        </div>
+        <div class="w100 bgf mybox_B">
+            <div class="mybox_L">
+                <div class=" mybox_L_div">我的帖子</div>
+                <div class=" mybox_L_div">我的收藏</div>
+                <div class=" mybox_L_div">我的评论</div>
+                <div class=" mybox_L_div">我的申请</div>
+                <div class=" mybox_L_div">我的参与</div>
+            </div>
+            <div class="mybox_R">
+                <!-- 我的发布 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的帖子</span>
+                    </div>
+                    <div class="w100">
+                        {if !$publish_count}
+                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        {else}
+                        <div id="publish_list_box">
+
+                            {foreach $publish as $key => $value}
+                            <div class="js_list oh bb1 abb_list">
+                                <a href="{:url('forumInfo',['forum_id'=>$value.id])}">
+                                    <div class="js_list_img  fl">
+                                        <img src="{$value.pic}" alt="">
+                                    </div>
+                                    <div class="js_info fl">
+                                        <div class="js_info_top oh mb20">
+                                            <h3>{$value.name}</h3>
+                                            <p class="fz14 c9">发帖于{$value.create_time|date="Y-m-d H:i:s"}</p>
+                                        </div>
+                                        <div class="abb_list_icon oh">
+                                            <div class="fl oh mr20">
+                                                <img src="/static/index/images/scan.png" alt="" class="fl">
+                                                <span class="fz12 c9">{$value.see_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <img src="/static/index/images/flow.png" alt="" class="fl">
+                                                <span class="fz12 c9">{$value.comment_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <span class="hand" style="width: 12px;height: 13px;"></span>
+                                                <span class="fz12 c9">&nbsp;&nbsp;{$value.like_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <span class="uncollect" style="width: 14px;height: 13px;"></span>
+                                                <span class="fz12 c9">{$value.collect_num}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="js_btn">
+                                    <button class="red_btn" type="button" onclick="deletePublish('{$value.id}')">删除</button>
+                                </div>
+                            </div>
+                            {/foreach}
+
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box1">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 我的收藏 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的收藏</span>
+                    </div>
+                    <div class="w100">
+                        {if !$collect_count}
+                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        {else}
+                        <div id="collect_list_box">
+                            {foreach $collect as $key => $value}
+                            <div class="js_list oh bb1 abb_list">
+                                <a href="{:url('forumInfo',['forum_id'=>$value.id])}">
+                                    <div class="js_list_img  fl">
+                                        <img src="{$value.pic}" alt="">
+                                    </div>
+                                    <div class="js_info fl">
+                                        <div class="js_info_top oh mb20">
+                                            <h3>{$value.name}</h3>
+                                            <p class="fz14 c9">收藏于{$value.create_time|date="Y-m-d H:i:s"}</p>
+                                        </div>
+                                        <div class="abb_list_icon oh">
+                                            <div class="fl oh mr20">
+                                                <img src="/static/index/images/scan.png" alt="" class="fl">
+                                                <span class="fz12 c9">{$value.see_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <img src="/static/index/images/flow.png" alt="" class="fl">
+                                                <span class="fz12 c9">{$value.comment_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <span class="hand" style="width: 12px;height: 13px;"></span>
+                                                <span class="fz12 c9">&nbsp;&nbsp;{$value.like_num}</span>
+                                            </div>
+                                            <div class="fl oh mr20">
+                                                <span class="uncollect" style="width: 14px;height: 13px;"></span>
+                                                <span class="fz12 c9">{$value.collect_num}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="js_btn">
+                                    <button class="blue_btn" type="button" onclick="deleteCollect('{$value.id}')">取消</button>
+                                </div>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box2">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 我的回复 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的评论</span>
+                    </div>
+                    <div class="w100">
+                        {if !$comment_count}
+                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        {else}
+                        <div id="comment_list_box">
+                        {foreach $comment as $key => $value}
+                        <div class="hf_list oh bb1 ">
+                            <a href="{:url('forumInfo',['forum_id'=>$value.id])}">
+                                <h3 class="fz20 c3 oh1 fw9 mb5">{$value.name}</h3>
+                                <p class="fz16 c9 oh2 mb10" style="width: 100%;">{$value.content|raw}</p>
+                                <div class="oh">
+                                    <!--<div class="hf_list_img">-->
+                                    <!--<img src="__STATIC__/images/banner_01.jpg" alt="">-->
+                                    <!--</div>-->
+                                    <div class="fz12 c9 lh26 fl mr20">评论时间：{$value.create_time|date="Y-m-d H:i:s"} </div>
+                                    <div class="abb_list_icon oh">
+                                        <div class="fl oh mr20">
+                                            <span class="hand" style="width: 12px;height: 13px;"></span>
+                                            <span class="fz12 c9">&nbsp;&nbsp;{$value.like_num}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {/foreach}
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box3">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 我的申请 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的申请</span>
+                    </div>
+                    <div class="w100">
+                        {if !$apply_count}
+                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        {else}
+                        <div id="apply_list_box">
+                        {foreach $apply as $key => $value}
+                        <div class="js_list oh bb1 sq_list">
+                            <a href="{:url('forumPlateIndex',['plate_id'=>$value.plate_id])}">
+
+                            <div class="js_list_img  fl">
+                                <img src="{$value.plate_img}" alt="">
+                            </div>
+                            <div class="js_info fl">
+                                <div class="js_info_top oh">
+                                    <h3>{$value.plate_name}</h3>
+                                    <span class="fz14 c9 mr20">{$value.create_time|date="Y-m-d H:i:s"}</span>
+                                    {if $value.status == 0}
+                                    <span class="fz14 blue">审批中</span>
+                                    {elseif $value.status == 1}
+                                    <span class="fz14 green">审核通过</span>
+                                    {elseif $value.status == 2}
+                                    <span class="fz14 red">已拒绝</span>
+                                    {/if}
+                                </div>
+                                <div class="js_info_content fz14 c6">
+                                    申请原因：{$value.apply_for_desc}</div>
+                            </div>
+                            </a>
+                            {if $value.status == 0}
+                            <div class="js_btn">
+                                <button class="blue_btn" type="button"  onclick="delApply('{$value.plate_id}')">取消申请</button>
+                            </div>
+                            {/if}
+                        </div>
+                        {/foreach}
+                        </div>
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box4">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 我的参与 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的参与</span>
+                    </div>
+                    <div class="w100">
+                        <div id="join_list_box">
+                            {foreach $manager as $key => $value}
+                            <div class="js_list oh bb1">
+                                <div class="js_list_img fl bor0">
+                                    <img src="{$value.plate_img}" alt="">
+                                </div>
+                                <div class="js_info fl">
+                                    <div class="js_info_top oh">
+                                        <h3>{$value.plate_name}</h3>
+                                    </div>
+                                    <div class="js_info_top oh">
+                                        <a href="javascript:void(0);">{$value.role_name}</a>
+                                        {if $value.role_id == 0}
+                                        <a href="{:url('forumPlateManagerIndex',['plate_id'=>$value.plate_id])}">管理</a>
+                                        <br/><span style="color: #999;">加入时间 {$value.create_time|date="Y-m-d H:i:s"}</span>
+                                        {/if}
+                                    </div>
+                                </div>
+                                <!--<div class="js_btn">-->
+                                <!--<button class="blue_btn" type="button">申请退出</button>-->
+                                <!--</div>-->
+                            </div>
+                            {/foreach}
+                        </div>
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box5">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    $(".tx_list").click(function() {
+        var _div = $(this).find('div')
+        if (_div.hasClass('tx_active')) {
+            _div.removeClass('tx_active');
+        } else {
+            _div.addClass('tx_active');
+        }
+    });
+    $(".hook").eq(0).show();
+    $(".mybox_L_div").eq(0).addClass('cur');
+    $(".mybox_L_div").click(function() {
+        var _index = $(".mybox_L_div").index(this);
+        $(".hook").hide();
+        $(".hook").eq(_index).show();
+        $(".mybox_L_div").removeClass('cur');
+        $(".mybox_L_div").eq(_index).addClass('cur');
+    })
+
+    var deletePublish = function(forum_id){
+        layer.confirm('您确定删除吗?',function(){
+            $.ajax({
+                url:"{:url('/index/My_forum/delForum')}",
+                type:'post',
+                dataType:'json',
+                data:{
+                    forum_id : forum_id,
+                },
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg)
+                    } else{
+                        layer.msg('删除成功')
+                        setTimeout(function(){
+                            window.location.reload()
+                        },750)
+                    }
+                }
+            })
+        })
+    }
+    var deleteCollect = function(forum_id){
+        $.ajax({
+            url:"{:url('/index/Forum/collect')}",
+            type:'post',
+            dataType:'json',
+            data:{
+                forum_id : forum_id,
+            },
+            success:function(data){
+                if (data.code == 0){
+                    layer.msg(data.msg)
+                } else{
+                    layer.msg('操作成功')
+                    setTimeout(function(){
+                        window.location.reload()
+                    },750)
+                }
+            }
+        })
+    }
+    var delApply = function(plate_id){
+        $.ajax({
+            url:"{:url('/index/My_forum/delApply')}",
+            type:'post',
+            dataType:'json',
+            data:{
+                plate_id : plate_id,
+            },
+            success:function(data){
+                if (data.code == 0){
+                    layer.msg(data.msg)
+                } else{
+                    layer.msg('操作成功')
+                    setTimeout(function(){
+                        window.location.reload()
+                    },750)
+                }
+            }
+        })
+    }
+    $(function(){
+        {if $publish_count}
+        $('.M-box1').pagination({
+            totalData:{$publish_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/My_forum/getMyPublishList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#publish_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+        {if $collect_count}
+        $('.M-box2').pagination({
+            totalData:{$collect_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/My_forum/getMyCollectList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#collect_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+        {if $comment_count}
+        $('.M-box3').pagination({
+            totalData:{$comment_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/My_forum/getMyCommentList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#comment_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+        {if $apply_count}
+        $('.M-box4').pagination({
+            totalData:{$apply_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/My_forum/getMyApplyList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#apply_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+        {if $manager_count}
+        $('.M-box5').pagination({
+            totalData:{$manager_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/My_forum/getMyJoinInList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#join_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+    })
+</script>
+{/block}

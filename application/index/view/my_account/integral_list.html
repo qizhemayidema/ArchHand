@@ -1,0 +1,13 @@
+{foreach $integral as $key => $value}
+<tr class="tac">
+    <td >{$value.create_time|date="Y-m-d H:i:s"}</td>
+    {if $value.type == '购买课程' || $value.type == '购买云库素材'}
+    <td>支出</td>
+    <td class="cf14f4f">{$value.integral}</td>
+    {else}
+    <td>收入</td>
+    <td class="c00a012">{$value.integral}</td>
+    {/if}
+    <td>{$value.type}</td>
+</tr>
+{/foreach}

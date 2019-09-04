@@ -1,0 +1,22 @@
+{foreach $manager as $key => $value}
+<div class="js_list oh bb1">
+    <div class="js_list_img fl bor0">
+        <img src="{$value.plate_img}" alt="">
+    </div>
+    <div class="js_info fl">
+        <div class="js_info_top oh">
+            <h3>{$value.plate_name}</h3>
+        </div>
+        <div class="js_info_top oh">
+            <a href="javascript:void(0);">{$value.role_name}</a>
+            {if $value.role_id == 0}
+            <a href="{:url('forumPlateManagerIndex',['plate_id'=>$value.plate_id])}">管理</a>
+            <br/><span style="color: #999;">加入时间 {$value.create_time|date="Y-m-d H:i:s"}</span>
+            {/if}
+        </div>
+    </div>
+    <!--<div class="js_btn">-->
+    <!--<button class="blue_btn" type="button">申请退出</button>-->
+    <!--</div>-->
+</div>
+{/foreach}

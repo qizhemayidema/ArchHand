@@ -12,88 +12,72 @@
 
 use think\facade\Route;
 
-Route::group('/api',function(){
-    Route::group('/Login',function(){
-        Route::post('/getCode','api/Login/getCode');
-        Route::post('/register','api/Login/register');
-        Route::post('/login','api/Login/login');
-        Route::post('/rePwd','api/Login/rePwd');
-        Route::post('/getCsrf','api/Login/getCsrf');
-    });
-    Route::group('/User',function(){
-        Route::post('/basicInfo','api/User/basicInfo');
-        Route::post('/updateBasicInfo','api/User/updateBasicInfo');
-        Route::post('/updatePassword','api/User/updatePassword');
-    });
-    Route::group('/My_user',function (){
-        Route::post('/integralHistory','api/My_user/integralHistory');
-        Route::post('/info','api/My_user/info');
-
+Route::group('/', function () {
+    //首页
+    Route::get('/', 'index/Index/index')->name('index');
+    //社区板块模块
+    Route::group('forumPlate', function () {
+        //社区版主管理页
+        Route::get('/manager/:plate_id','index/PlateManager/index')->name('forumPlateManagerIndex');
+        //社区列表页面
+        Route::get('/:plate_id/[:type]', 'index/Plate/index')->name('forumPlateIndex');
     });
 
-    Route::group('/My_library',function (){
-        Route::post('/myPublish','api/My_library/myPublish');
-        Route::post('/myComment','api/My_library/myComment');
-        Route::post('/myDownload','api/My_library/myDownload');
-        Route::post('/myCollect','api/My_library/myCollect');
-        Route::post('/myBuy','api/My_library/myBuy');
+    //社区模块
+    Route::group('forum', function () {
+        //社区发布页面
+        Route::get('/publish', 'index/Forum/add')->name('forumAdd');
+        Route::post('/publish', 'index/Forum/save')->name('forumAddAction');
+        //社区帖子详情页
+        Route::get('/:forum_id', 'index/Forum/info')->name('forumInfo');
     });
-    Route::group('/My_class',function(){
-        Route::post('/myCollect','api/My_class/myCollect');
-        Route::post('/myBuy','api/My_class/myBuy');
+    //云库首页
+    Route::group('library',function(){
+        //云库首页
+        Route::get('/','index/Library/index')->name('libraryIndex');
+        //云库发布页
+        Route::get('/publish','index/Library/add')->name('libraryAdd');
+        //云库详情页
+        Route::get('/:library_id','index/Library/info')->name('libraryInfo');
     });
-    Route::group('/Collect',function(){
-        Route::post('/removeClass','api/Collect/removeClass');
-        Route::post('/removeLibrary','api/Collect/removeLibrary');
+    //云库店铺首页
+    Route::group('store',function(){
+       Route::get('/:store_id','index/Store/index')->name('storeIndex');
     });
-    Route::group('/Class',function(){
-        Route::post('/search','api/Classes/search');
-        Route::post('/list','api/Classes/list');
-        Route::post('/listMore','api/Classes/listMore');
-        Route::post('/info','api/Classes/info');
-        Route::post('/seeVideo','api/Classes/seeVideo');
-        Route::post('/buy','api/Classes/buy');
-        Route::post('/collect','api/Classes/collect');
+    //课程模块
+    Route::group('class', function () {
+        //首页
+        Route::get('/', 'index/Classes/index')->name('classIndex');
+        //课程列表页
+        Route::get('/list/:cate_id','index/Classes/list')->name('classList');
+        //课程详情页
+        Route::get('/:class_id','index/Classes/info')->name('classInfo');
     });
-    Route::group('/Class_comment',function(){
-        Route::post('/add','api/ClassesComment/add');
-        Route::post('/readList','api/ClassesComment/readList');
-        Route::post('/remove','api/ClassesComment/remove');
-        Route::post('/like','api/ClassesComment/like');
-    });
-    Route::group('/Sign_in',function(){
-        Route::post('/getIntegral','api/Sign_in/getIntegral');
-        Route::post('/getSignInDays','api/Sign_in/getSignInDays');
-    });
-    Route::group('/Forum',function(){
-        Route::post('/getAllPlate','api/Forum/getAllPlate');
-        Route::post('/getPlateForCate','api/Forum/getPlateForCate');
-        Route::post('/getCate','api/Forum/getCate');
-        Route::post('/save','api/Forum/save');
-        Route::post('/plate','api/Forum/plate');
-        Route::post('/info','api/Forum/info');
-        Route::post('/collect','api/Forum/collect');
-        Route::post('/like','api/Forum/like');
-        Route::post('/likeComment','api/Forum/likeComment');
-        Route::post('/comment','api/Forum/comment');
-        Route::post('/joinInManager','api/Forum/joinInManager');
-    });
+    //我的xxx模块
+    Route::group('my',function(){
+        //我的信息页面
+        Route::get('info','index/My_info/index')->name('myInfo');
+        //我的社区
+        Route::get('forum','index/My_forum/index')->name('myForum');
+        //我的云库
+        Route::get('library','index/My_library/index')->name('myLibrary');
+        //我的课程
+        Route::get('class','index/My_classes/index')->name('myClass');
+        //账户信息
+        Route::get('account','index/My_account/index')->name('myAccount');
 
-    Route::group('/Forum_manager',function(){
-        Route::post('/classics','api/Forum_manager/classics');
-        Route::post('/top','api/Forum_manager/top');
-        Route::post('/delForum','api/Forum_manager/delForum');
-        Route::post('/delComment','api/Forum_manager/delComment');
-        Route::post('/saveRole','api/Forum_manager/saveRole');
-        Route::post('/updateRole','api/Forum_manager/updateRole');
-        Route::post('/delRole','api/Forum_manager/delRole');
-        Route::post('/permission','api/Forum_manager/permission');
-        Route::post('/roleList','api/Forum_manager/roleList');
-        Route::post('/role','api/Forum_manager/role');
-        Route::post('/giveRole','api/Forum_manager/giveRole');
-        Route::post('/shotOffManager','api/Forum_manager/shotOffManager');
-        Route::post('/checkManagerJoin','api/Forum_manager/checkManagerJoin');
-        Route::post('/changeJoinChannel','api/Forum_manager/changeJoinChannel');
+    })->middleware(\app\http\middleware\IndexCheckLoginStatus::class);
+    //帮助
+    Route::get('help', 'index/Help/index')->name('help');
+    //页脚
+    Route::get('info','index/Footer/index')->name('footerIndex');
+
+
+    //签到模块
+    Route::group('signIn', function () {
+        //签到块
+        Route::get('/', 'index/SignIn/index')->name('signIn');
+        //签到动作
+        Route::post('/', 'index/SignIn/signIn')->name('signInAction');
     });
-    Route::post('/Library/uploadVideo','api/Library/uploadVideo');
 });

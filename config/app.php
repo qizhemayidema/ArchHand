@@ -21,6 +21,7 @@ return [
     // 应用调试模式
     'app_debug'              => true,
     // 应用Trace
+
     'app_trace'              => true,
     // 是否支持多模块
     'app_multi_module'       => true,
@@ -143,7 +144,14 @@ return [
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
 
-
+    'http_exception_template'    =>
+        [
+            404 =>  Env::get('app_path') . 'index/view/exception_html/404.html',
+            403 =>  Env::get('app_path') . 'index/view/exception_html/403.html',
+            500 =>  Env::get('app_path') . 'index/view/exception_html/404.html',
+        ],
 
     'upload_root_path'      => '/static/uploads/',
+
+    'index_user_session_path' => 'index.user_info',
 ];

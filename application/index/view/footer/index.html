@@ -1,0 +1,57 @@
+{extend name="base/base_solid"}
+
+{block name="title"} 相关信息 - {$website_title} {/block}
+{block name="source"}
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+
+</style>
+{/block}
+{block name="body"}
+<!-- / 主体/ -->
+<div class="w1200 clearfix">
+    <div class=" lh40 fz14 ">
+        <a href="" class="c3">&nbsp;</a>
+        <a href="" class="c3">&nbsp;</a>
+    </div>
+    <!-- /设计学院/ -->
+    <div class="bgf  mt20 mb20 oh">
+        <div class="about_box oh">
+            <div class="about_left">
+                <a href="{:url('footerIndex')}?page=about" class="bb1 {if $page == 'about'} active {/if}">关于我们</a>
+                <a href="{:url('footerIndex')}?page=FAQ" class="bb1 {if $page == 'FAQ'} active {/if} ">常见问题</a>
+                <a href="{:url('footerIndex')}?page=privacy_policy" class="bb1 {if $page == 'privacy_policy'} active {/if} ">隐私政策</a>
+                <a href="{:url('footerIndex')}?page=job" class="bb1 {if $page == 'job'} active {/if} ">招聘信息</a>
+                <a href="{:url('footerIndex')}?page=contact_us" class="bb1 {if $page == 'contact_us'} active {/if} ">联系我们</a>
+            </div>
+            <div class="about_right fl">
+                <div class="p25">
+                    <div class="about_right_t bb1 fz16 lh40 c3">
+                        {if $page == 'about'}
+                        关于我们
+                        {elseif $page == 'FAQ'}
+                        常见问题
+                        {elseif $page == 'privacy_policy'}
+                        隐私政策
+                        {elseif $page == 'job'}
+                        招聘信息
+                        {else}
+                        联系我们
+                        {/if}
+
+                    </div>
+                    <div class="about_right_info fz16 c6 p10">
+                        {$footer[$page]|raw}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

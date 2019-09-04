@@ -1,0 +1,68 @@
+{extend name="base/base_solid"}
+
+{block name="title"}
+帮助 - {$website_title}
+{/block}
+{block name="source"}
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+</style>
+{/block}
+{block name="body"}
+<!-- /banner/ -->
+<div class="sqbanner mb20"></div>
+<!-- / 主体/ -->
+<div class="w1200 clearfix">
+    <!-- /设计学院/ -->
+    <div class="inrmk1">
+        <div class="inrtit">
+            <p class="inrtitp">
+                <span class="text1">板块说明</span>
+            </p>
+        </div>
+        <div class="hengxian"></div>
+        <div class="bztitle">
+            {foreach $help as $key => $value}
+            <span {if $key == 0}  class="bkcur" {/if}>{$value.cate_name}</span>
+            {/foreach}
+        </div>
+        {foreach $help as $key => $value}
+        <div class="flag">
+            <div class="bkinr hook" {if $key == 0}  style="display: block;" {/if}>
+                {$value.desc|raw}
+            </div>
+            <div class="inrmk1 hook">
+                <div class="inrtit">
+                    <p class="inrtitp">
+                        <span class="text1">常见问题</span>
+                    </p>
+                </div>
+                <div class="hengxian"></div>
+                <div class="bkinr ">
+                   {$value.question|raw}
+                </div>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    $(".flag").hide();
+    $(".flag").eq(0).show();
+    $(".bztitle span").click(function(){
+        var index = $(".bztitle span").index(this);
+        $(".bztitle span").removeClass('bkcur');
+        $(".flag").hide();
+        $(".bztitle span").eq(index).addClass('bkcur');
+        $(".flag").eq(index).show();
+    })
+</script>
+{/block}

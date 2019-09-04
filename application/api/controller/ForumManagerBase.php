@@ -37,11 +37,9 @@ class ForumManagerBase extends Controller
 
         $this->getManagerInfo();
 
-
         if (!$this->checkPermission()){
             header('Content-type: application/json');
             exit(json_encode(['code' => 0, 'msg' => '操作越权'], 256));
-
         }
     }
 
@@ -64,8 +62,6 @@ class ForumManagerBase extends Controller
         //查找权限列表
         $permission_ids = (new RoleModel())->where(['id'=>$this->role_id])->value('permission_ids');
         $this->permission_list = (new PermissionModel())->whereIn('id',$permission_ids)->select();
-
-
 
     }
     private function getUserInfo()

@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use think\Cache;
 use think\Controller;
 use think\Exception;
 use think\Request;
@@ -83,7 +84,8 @@ class LibraryAttribute extends Base
             (new AttrValueModel())->insertAll($attrValuesSet);
 
             $attrModel->commit();
-
+            $cache = new Cache(['type'=>config('cache.type')]);
+            $cache->set('library_cate',null);
         }catch (Exception $e){
             $attrModel->rollback();
             return json(['code'=>0,'msg'=>'操作失败,请重新尝试']);
@@ -157,7 +159,8 @@ class LibraryAttribute extends Base
 
             (new AttrValueModel())->insertAll($attrValuesSet);
         }
-
+        $cache = new Cache(['type'=>config('cache.type')]);
+        $cache->set('library_cate',null);
         return json(['code'=>1,'msg'=>'success']);
     }
 
@@ -183,7 +186,8 @@ class LibraryAttribute extends Base
 
         //删除 zhu_library_have_attribute_value 表
         (new LHAVModel())->where(['attr_value_id'=>$id])->delete();
-
+        $cache = new Cache(['type'=>config('cache.type')]);
+        $cache->set('library_cate',null);
         return json(['code'=>1,'msg'=>'success']);
     }
 }

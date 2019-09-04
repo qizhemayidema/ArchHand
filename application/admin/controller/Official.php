@@ -6,6 +6,7 @@ use think\Controller;
 use think\Request;
 use app\admin\model\User as UserModel;
 use app\admin\validate\User as UserValidate;
+use app\admin\model\Store as StoreModel;
 use app\admin\model\Vip;
 
 class Official extends Base
@@ -57,13 +58,11 @@ class Official extends Base
         $form['type'] = 2;
         $form['birthday'] = strTotime($form['birthday']);
         $form['last_login_time'] = time();
-
-        $rand = mt_rand(1000000,9999999);
-        $salt = env('LOGIN.SALT');
-        $form['token'] = md5(md5($form['password']) . $rand . $salt .  microtime() );
         $form['create_time'] = time();
+        $form['store_id'] = 1;
 
         $user = (new UserModel())->save($form);
+
         if ($user) {
             return jsone(1, '创建成功');
         }

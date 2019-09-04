@@ -1,13 +1,13 @@
 {
-  "title": "1212121212121212121212121",
+  "title": "\u7b51\u624b\u667a\u5e93\u7f51",
   "keyword": "asdffsfs,fs",
   "description": "asdfasdf",
-  "icp": "asdfasdf",
+  "icp": "\u4eacICP\u590700000000\u53f7-1",
   "announcement": "\u4e0d\u662f\u90fd\u516c\u53f8\u7684\u80a1\u4efd",
-  "copyright": "asdfasdf",
-  "qq": "45214523568752",
-  "phone": "13465321542",
-  "qr_code": "\/static\/uploads\/qr_code\/20190822\/311d74014aeb01020bd11b3df685ef60.jpg",
+  "copyright": "\u00a9 2019 \u7b51\u624b\u667a\u5e93\u7f51\u7248\u6743\u6240\u6709",
+  "qq": "111111",
+  "phone": "18512345678",
+  "qr_code": "\/static\/uploads\/qr_code\/20190829\/2c9707566dedd7a3381dca12dfeda4b6.jpg",
   "issue_integral": "50",
   "issue_integral_count": "5",
   "comment_integral": "5",
@@ -23,9 +23,30 @@
     "7": "70"
   },
   "today_recommend": {
-    "today_title": "asdfasd",
-    "today_url": "http:\/\/www.sdfs.com",
-    "today_content": "<p>asdfadfasdfadfadfasdfadfasdf<\/p>",
-    "today_pic": "\/static\/uploads\/today_recommend\/20190826\/b235252c32d88b1e4fbf39fc5435de34.jpg"
+    "today_title": "\u56fd\u5b89\u4e3b\u5e05:\u4fdd\u4f4f\u8054\u8d5b\u7b2c\u4e8c \u968f\u65f6\u51c6\u5907\u53cd\u8d85\u6052\u5927",
+    "today_url": "http:\/\/sports.sina.com.cn\/china\/j\/2019-08-28\/doc-ihytcitn2581740.shtml",
+    "today_content": "\u8c08\u53ca\u662f\u4ec0\u4e48\u52a8\u529b\u6765\u5230\u4e2d\u56fd\u65f6\uff0c\u5e03\u9c81\u8bfa\u8868\u793a\uff1a\u6211\u4e4b\u524d\u5728\u91cc\u6602\u6267\u6559\u4e09\u5e74\u534a\u4e86\uff0c\u6211\u60f3\u4ece\u4e2a\u4eba\u89d2\u5ea6\u6765\u5bfb\u6c42\u65b0\u7684\u8c03\u6574\uff0c\u79bb\u91cc\u6602\u3001\u6cd5\u56fd\u8fdc\u4e00\u70b9\u3002\u6b27\u6d32\u90fd\u6709\u70b9\u592a\u8fd1\u4e86\u3002\u6765\u4e4b\u524d\uff0c\u6211\u5bf9\u4e2d\u56fd\u662f\u5f88\u964c\u751f\u7684\uff0c\u5bf9\u4e8e\u6211\u4e2a\u4eba\u6765\u8bf4\u662f\u5f88\u597d\u7684\u6311\u6218\u3002\u6765\u4e2d\u56fd\u4e4b\u524d\uff0c\u6211\u8ddf\u6211\u7684\u7ecf\u7eaa\u4eba\u4e86\u89e3\u4e2d\u56fd\u8054\u8d5b\uff0c\u6211\u77e5\u9053\u4e2d\u8d85\u8054\u8d5b\u6709\u5f88\u591a\u9876\u7ea7\u5916\u63f4\u548c\u5916\u6559\uff0c\u4ed6\u4eec\u5e26\u52a8\u4e2d\u56fd\u7403\u5458\u4e5f\u4e0a\u5347\u4e86\u4e00\u4e2a\u6863\u6b21\uff0c\u6211\u77e5\u9053\u4e2d\u8d85\u8054\u8d5b\u7684\u6c34\u5e73\u662f\u5f88\u9ad8\u7684\u3002\u6211\u76f8\u4fe1\uff0c\u8fd9\u4e9b\u5927\u724c\u5916\u63f4\u80fd\u591f\u5e26\u52a8\u4e2d\u56fd\u8db3\u7403\u8fc8\u4e0a\u66f4\u9ad8\u7684\u53f0\u9636\u3002\u6211\u4e4b\u524d\u5728\u6cd5\u56fd\u751f\u6d3b\uff0c\u6765\u5230\u5317\u4eac\u4e4b\u540e\u6ca1\u4ec0\u4e48\u964c\u751f\u611f\uff0c\u5de5\u4f5c\u3001\u751f\u6d3b\u73af\u5883\u90fd\u6ca1\u56f0\u96be\uff0c\u5f88\u5feb\u5c31\u878d\u5165\u4e86\uff0c\u6211\u5f88\u9ad8\u5174\u6765\u5230\u5317\u4eac\u8fd9\u5ea7\u57ce\u5e02\u3002\u4ece\u804c\u4e1a\u548c\u6211\u4e2a\u4eba\u89d2\u5ea6\u6765\u8bf4\uff0c\u5230\u76ee\u524d\u4e3a\u6b62\u4e00\u5207\u90fd\u975e\u5e38\u597d\u3002",
+    "today_pic": "\/static\/uploads\/today_recommend\/20190829\/cbd9a8c212450fd1994bd3992bc154d3.jpg"
+  },
+  "partner": [
+    {
+      "name": "asdf",
+      "url": "http:\/\/www.baidu.com"
+    },
+    {
+      "name": "adsf",
+      "url": "http:\/\/www.baidu.com1"
+    },
+    {
+      "name": "\u53d1\u77ed\u53d1\u77ed\u53d1",
+      "url": "http:\/\/www.bdaidu.com1"
+    }
+  ],
+  "bottom_navigation": {
+    "about": "<p><img alt=\"\u4e0b\u8f7d.jpg\" src=\"\/static\/uploads\/bottom_navigation\/20190901\/d7cecfd4847ae8ab131b9bae2774fa7b.jpg\" width=\"275\" height=\"238\"><br><\/p>",
+    "FAQ": "<p>\u53d1\u6492\u65e6\u6cd5<img alt=\"003CxTovgy6KItlhnedf5&690.jpg\" src=\"\/static\/uploads\/bottom_navigation\/20190827\/564b2638bdce90eb9067110584999fe4.jpg\" width=\"560\" height=\"315\"><\/p>",
+    "privacy_policy": "<p><img alt=\"1-150321221421.jpg\" src=\"\/static\/uploads\/bottom_navigation\/20190827\/36785d0624c895cef44fc623fa2ed775.jpg\" width=\"820\" height=\"388\"><\/p>",
+    "job": "<p><img alt=\"53d66b411241d837.jpg_480x360x95_7a7e609f.jpg\" src=\"\/static\/uploads\/bottom_navigation\/20190827\/939e9219db7fc23cb3515cd47038d0fd.jpg\" width=\"480\" height=\"360\"><\/p>",
+    "contact_us": "<p><img alt=\"43617.jpg\" src=\"\/static\/uploads\/bottom_navigation\/20190827\/dc717edad6779485c60ee5edac4699c1.jpg\" width=\"600\" height=\"324\"><\/p>"
   }
 }

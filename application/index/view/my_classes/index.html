@@ -1,0 +1,373 @@
+{extend name="base/base_solid"}
+
+{block name="title"}
+我的课程 - {$website_title}
+{/block}
+
+{block name="source"}
+<link href="__STATIC__/css/slick.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/slick-theme.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/iconfont.css"  rel="stylesheet" type="text/css"/>
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<script src="__STATIC__/js/slick.js"></script>
+<script src="__STATIC__/js/select.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/vue.min.js"></script>
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="my_box">
+    <div class="w1200">
+        <div class="mybox_H">
+            <div class="mybox_H_inr">我的课程</div>
+        </div>
+        <div class="w100 bgf mybox_B">
+            <div class="mybox_L">
+                <div :class="ltype==0? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(0)">已购买课程</div>
+                <div :class="ltype==1? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(1)">收藏的课程</div>
+            </div>
+            <div class="mybox_R">
+                <div v-show="ltype==0" class="mybox_R_one">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">已购买课程</span>
+                    </div>
+                    <div class="w100">
+                        {if !count($buy_info)}
+                        <div class="zanwu">暂无数据</div>
+                        {else}
+                        <div id="buy_list_box">
+                        {foreach $buy_info as $key => $value}
+                        <div class="my_kc_one cspointer">
+                            <a href="{:url('classInfo',['class_id'=>$value.id])}"><img class="my_kc_img" src="{$value.class_pic}"  alt=""></a>
+                            <div class="my_kc_msg">
+                                <div class="kc_name oh1">{$value.name}</div>
+                                <div class="kc_zhangjie">共有{$value.chapter_sum}节 其中 {$value.free_chapter} 节免费</div>
+                                <div class="kc_name">
+                                    <div class="kc_jiage">
+                                        价格: <span style="color: #f04e4f;">{$value.integral}</span>
+                                    </div>
+                                    <!-- <div class="kc_gobuy_btn">立即购买</div>
+                                    <div class="kc_sc_cal">取消收藏</div> -->
+                                </div>
+
+                            </div>
+                        </div>
+                        {/foreach}
+                        </div>
+                        {/if}
+                        <div class="tac">
+                            <div class="m-style M-box2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-show="ltype==1" class="mybox_R_one">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">收藏的课程</span>
+                    </div>
+                    <div class="w100">
+
+                        {if !count($collect_info)}
+                        <div class="zanwu">暂无数据</div>
+                        {else}
+                        <div id="collect_list_box">
+                            {foreach $collect_info as $key => $value}
+                            <div class="my_kc_one cspointer">
+                                <a href="{:url('classInfo',['class_id'=>$value.id])}"><img class="my_kc_img" src="{$value.class_pic}"  alt=""></a>
+                                <div class="my_kc_msg">
+                                    <div class="kc_name oh1">{$value.name}</div>
+                                    <div class="kc_zhangjie">共有{$value.chapter_sum}节 其中 {$value.free_chapter} 节免费</div>
+                                    <div class="kc_name">
+                                        <div class="kc_jiage">
+                                            价格: <span style="color: #f04e4f;">{$value.integral}</span>
+                                        </div>
+                                        <div class="kc_gobuy_btn cspointer" onclick="buykc('{$value.id}')">立即购买</div>
+                                        <div class="kc_sc_cal cspointer" onclick="collect_kc('{$value.id}')">取消收藏</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
+
+                        <div class="tac">
+                            <div class="m-style M-box3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+
+<script>
+
+     $(function(){
+         {if $buy_count}
+         $('.M-box2').pagination({
+             totalData:{$buy_count},
+             showData:{$page_length},
+             // mode: 'fixed',
+             callback: function (api) {
+                 var page=api.getCurrent()
+                 $.ajax({
+                     url:"{:url('/index/My_classes/getBuyList')}",
+                     type:"post",
+                     data:{
+                         page : page,
+                     },
+                     dataType:"json",
+                     success:function(data){
+                         if (data.code == 0){
+                             layer.msg(data.msg);
+                         } else{
+                             $('#buy_list_box').html(data.data);
+                         }
+                     }
+                 })
+             }
+         })
+         {/if}
+         {if $collect_count}
+         $('.M-box3').pagination({
+             totalData:{$collect_count},
+             showData:{$page_length},
+             // mode: 'fixed',
+             callback: function (api) {
+                 var page=api.getCurrent()
+                 $.ajax({
+                     url:"{:url('/index/My_classes/getCollectList')}",
+                     type:"post",
+                     data:{
+                         page : page,
+                     },
+                     dataType:"json",
+                     success:function(data){
+                         if (data.code == 0){
+                             layer.msg(data.msg);
+                         } else{
+                             $('#collect_list_box').html(data.data);
+                         }
+                     }
+                 })
+             }
+         })
+         {/if}
+     })
+    var vm = new Vue({
+        el: '#body',
+        data: {
+            mybuy:[],   //购买列表
+            mycoll:[],  //收藏列表
+            page:1,
+            pagesize:'{$page_length}',
+            page_buy:1,    //购买分页
+            pagesize_buy:'{$page_length}',  //购买分页长度
+            login:false,
+            showpwd:false,
+            tximg:'',
+            ltype:0,   //左侧分类
+            mkcur: 0,
+
+        },
+        created: function() {
+            // this.gtetbuy()
+            // this.getcoll()
+        },
+        mounted() {
+        },
+        methods: {
+            qhcur(index) {
+                this.ltype = index
+            },
+            //获取购买
+            gtetbuy(){
+                ///api/My_class/myBuy
+                var that =this
+                $.ajax({
+                    type: "post",
+                    url: "{:url('/index/My_class/myBuy')}",
+                    data: {
+                        page:that.page_buy,
+                        page_length:that.pagesize_buy,
+                    },
+                    success: function (res) {
+                        if(res.code==1){
+                            that.mybuy=res.data
+                            if(that.page_buy==1&&res.count>that.pagesize_buy){
+
+                                $('.M-box2').pagination({
+                                    totalData: res.count,
+                                    showData:vm.pagesize_buy,
+                                    mode: 'fixed',
+                                    callback: function (api) {
+                                        console.log(api.getCurrent())
+                                        vm.page_buy=api.getCurrent()
+                                        that.gtetbuy()
+                                    }
+                                })
+                            }
+                            if(res.data.length>0){
+                                that.page_buy++
+                            }else{
+                                // layer.msg('暂无更多数据')
+                            }
+                        }else{
+                            if(res.msg){
+                                layer.msg(res.msg)
+                            }else{
+                                layer.msg('获取失败')
+                            }
+                        }
+
+                    },
+                    error:function(err){
+                        layer.msg('获取失败')
+                        console.log(err)
+                    }
+                })
+            },
+            //获取收藏
+            getcoll(){
+                ///api/My_class/myCollect
+                var that =this
+                $.ajax({
+                    type: "post",
+                    url: "{:url('/index/My_class/getCollectList')}",
+                    data: {
+                        page:that.page,
+                    },
+                    success: function (res) {
+                        if(res.code==1){
+                            that.mycoll=res.data
+                            if(that.page==1&&res.count>that.pagesize){
+
+                                $('.M-box3').pagination({
+                                    totalData: res.count,
+                                    showData:vm.pagesize,
+                                    mode: 'fixed',
+                                    callback: function (api) {
+                                        console.log(api.getCurrent())
+                                        vm.page=api.getCurrent()
+                                        that.getcoll()
+                                    }
+                                })
+                            }
+                            if(res.data.length>0){
+                                that.page++
+                            }else{
+                                // layer.msg('暂无更多数据')
+                            }
+                        }else{
+                            if(res.msg){
+                                layer.msg(res.msg)
+                            }else{
+                                layer.msg('获取失败')
+                            }
+                        }
+
+                    },
+                    error:function(err){
+                        layer.msg('获取失败')
+                        console.log(err)
+                    }
+                })
+            },
+        }
+    })
+
+     //购买该课程
+     var buykc = function(id){
+         var that =this
+         layer.confirm('您确定要购买该课程吗？', {
+             btn: ['确定','取消'] //按钮
+         }, function(){
+             $.ajax({
+                 type: "post",
+                 url:  '{:url('/index/Classes/buy')}',
+                 data: {
+                     class_id: id,
+                 },
+                 success: function (res) {
+                     if(res.code==1){
+                         layer.msg('购买成功')
+                         setTimeout(function() {
+                             window.location.href=""
+                         }, 1000);
+                     }else{
+                         if(res.msg){
+                             layer.msg(res.msg)
+                         }else{
+                             layer.msg('获取失败')
+                         }
+                     }
+
+                 },
+                 error:function(err){
+                     layer.msg('获取失败')
+                     console.log(err)
+                 }
+             })
+         }, function(){
+             // layer.msg('也可以这样', {
+             // 	time: 20000, //20s后自动关闭
+             // 	btn: ['明白了', '知道了']
+             // });
+         });
+     }
+     //收藏
+     var collect_kc = function(id){
+         var that = this
+         layer.confirm('您确定要取消收藏该课程吗？', {
+             btn: ['确定','取消'] //按钮
+         }, function(){
+             $.ajax({
+                 type: "post",
+                 url: "{:url('/index/Classes/collect')}",
+                 data: {
+                     class_id: id,
+                 },
+                 success: function (res) {
+                     if(res.code==1){
+                         layer.msg('取消成功')
+                         setTimeout(function() {
+                         	window.location.href=""
+                         }, 1000);
+                     }else{
+                         if(res.msg){
+                             layer.msg(res.msg)
+                         }else{
+                             layer.msg('操作失败')
+                         }
+                     }
+
+                 },
+                 error:function(err){
+                     that.btnkg=0
+                     layer.msg('操作失败')
+                     console.log(err)
+                 }
+             })
+         }, function(){
+             // layer.msg('也可以这样', {
+             // 	time: 20000, //20s后自动关闭
+             // 	btn: ['明白了', '知道了']
+             // });
+         });
+     }
+
+</script>
+{/block}

@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\admin\model\ForumManager;
 use app\common\controller\UploadPic;
+use think\Cache;
 use think\Exception;
 use think\Request;
 use app\admin\model\ForumCategory as CateModel;
@@ -98,14 +99,15 @@ class ForumPlate extends Base
             (new ForumManager())->insert([
                 'plate_id'  =>  $plate_id,
                 'user_id'   =>  $plateManInfo['id'],
-                'role_id'   =>  0
+                'role_id'   =>  0,
+                'create_time' => time(),
             ]);
             $plateModel->commit();
         }catch(Exception $e){
             return json(['code'=>0,'msg'=>'操作失败']);
             $plateModel->rollback();
         }
-
+        (new PlateModel())->clearCache();
         return json(['code'=>1,'msg'=>'success']);
     }
 
@@ -186,13 +188,14 @@ class ForumPlate extends Base
             }else{
                 //修改原先的版主id
                 (new ForumManagerModel())->where(['plate_id'=>$data['id'],'user_id'=>$plateManInfo['id'],'role_id'=>0])
-                    ->update(['user_id'=>$plateManInfo['id']]);
+                    ->update(['user_id'=>$plateManInfo['id'],'create_time'=>time()]);
             }
             $plateModel->commit();
         }catch(Exception $e){
             return json(['code'=>0,'msg'=>'操作失败']);
             $plateModel->rollback();
         }
+        (new PlateModel())->clearCache();
 
         return json(['code'=>1,'msg'=>'success']);
     }
@@ -202,6 +205,7 @@ class ForumPlate extends Base
         $id = $request->param('plate_id');
 
         (new PlateModel())->where(['id'=>$id])->update(['is_delete'=>1]);
+        (new PlateModel())->clearCache();
         return json(['code'=>1,'msg'=>'success']);
     }
 

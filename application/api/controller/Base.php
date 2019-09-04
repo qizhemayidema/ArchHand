@@ -89,7 +89,6 @@ class Base extends Controller
             header('Content-type: application/json');
             exit(json_encode(['code' => 0, 'msg' => '获取配置失败'], 256));
         }
-        
         return $temp;
     }
 }

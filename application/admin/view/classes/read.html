@@ -361,7 +361,7 @@
                         uploadData.append('policy', data.policy);
                         uploadData.append('authorization', data.authorization);
                         $.ajax({
-                            url:'http://v0.api.upyun.com/archhandcom',
+                            url:"{:input('server.REQUEST_SCHEME')}://v0.api.upyun.com/archhandcom",
                             type: 'POST',
                             data: uploadData,
                             cache: false,

@@ -1,0 +1,226 @@
+{extend name="base/base_solid"}
+
+{block name="title"} - {$website_title}{/block}
+
+{block name="source"}
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/iconfont.css" rel="stylesheet" type="text/css" />
+<script src="__STATIC__/js/city-picker.min.js" type="text/javascript"  charset="utf-8"></script>
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<script src="__STATIC__/js/select.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+    .hook{
+        display: none;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="my_box">
+    <div class="w1200">
+        <div class="mybox_H">
+            <div class="mybox_H_inr fl">居住建筑</div>
+            <div class="fr isOpenAdd">
+                <div class="checkbox cupo">
+                    <label class="fz14 c3 oh">
+                        <input type="checkbox" class="fl">
+                        <span>是否开启成员申请</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="w100 bgf mybox_B">
+            <div class="mybox_L">
+                <div class=" mybox_L_div">角色设置</div>
+                <div class=" mybox_L_div">成员管理</div>
+                <div class=" mybox_L_div">审核处理</div>
+            </div>
+            <div class="mybox_R">
+                <!-- 角色设置 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">角色设置</span>
+                    </div>
+                    <div class="w100">
+                        <div class="js_list oh bb1">
+                            <div class="js_list_img  fl">
+                                <img src="images/js_03.png" alt="">
+                            </div>
+                            <div class="js_info fl">
+                                <div class="js_info_top oh">
+                                    <h3>管理员1</h3>
+                                    <a href="">编辑</a>
+                                    <span class="fz14 c9">于2019-01-01加入</span>
+                                </div>
+                                <div class="js_sel_box oh">
+                                    <div class="top_warpper_right oh">
+                                        <div class="tx_list oh">
+                                            <div class="tx_active">
+                                                <p></p>
+                                            </div>
+                                            <h3 class="fz 14 c3">加精</h3>
+                                        </div>
+                                        <div class="tx_list oh">
+                                            <div class="">
+                                                <p></p>
+                                            </div>
+                                            <h3 class="fz 14 c3">置顶</h3>
+                                        </div>
+                                        <div class="tx_list oh">
+                                            <div class="tx_active">
+                                                <p></p>
+                                            </div>
+                                            <h3 class="fz 14 c3">删帖</h3>
+                                        </div>
+                                        <div class="tx_list oh">
+                                            <div class="">
+                                                <p></p>
+                                            </div>
+                                            <h3 class="fz 14 c3">删评论</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="js_btn">
+                                <button class="red_btn mb5" type="button">踢除</button>
+                                <button class="blue_btn" type="button">踢除</button>
+                            </div>
+                        </div>
+                        <div class="js_list oh bb1">
+                            <div class="js_list_img  fl">
+                                <img src="images/js_03.png" alt="">
+                            </div>
+                            <div class="js_info fl">
+                                <div class="js_info_top oh">
+                                    <h3>管理员1</h3>
+                                    <a href="">编辑</a>
+                                    <span class="fz14 c9">于2019-01-01加入</span>
+                                </div>
+                                <div class="js_sel_box oh">
+                                    <div class="top_warpper_right oh">
+                                        <div class="tx_list oh">
+                                            <div class="tx_active">
+                                                <p></p>
+                                            </div>
+                                            <h3 class="fz 14 c3">加精</h3>
+                                        </div>
+                                        <div class="tx_list oh">
+                                            <div class="">
+                                                <p></p>
+                                            </div>
+                                            <h3 class="fz 14 c3">置顶</h3>
+                                        </div>
+                                        <div class="tx_list oh">
+                                            <div class="tx_active">
+                                                <p></p>
+                                            </div>
+                                            <h3 class="fz 14 c3">删帖</h3>
+                                        </div>
+                                        <div class="tx_list oh">
+                                            <div class="">
+                                                <p></p>
+                                            </div>
+                                            <h3 class="fz 14 c3">删评论</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="js_btn">
+                                <button class="red_btn mb5" type="button">踢除</button>
+                                <button class="blue_btn" type="button">踢除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 成员管理 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">成员管理</span>
+                    </div>
+                    <div class="w100">
+                        <div class="js_list oh bb1">
+                            <div class="js_list_img  fl">
+                                <img src="images/js_03.png" alt="">
+                            </div>
+                            <div class="js_info fl">
+                                <div class="js_info_top oh">
+                                    <h3>昵称123</h3>
+                                    <span class="fz14 c9">2019-01-01</span>
+                                </div>
+                                <div class="js_info_top oh">
+                                    <h3>管理员1</h3>
+                                </div>
+                            </div>
+                            <div class="js_btn">
+                                <button class="red_btn mb5" type="button">踢除</button>
+                                <button class="blue_btn" type="button">踢除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 审核处理 -->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">审核处理</span>
+                    </div>
+                    <div class="oh sh_tab">
+                        <div class="fl fz16 c3 cupo active">待审核（2）</div>
+                        <div class="fl fz16 c3 cupo">已通过（0）</div>
+                        <div class="fl fz16 c3 cupo">已拒绝（0）</div>
+                    </div>
+                    <div class="w100">
+                        <div class="js_list oh bb1">
+                            <div class="js_list_img  fl">
+                                <img src="images/js_03.png" alt="">
+                            </div>
+                            <div class="js_info fl">
+                                <div class="js_info_top oh">
+                                    <h3>昵称123</h3>
+                                    <span class="fz14 c9">2019-01-01</span>
+                                </div>
+                                <div class="js_info_content fz14 c6">
+                                    申请原因：这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因.
+                                </div>
+                            </div>
+                            <div class="js_btn">
+                                <button class="red_btn mb5" type="button">通过</button>
+                                <button class="blue_btn" type="button">拒绝</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    $(".tx_list").click(function() {
+        var _div = $(this).find('div')
+        if (_div.hasClass('tx_active')) {
+            _div.removeClass('tx_active');
+        }else{
+            _div.addClass('tx_active');
+        }
+    });
+    $(".hook").eq(0).show();
+    $(".mybox_L_div").eq(0).addClass('cur');
+    $(".mybox_L_div").click(function() {
+        var _index = $(".mybox_L_div").index(this);
+        $(".hook").hide();
+        $(".hook").eq(_index).show();
+        $(".mybox_L_div").removeClass('cur');
+        $(".mybox_L_div").eq(_index).addClass('cur');
+    })
+</script>
+{/block}

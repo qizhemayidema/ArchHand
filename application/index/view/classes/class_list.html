@@ -1,0 +1,9 @@
+{foreach $class as $key => $value}
+<div class="inr2box"  onclick="window.location.href='{:url('classInfo',['class_id'=>$value.id])}'">
+    <div class="ccz">
+        <p><img src="__STATIC__/images/play.png"></p>
+    </div>
+    <img src="{$value.class_pic}" alt="">
+    <div>{$value.name}</div>
+</div>
+{/foreach}

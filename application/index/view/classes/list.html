@@ -1,0 +1,82 @@
+{extend name="base/base_solid"}
+
+{block name="title"}课程 - {$cate_info.cate_name}列表 - {$website_title}{/block}
+
+{block name="source"}
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="sqbanner sqbanner1 mb20"></div>
+<input type="hidden" name="cate_id" value="{$cate_info.id}">
+<!-- / 主体/ -->
+<div class="w1200 clearfix">
+    <!-- /设计学院/ -->
+    <div class="inrmk1">
+        <div class="inrtit">
+            <p class="inrtitp">
+                <span class="text1">{$cate_info.cate_name}</span>
+            </p>
+        </div>
+        <div class="hengxian"></div>
+        <div id="class_list_box" class="inrbox1 box_siz clearfix">
+            {foreach $class as $key => $value}
+            <div class="inr2box" onclick="window.location.href='{:url('classInfo',['class_id'=>$value.id])}'">
+                <div class="ccz">
+                    <p><img src="__STATIC__/images/play.png"></p>
+                </div>
+                <img src="{$value.class_pic}" alt="">
+                <div>{$value.name}</div>
+            </div>
+            {/foreach}
+        </div>
+        <div class="tac">
+            <div class="m-style M-box3"></div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script>
+
+    $(function () {
+        {if $class_count}
+        $('.M-box3').pagination({
+            totalData:{$class_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                var cate_id = $('input[name=cate_id]').val();
+                $.ajax({
+                    url:"{:url('/index/Classes/getList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                        cate_id : cate_id,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#class_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+        })
+</script>
+{/block}

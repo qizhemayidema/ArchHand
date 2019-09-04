@@ -70,7 +70,7 @@ class UploadPic extends Controller{
     /**
      * @param $base64_image_content
      * @param $path
-     * @return \think\response\Json
+     * @return array
      */
     public function uploadBase64Pic($base64_image_content,$path)
     {

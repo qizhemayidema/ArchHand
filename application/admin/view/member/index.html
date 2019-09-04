@@ -89,7 +89,6 @@
                 data: {'id': id},
                 success: function (data) {
                     if(data.code===0){
-                        $(obj).parents("tr").remove();
                         layer.msg(data.msg, {icon: 2, time: 2000});
                     }else {
                         $(obj).parents("tr").remove();
@@ -102,7 +101,6 @@
             });
         });
     }
-
 </script>
 </body>
 </html>

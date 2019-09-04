@@ -22,8 +22,6 @@ class LibraryCategory extends Controller
         }catch(\Exception $e){
             return json(['code'=>0,'msg'=>'查询失败'],500);
         }
-
-
     }
 
     /**

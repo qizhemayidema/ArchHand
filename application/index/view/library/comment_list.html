@@ -1,0 +1,33 @@
+{foreach $comment as $key => $value}
+<div class="zhul_xx_nlzTop clearfix">
+    <a href="javascript:void(0);" class="pltx">
+        <img src="{$value.avatar_url}">
+    </a>
+    <div class="fl">
+        <p class="zhul_xx_lzname">
+            <a href="javascript:void(0);">{$value.nickname}</a>
+        </p>
+        <p class="zhul_xx_lzname" style="padding-left:0;">
+            发表于<span>{$value.create_time|date="Y-m-d H:i:s"}</span>
+        </p>
+    </div>
+    <div class="pl_lc">{$floor_start +$key + 1}楼</div>
+</div>
+<div class="zhul_xx_pingtCon clearfix">
+    <div class="fwbbox" style="min-height: 0;">
+        {$value.comment|raw}
+    </div>
+
+    <div class="w100 xqcaozuo1" style="display: inline-block;">
+        <p class="fr">
+            <a href="javascript:void(0)"  onclick="likeComment(this,'{$value.id}')">
+                <span class="hand {if isset($value.is_like) && $value.is_like}redhand {/if}"></span>
+                点赞(<em>{$value.like_num}</em>)
+            </a>
+        </p>
+    </div>
+
+    <p class="dashed_line" style="margin-bottom: 10px;"></p>
+
+</div>
+{/foreach}

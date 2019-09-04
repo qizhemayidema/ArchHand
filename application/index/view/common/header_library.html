@@ -1,0 +1,25 @@
+<!-- nav -->
+<div class="header1 clearfix">
+    <div class="w1200  clearfix">
+        <div class="nav_box clearfix">
+            <div class="fl clearfix">
+                <div class="logo fl fz0">
+                    <a href="{:url('/index')}" class="logoa fl">
+                        <img src="__STATIC__/images/logo.png" alt="">
+                    </a>
+                    {if $user_info}
+                    <a class="m768show fr qiadaom" href="{:url('signIn')}"><img src="__STATIC__/images/qiandao.png" alt="">签到</a>
+                    <a class="m768show fr fz12 mr5 cf" href="javascript:void(0);">
+                        {$user_info.nickname}
+                    </a>
+                    {else}
+                    <a class="m768show fr fz12 mr10" href="javascript:void(0);" onclick="showMarks(registerHTML,0);">注册</a>
+                    <a class="m768show fr fz12 mr5" href="javascript:void(0);" onclick="showMarks(loginHTML,1);">登录</a>
+                    {/if}
+                </div>
+                {include file="common/header_common/menu"}
+            </div>
+            {include file="common/header_common/user"}
+        </div>
+    </div>
+</div>

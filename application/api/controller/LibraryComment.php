@@ -170,7 +170,6 @@ class LibraryComment extends Base
         }catch (Exception $e){
             return json(['code'=>0,'msg'=>'删除失败'],200);
         }
-
         return json(['code'=>1,'msg'=>'success'],200);
     }
 }

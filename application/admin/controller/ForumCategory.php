@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use think\Cache;
 use think\Controller;
 use think\Request;
 use app\admin\model\ForumCategory as CateModel;
@@ -48,7 +49,7 @@ class ForumCategory extends Base
         $classCateModel->insert([
             'cate_name' => $data['cate_name'],
         ]);
-
+        (new PlateModel())->clearCache();
         return json(['code'=>1,'msg'=>'success']);
     }
 
@@ -91,6 +92,7 @@ class ForumCategory extends Base
         $classCateModel->where(['id'=>$data['id']])->update([
             'cate_name' => $data['cate_name'],
         ]);
+        (new PlateModel())->clearCache();
 
         return json(['code'=>1,'msg'=>'success']);
 
@@ -106,6 +108,7 @@ class ForumCategory extends Base
 
         //删除
         (new CateModel())->where(['id'=>$id])->delete();
+        (new PlateModel())->clearCache();
 
         return json(['code'=>1,'msg'=>'success']);
     }

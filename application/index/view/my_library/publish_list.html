@@ -1,0 +1,52 @@
+{foreach $library as $key => $value}
+<div class="js_list oh bb1 abb_list">
+    {if $value.status == 1}
+    <a href="{:url('libraryInfo',['library_id'=>$value.id])}">
+        {/if}
+        <div class="js_list_img  fl">
+            <img src="{$value.library_pic}" alt="">
+        </div>
+        <div class="js_info fl">
+            <div class="js_info_top oh mb20">
+                <h3>{$value.name}</h3>
+                <p class="fz14 c9">发布于{$value.create_time|date="Y-m-d H:i:s"}
+                    {if $value.status == -1}
+                    &nbsp;<span class="fz14 red">已拒绝</span>
+                    {elseif $value.status == 0}
+                    &nbsp;<span class="fz14 blue">审批中</span>
+                    {else}
+                    &nbsp;<span class="fz14 green">审核通过</span>
+                    {/if}
+                </p>
+            </div>
+            {if $value.status == 1}
+            <div class="abb_list_icon oh">
+                <div class="fl oh mr20">
+                    <img src="/static/index/images/scan.png" alt="" class="fl">
+                    <span class="fz12 c9">{$value.see_num}</span>
+                </div>
+                <div class="fl oh mr20">
+                    <img src="/static/index/images/flow.png" alt="" class="fl">
+                    <span class="fz12 c9">{$value.comment_num}</span>
+                </div>
+                <div class="fl oh mr20">
+                    <span class="hand" style="width: 12px;height: 13px;"></span>
+                    <span class="fz12 c9">&nbsp;&nbsp;{$value.like_num}</span>
+                </div>
+                <div class="fl oh mr20">
+                    <span class="uncollect" style="width: 14px;height: 13px;"></span>
+                    <span class="fz12 c9">{$value.collect_num}</span>
+                </div>
+            </div>
+            {else if $value.status == -1}
+            <span class="fz14">未通过原因 : {$value.because}</span>
+            {/if}
+        </div>
+        {if $value.status == 1}
+    </a>
+    {/if}
+    <div class="js_btn">
+        <button class="red_btn" type="button" onclick="deletePublish('{$value.id}')">删除</button>
+    </div>
+</div>
+{/foreach}

@@ -1,0 +1,10 @@
+{foreach $library as $key => $value}
+<div class="inr2box">
+    <p><img src="{$value.library_pic}" onclick="window.location.href='{:url('libraryInfo',['library_id'=>$value.id])}'">
+        {if $value.is_official}
+        <a class="hot"></a>
+        {/if}
+    </p>
+    <div>{$value.name}</div>
+</div>
+{/foreach}

@@ -1,0 +1,20 @@
+{foreach $comment as $key => $value}
+<div class="hf_list oh bb1 ">
+    <a href="{:url('libraryInfo',['library_id'=>$value.library_id])}">
+        <h3 class="fz20 c3 oh1 fw9 mb5">{$value.name}</h3>
+        <p class="fz16 c9 oh2 mb10" style="width: 100%;">{$value.comment|raw}</p>
+        <div class="oh">
+            <!--<div class="hf_list_img">-->
+            <!--<img src="__STATIC__/images/banner_01.jpg" alt="">-->
+            <!--</div>-->
+            <div class="fz12 c9 lh26 fl mr20">评论时间：{$value.create_time|date="Y-m-d H:i:s"} </div>
+            <div class="abb_list_icon oh">
+                <div class="fl oh mr20">
+                    <span class="hand" style="width: 12px;height: 13px;"></span>
+                    <span class="fz12 c9">&nbsp;&nbsp;{$value.like_num}</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+{/foreach}

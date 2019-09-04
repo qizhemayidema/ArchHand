@@ -73,8 +73,24 @@ class ForumManager extends ForumManagerBase
             return json(['code' => 0, 'msg' => $validate->getError()]);
         }
 
-        (new ForumModel())->where(['id' => $data['forum_id'], 'plate_id' => $data['plate_id'], 'is_delete' => 0])
+        $forumInfo = (new ForumModel())->where(['id' => $data['forum_id'], 'is_delete' => 0])->find();
+        if(!$forumInfo){
+            return json(['code'=>0,'msg'=>'该帖子不存在']);
+        }
+        (new ForumModel())->where(['id' => $data['forum_id'], 'plate_id' => $forumInfo['plate_id'], 'is_delete' => 0])
             ->update(['is_delete' => 1]);
+        $plateInfo = (new PlateModel())->where(['id'=>$forumInfo['plate_id']])->find();
+        $comment_num = $forumInfo['comment_num'];
+        if($comment_num){
+            if ($plateInfo['comment_num'] < $comment_num){
+                $plateInfo->save(['comment_num'=>0]);
+            }else{
+                $plateInfo->setDec('comment_num',$comment_num);
+            }
+        }
+        if ($plateInfo['forum_num'] > 0){
+            $plateInfo->setDec('forum_num');
+        }
 
         return json(['code' => 1, 'msg' => 'success']);
     }
@@ -97,11 +113,17 @@ class ForumManager extends ForumManagerBase
 
         }
         $forumInfo = (new ForumModel())->where(['id' => $forum_id, 'plate_id' => $data['plate_id'], 'is_delete' => 0])->find();
-
+        $plateInfo = (new PlateModel())->where(['id'=>$data['forum_id']])->find();
         if (!$forumInfo) {
             return json(['code' => 0, 'msg' => '该帖子不存在']);
         }
         (new ForumCommentModel())->where(['id' => $data['forum_comment_id']])->update(['status'=>0]);
+        if($plateInfo){
+            if ($plateInfo['comment_num'] > 0){
+                $plateInfo->setDec('comment_num',1);
+            }
+        }
+
         return json(['code' => 1, 'msg' => 'success']);
     }
 
@@ -382,5 +404,6 @@ class ForumManager extends ForumManagerBase
         ]);
         return json(['code' => 1, 'msg' => 'success']);
     }
+
 
 }

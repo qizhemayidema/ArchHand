@@ -22,7 +22,7 @@ class Config extends Base
 
         $sign = [];
 
-        if(!$data){
+        if (!$data) {
             return $this->fetch('config/index');
         }
 
@@ -59,12 +59,10 @@ class Config extends Base
     {
 
         $form = $request->post();
-
         $validate = new \app\admin\validate\Config();
         if (!$validate->check($form)) {
             return jsone(0, $validate->getError());
         }
-
 
         $sign_in_integral = explode(',', trim($form['sign_in_integral']));
         $sign = [];
@@ -76,13 +74,25 @@ class Config extends Base
         //今日力推
 
         $today_recommend = [
-            'today_title'=>$form['today_title'],
-            'today_url'=>$form['today_url'],
-            'today_content'=>$form['today_content'],
-            'today_pic'=>$form['today_pic'],
+            'today_title' => $form['today_title'],
+            'today_url' => $form['today_url'],
+            'today_content' => $form['today_content'],
+            'today_pic' => $form['today_pic'],
         ];
 
-
+        //合作方
+        $partner = [];
+        foreach ($form['partner'] as $value) {
+            $partner[] = $value;
+        }
+        //底部导航
+        $bottom_navigation = [
+            'about' => $form['about'],
+            'FAQ' => $form['FAQ'],
+            'privacy_policy' => $form['privacy_policy'],
+            'job' => $form['job'],
+            'contact_us' => $form['contact_us'],
+        ];
         $data = [
             'title' => trim($form['title']),
             'keyword' => trim($form['keyword']),
@@ -94,19 +104,19 @@ class Config extends Base
             'phone' => trim($form['phone']),
             'qr_code' => trim($form['qr_code']),
             'issue_integral' => trim($form['issue_integral']),
-            'issue_integral_count'=>trim($form['issue_integral_count']),
+            'issue_integral_count' => trim($form['issue_integral_count']),
             'comment_integral' => trim($form['comment_integral']),
-            'comment_integral_count'=>trim($form['comment_integral_count']),
+            'comment_integral_count' => trim($form['comment_integral_count']),
 //            'ratio_integral' => trim($form['ratio_integral']),
             'service_charge_integral' => trim($form['service_charge_integral']),
             'sign_in_integral' => $sign,
-            'today_recommend'=>$today_recommend,
+            'today_recommend' => $today_recommend,
+            'partner' => $partner,
+            'bottom_navigation'=>$bottom_navigation,
         ];
 
         $data = json_encode($data);
 
-//        dump($data);
-//        die;
         $status = file_put_contents(self::WEB_SITE_PATH, $data);
         if ($status) {
             return jsone(1, '设置成功');

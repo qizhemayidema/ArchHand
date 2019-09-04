@@ -332,9 +332,9 @@ class Classes extends Controller
                     //删除视频
                     $upyun->delete($value['source_url'],true);
                     //删除图片
-                    if (file_exists($value['pic'])){
-                        unlink('.' . $value['pic']);
-                    }
+//                    if (file_exists($value['pic'])){
+//                        unlink('.' . $value['pic']);
+//                    }
                     //从数据库删除
                     $chapterModel->where(['id'=>$value['id']])->delete();
                 }else{

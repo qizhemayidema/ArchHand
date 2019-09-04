@@ -4,6 +4,7 @@ namespace app\api\validate;
 
 use app\api\model\LibraryCategory;
 use app\api\model\User;
+use think\Db;
 use think\Validate;
 
 class Library extends Validate
@@ -22,12 +23,11 @@ class Library extends Validate
         'integral' => 'require|number',
         'source_url' => 'require',
         'desc' => 'require|min:10',
-        'library_pic' => 'require',
         'suffix' => 'require|alpha',
         'data_size' => 'require|number',
         'is_original' => 'require|number',
         'is_classics' => 'require|number|in:0,2',
-        'attr_value_ids' => 'require|attrJson'
+//        'attr_value_ids' => 'require|array|length',
     ];
 
     /**
@@ -44,7 +44,7 @@ class Library extends Validate
         'name.min:3' => '标题不能小于3个文字',
         'name.max:64' => '标题不能大于64个文字',
         'name.chsAlpha' => '标题填写错误',
-        'user_id.require' => '请登录后重试1',
+        'user_id.require' => '请登录后重试',
         'user_id.number' => '请登录后重试',
         'user_id.userCheck' => '请登陆后重试',
         'name_status.require' => '请选择是否显示名称',
@@ -54,9 +54,8 @@ class Library extends Validate
         'source_url.require' => '资源路径错误',
         'desc.require' => '请填写正文信息',
         'desc.min' => '正文字数过少',
-        'library_pid.require' => '请上传封面图',
         'suffix.require' => '文件格式错误',
-        'suffix.alpha' => '文件格式错误11',
+        'suffix.alpha' => '文件格式错误',
         'data_size.require' => '请填写文件大小',
         'data_size.number' => '文件大小错误',
         'is_original.require' => '请填写原创信息',
@@ -64,8 +63,9 @@ class Library extends Validate
         'is_classics.require' => '请填写是否加精',
         'is_classics.number' => '加精信息错误',
         'is_classics.in' => '加精信息错误',
-        'attr_value_ids.require' => '文库属性必须填写',
-        'attr_value_ids.attrJson' => '文库属性填写错误',
+        'attr_value_ids.require'=>'文库属性必须填写',
+        'attr_value_ids.array' => '文库属性填写错误',
+        'attr_value_ids.length' => '文库属性必须填写',
     ];
 
     public function cateCheck($value, $rule, $data)
@@ -86,10 +86,4 @@ class Library extends Validate
         return false;
     }
 
-    public function attrJson($value, $rule, $data)
-    {
-        json_decode($value);
-        return (json_last_error() == JSON_ERROR_NONE) ;
-
-    }
 }

@@ -78,7 +78,8 @@ class LibraryCategory extends Base
         $insert = Db::name('library_category')->insertGetId(['cate_name'=>$cate['cate_name']]);
         if ($insert) {
             //新增分类后，重新创建分类缓存
-            $this->setCache();
+            $cache = new \think\Cache(['type'=>config('cache.type')]);
+            $cache->set('library_cate',null);
             return json(['code' => 1, 'msg' => '添加成功']);
         }
         return json(['code' => 0, 'msg' > 'error']);
@@ -153,6 +154,8 @@ class LibraryCategory extends Base
 //        }
 
         $category = LibraryCategoryModel::update($data);
+        $cache = new \think\Cache(['type'=>config('cache.type')]);
+        $cache->set('library_cate',null);
         if ($category) {
             //编辑分类后，重新创建分类缓存
             $this->setCache();
@@ -182,6 +185,8 @@ class LibraryCategory extends Base
             }
 
            if( $cate->delete())
+               $cache = new \think\Cache(['type'=>config('cache.type')]);
+                $cache->set('library_cate',null);
                //删除分类后，重新创建分类缓存
 //               $this->setCache();
                return jsone(1,'删除成功');

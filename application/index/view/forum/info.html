@@ -1,0 +1,396 @@
+{extend name="base/base_solid"}
+
+{block name="title"} {$forum.name} - {$website_title} {/block}
+
+{block name="source"}
+
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/share_style0_32.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/simditor.css" rel="stylesheet" type="text/css"/>
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<!-- 编辑器 -->
+<script type="text/javascript" src="__STATIC__/js/module.js"></script>
+<script type="text/javascript" src="__STATIC__/js/hotkeys.js"></script>
+<script type="text/javascript" src="__STATIC__/js/uploader.js"></script>
+<script type="text/javascript" src="__STATIC__/js/simditor.js"></script>
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+    .zt_r{
+        background-color: #fff;
+    }
+    #comment_list_box img{max-width:100%;}
+    p img{
+        max-width: 100%;
+        height: auto;
+    }
+    
+</style>
+{/block}
+
+{block name="body"}
+
+<!-- / 主体/ -->
+<input type="hidden" name="forum_id" value="{$forum.id}">
+<div class="w1200 clearfix">
+    <div class="zt_l clearfix">
+        <div class="zhul_xx_newtzTit">
+                    <span class="zhul_xx_newtzTitle">
+                        <span class="h1">{$forum.name}</span>
+                        {if $forum.is_classics}
+                        <a href="javascript:void(0);">
+                            <p class="zhul_zy_jing">精</p>
+                        </a>
+                        {/if}
+                    </span>
+            <p style="clear:both;display:inline-block;width:100%;margin-top:10px;"><span>{$forum.user_name}</span>&nbsp;
+                发表于<span>{$forum.create_time|date="Y-m-d H:i:s"}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="scan"></span><span>{$forum.see_num}</span>人浏览
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <!--<a href="javascript:void(0);">回复加筑手币 </a><span class="zhul_xx_dpnums">20</span></p>-->
+        </div>
+        <!-- </div> -->
+
+        <div class="hengxian"></div>
+        <div class="zt_l_box clearfix">
+            <div class="xq_bq_box clearfix">
+                {if $forum.tag_str}
+                <span class="xqbq_tit">标签：</span>
+                <div class="xqbq_bq">
+                    {foreach :explode('，',$forum.tag_str) as $key => $value}
+                    <div class="xqbq_one">{$value}</div>
+                    {/foreach}
+                </div>
+                {/if}
+            </div>
+            <!-- inner -->
+            <div class="zt_inner w100">
+                {$forum.content|raw}
+            </div>
+            <!-- inner -->
+            <div class="zhul_xx_nhots clearfix box_siz">
+                <!--分享-->
+                <div class="zhul_xx_czfx clearfix">
+                    <a id="sharea" name="sharea"></a>
+                    <div class="zhul_xx_lshare">
+                        <span style="float:left;display: inline-block;width: 50px;height:45px;line-height: 45px;text-align: center;font-size: 16px;margin-right: 10px;">分享至</span>
+                        <a href="javascript:void(0);" title="分享到微信" class="weixin" onclick="wx_share();" target="_self"></a>
+                        <div class="zhul_po_wxkuang" style="display: none;">
+                            <p class="zhul_fx_wxtop">
+                                <span style="float:left;">分享到微信朋友圈</span>
+                                <a href="javascript:void(0);" onclick="gb_share();" target="_self">×</a>
+                            </p>
+                            <p class="zhul_fx_wximg"><img src="http://f.zhulong.com/qrcode.php?data={:url('forumInfo',['forum_id'=>$forum.id])}" width="150" height="150"></p>
+                            <p class="zhul_fx_botts">打开微信"扫一扫"，扫描上方二维码<br>请点击右上角按钮&nbsp;<img src="http://bbs.zhulong.com//img/indeximg/wxfx_01.gif">，选择&nbsp;<img src="http://bbs.zhulong.com//img/indeximg/wxfx_02.gif"></p>
+                        </div>
+                        <div class="bdsharebuttonbox bdshare-button-style0-32" data-bd-bind="1565237725651">
+                            <a title="分享到QQ好友" href="https://connect.qq.com/widget/shareqq/index.html?url=&amp;title=&amp;desc=&amp;summary=&amp;site=baidu&amp;pics=" class="bds_sqq" data-cmd="sqq"></a>
+                            <a title="分享到QQ空间" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=&amp;title=&amp;pics=" class="bds_qzone" target="_blank"></a><span id="share_sina" style="float:left;width:38px;height:38px;margin: 7px 7px 0 0">
+                            <a title="分享到新浪微博" href="http://service.weibo.com/share/share.php?url=&amp;appkey=&amp;searchPic=1&amp;title=&amp;pic=" class="bds_tsina" target="_blank"></a></span>
+                            <input type="hidden" id="share_pic" value="{$Request.domain}{$forum.pic}">
+                            <input type="hidden" id="share_title" value="{$forum.name}">
+                            <script type="text/javascript">
+                                function sharelink2() {
+                                    var sina_url = window.location.href;
+                                    // var snum = sina_index.htmlOf('#');
+                                    var text = encodeURIComponent($("#share_title").val());
+                                    var pics = $("#share_pic").val();
+                                    var share_qzone_url = "";
+                                    // if (snum > -1) {
+                                    //     sina_url = sina_url.substr(0, snum);
+                                    // }
+                                    var url_short = sina_url;
+                                    pics = pics.replace(/,/g, '|');
+                                    var temp = $("#share_pic").val();
+                                    // if (temp != "") {
+                                    //     temp.replace(/_0_0_760_0/g, '');
+                                    //     temp = temp.replace(/,/g, "||");
+                                    //     tempArray = temp.split('||');
+                                    //     temp = tempArray.slice(0, 15).join("||");
+                                    // }
+                                    share_qzone_url = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + url_short + '&title=' +
+                                        text + '&pics=' + pics;
+                                    $("#share_sina").html('<a title="分享到新浪微博" href="http://service.weibo.com/share/share.php?url=' + sina_url +
+                                        '%230-tsina-1-22490-397232819ff9a47a7b7e80a40613cfe1&title={$forum.name}&pic=' +
+                                        temp + '" class="bds_tsina" target="_blank"></a>');
+                                    $(".bds_sqq").attr("href", 'https://connect.qq.com/widget/shareqq/index.html?url=' + sina_url +
+                                        '%230-sqq-1-69836-9737f6f9e09dfaf5d3fd14d775bfee85&title=' + text + '&desc=&summary=&site=baidu&pics=' +
+                                        pics);
+                                    $(".bds_qzone").attr("href", share_qzone_url);
+                                }
+                                sharelink2();
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="xqcaozuo">
+            <p>
+                <!-- <a href="javascript:void(0)" pid="33853328">
+                        <span class="nonice"></span>
+                        举报</a> -->
+                <a href="javascript:void(0)">
+                    <span class="message"></span>
+                    评论(<em>{$forum.comment_num}</em>)
+                </a>
+                <a href="javascript:void(0)" onclick="like(this,'{$forum.id}')">
+                    <span class="hand {if $forum.is_like}redhand {/if}"></span> <!-- 状态 redhand-->
+                    点赞(<em>{$forum.like_num}</em>)</a>
+                <a href="javascript:void(0)" onclick="collect(this,'{$forum.id}')">
+                    <span class="uncollect {if $forum.is_collect}collect_ok {/if}" style="width: 14px;height: 13px;"></span><!-- 状态 collect_ok-->
+                    收藏(<em>{$forum.collect_num}</em>)</a>
+            </p>
+        </div>
+        <div class="xqpl" id="comment_list_box">
+            {if $comment_count}
+            {foreach $comment as $key => $value}
+            <div class="zhul_xx_nlzTop clearfix">
+                <a href="javascript:void(0);" class="pltx">
+                    <img src="{$value.avatar_url}">
+                </a>
+                <div class="fl">
+                    <p class="zhul_xx_lzname">
+                        <a href="javascript:void(0);">{$value.nickname}</a>
+                    </p>
+                    <p class="zhul_xx_lzname" style="padding-left:0;">
+                        发表于<span>{$value.create_time|date="Y-m-d H:i:s"}</span>
+                    </p>
+                </div>
+                <div class="pl_lc">{$key + 1}楼</div>
+            </div>
+            <div class="zhul_xx_pingtCon clearfix">
+                <div class="fwbbox" style="min-height: 0;">
+                    {$value.content|raw}
+                </div>
+
+                <div class="w100 xqcaozuo1" style="display: inline-block;">
+                    <p class="fr">
+                        <a href="javascript:void(0)"  onclick="likeComment(this,'{$value.id}')">
+                            <span class="hand {if isset($value.is_like) && $value.is_like}redhand {/if}"></span>
+                            点赞(<em>{$value.like_num}</em>)
+                        </a>
+                    </p>
+                </div>
+
+                <p class="dashed_line" style="margin-bottom: 10px;"></p>
+
+            </div>
+            {/foreach}
+            {else}
+            <div class="zanwu" style="line-height: 30PX;">暂无评论,快来抢沙发吧~</div>
+
+            {/if}
+        </div>
+        {if $comment_count}
+        <div class="tac xqpl">
+            <div class="m-style M-box3" ></div>
+        </div>
+        {/if}
+        <div class="fabu_box clearfix">
+            <textarea name="content" id="editor" placeholder=""></textarea>
+            <div class="dis_flex aic jump_last_d">
+                <!--<input class="jump_last" type="checkbox" name="jump"> 回帖后跳到最后一页-->
+            </div>
+            <div class="clearfix">
+                <div class="fabu_yzm clearfix">
+                    <span class="fabu_yzm1 fl">验证码:</span>
+                    <input class="fabu_yzm2 fl" type="" name="pl_fabu_yam" id="" value="" placeholder="请输入验证码" />
+                    <img style="width: 110px;" id="captcha" class="yam_img fl" src="{:captcha_src()}" alt="">
+                    <div class="fabu_yzm3  fl"><a href="javascript:$('#captcha').attr('src','{:captcha_src()}?temp='+Math.random())">看不清楚 <span>换一换</span></a></div>
+                </div>
+                <div class="fabu_btn" style="background: red;" onclick="send_comment()">评论</div>
+            </div>
+        </div>
+    </div>
+    <div class="zt_r clearfix">
+        <div class="inrtit">
+            <p class="inrtitp">
+                <span class="text1">热门帖子</span>
+                <span class="text2">/ HOT POST</span>
+                <!-- <a class="fr c9 cspointer" @click="more(1)">更多>></a> -->
+            </p>
+        </div>
+        <div class="hengxian"></div>
+        {foreach $hot_forum as $key => $value}
+        <a class="hotcase clearfix" href="{:url('forumInfo',['forum_id'=>$value.id])}">
+            <img class="hotcaseImg" src="{$value.pic}" alt="">
+            <div class="caseinr oh2">{$value.name}</div>
+        </a>
+        {/foreach}
+    </div>
+</div>
+<script>
+    var like = function (_this,forum_id){
+        if ($(_this).find('span').hasClass('redhand')){
+            layer.msg('您已经点过赞了,不能重复点赞哦~')
+            return false;
+        }
+        $.ajax({
+            url:"{:url('/index/Forum/like')}",
+            type:'post',
+            data:{
+                forum_id : forum_id,
+            },
+            dataType:'json',
+            success:function(data){
+                if (data.code == 1){
+                    layer.msg('已点赞');
+                    $(_this).find('span').addClass('redhand');
+                    var em = $(_this).find('em');
+                    em.html(parseInt(em.html()) + 1)
+                }  else{
+                    layer.msg(data.msg);
+                }
+            }
+        })
+    }
+    var collect = function (_this,forum_id){
+        $.ajax({
+            url:"{:url('/index/Forum/collect')}",
+            type:'post',
+            data:{
+                forum_id : forum_id,
+            },
+            dataType:'json',
+            success:function(data){
+                if (data.code == 1){
+                    var span = $(_this).find('span');
+                    var em = $(_this).find('em');
+
+                    if (span.hasClass('collect_ok')){
+                        span.removeClass('collect_ok');
+                        em.html(em.html() - 1)
+                    }else{
+                        span.addClass('collect_ok');
+                        em.html(parseInt(em.html()) + 1)
+                    }
+                }  else{
+                    layer.msg(data.msg);
+                }
+            }
+        })
+    }
+
+    var send_comment = function(){
+        var flag = {if $user_info} true {else} false {/if};
+        if (!flag){
+            layer.msg('请登陆账号~');
+            return false;
+        }
+        var comment = $('#editor').val();
+        var captcha = $('input[name=pl_fabu_yam]').val();
+        var forum_id = $('input[name=forum_id]').val();
+        if (!captcha){
+            layer.msg('请填写验证码');
+            return false;
+        }
+        if (!comment){
+            layer.msg('请填写评论内容');
+            return false;
+        }
+        $.ajax({
+            url:"{:url('/index/Forum/comment')}",
+            type:'post',
+            data:{
+                comment : comment,
+                captcha : captcha,
+                forum_id : forum_id,
+            },
+            dataType:'json',
+            success:function(data){
+                if (data.code == 1){
+                    layer.msg('评论成功~');
+                    setTimeout(function(){
+                        window.location.reload();
+                    })
+                }  else{
+                layer.msg(data.msg);
+                }
+            }
+        })
+    }
+
+    function wx_share() {
+        $('.zhul_po_wxkuang').show()
+    }
+
+    function gb_share() {
+
+        $('.zhul_po_wxkuang').hide()
+    }
+    var likeComment = function(_this,forum_comment_id){
+        if ($(_this).find('span').hasClass('redhand')) {
+            layer.msg('您已经点过赞了,不能重复点赞哦~');
+            return false;
+        }
+        $.ajax({
+            url:"{:url('/index/Forum/likeComment')}",
+            type:'post',
+            data:{
+                forum_comment_id : forum_comment_id,
+            },
+            dataType:'json',
+            success:function(data){
+                if (data.code == 1){
+                    $(_this).find('span').addClass('redhand');
+                    var num = $(_this).find('em');
+                    num.html(parseInt(num.html()) + 1);
+                }  else{
+                    layer.msg(data.msg);
+                }
+            }
+        })
+    }
+    $(function () {
+        {if $comment_count}
+        $('.M-box3').pagination({
+            totalData:{$comment_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                var forum_id = $('input[name=forum_id]').val();
+                $.ajax({
+                    url:"{:url('/index/Forum/getComment')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                        forum_id : forum_id,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#comment_list_box').html(data.html);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+
+        var editor = new Simditor({
+            textarea: $('#editor'),
+            toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+                'blockquote','table','link','image','hr','indent','outdent','alignment'],
+            upload:{
+                url:'/index/Forum/uploadContentPic',
+                params:null,
+                fileKey:'file_path',
+                connectionCount:1,
+                leaveConfirm:'正在上传图片请勿关闭此页面'
+            },
+            placeholder:'',
+            imageButton:['upload'],
+        });
+        editor.sync()
+
+        })
+</script>
+{/block}

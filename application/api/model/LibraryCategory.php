@@ -2,6 +2,7 @@
 
 namespace app\api\model;
 
+use think\Cache;
 use think\Model;
 
 class LibraryCategory extends Model

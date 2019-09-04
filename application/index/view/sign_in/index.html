@@ -1,0 +1,126 @@
+{extend name="base/base_solid"}
+
+{block name="title"}签到 - {$website_title} {/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="mianbg">
+    <div class="qdmemsg">
+        <div class="qdtxbox">
+            <img src="{$user_info.avatar_url}" alt="">
+            <div class="nickname" v-html="username">
+                {:mb_substr($user_info.nickname,0,5)}
+                {if strlen($user_info.nickname) > 5}...
+                {/if}
+            </div>
+        </div>
+        <p class="zhushoubi">筑手币：{$user_info.integral}</p>
+    </div>
+    <div class="qiandaobox ">
+        <div class="dis_flex aic ju_c">
+            <div class="qdicond">
+                {if $sign_in.last_sign_in_num >= 1}
+                 <img src="__STATIC__/images/qdicon1.png" />
+                {else}
+                <img src="__STATIC__/images/qdicon0.png" />
+                {/if}
+                <div class="qd_qdtip dis_flex"><span class="m768hide">第一天 +{$sign_in.sign_in_integral.1}</span>
+                </div>
+            </div>
+            <div class="qd_hx qd_hx1"></div>
+            <div class="qdicond">
+                {if $sign_in.last_sign_in_num >= 2}
+                <img src="__STATIC__/images/qdicon1.png" />
+                {else}
+                <img src="__STATIC__/images/qdicon0.png" />
+                {/if}
+                <div class="qd_qdtip dis_flex"><span class="m768hide">第二天 +{$sign_in.sign_in_integral.2}</span>
+                </div>
+            </div>
+            <div class="qd_hx qd_hx1"></div>
+            <div class="qdicond">
+                {if $sign_in.last_sign_in_num >= 3}
+                <img src="__STATIC__/images/qdicon1.png" />
+                {else}
+                <img src="__STATIC__/images/qdicon0.png" />
+                {/if}
+                <div class="qd_qdtip dis_flex"><span class="m768hide">第三天 +{$sign_in.sign_in_integral.3}</span>
+                </div>
+            </div>
+            <div class="qd_hx qd_hx1"></div>
+            <div class="qdicond">
+                {if $sign_in.last_sign_in_num >= 4}
+                <img src="__STATIC__/images/qdicon1.png" />
+                {else}
+                <img src="__STATIC__/images/qdicon0.png" />
+                {/if}
+                <div class="qd_qdtip dis_flex"><span class="m768hide">第四天 +{$sign_in.sign_in_integral.4}</span>
+                </div>
+            </div>
+            <div class="qd_hx qd_hx1"></div>
+            <div class="qdicond">
+                {if $sign_in.last_sign_in_num >= 5}
+                <img src="__STATIC__/images/qdicon1.png" />
+                {else}
+                <img src="__STATIC__/images/qdicon0.png" />
+                {/if}
+                <div class="qd_qdtip dis_flex"><span class="m768hide">第五天 +{$sign_in.sign_in_integral.5}</span>
+                </div>
+            </div>
+            <div class="qd_hx qd_hx1"></div>
+            <div class="qdicond">
+                {if $sign_in.last_sign_in_num >= 6}
+                <img src="__STATIC__/images/qdicon1.png" />
+                {else}
+                <img src="__STATIC__/images/qdicon0.png" />
+                {/if}
+                <div class="qd_qdtip dis_flex"><span class="m768hide">第六天 +{$sign_in.sign_in_integral.6}</span>
+                </div>
+            </div>
+            <div class="qd_hx qd_hx1"></div>
+            <div class="qdicond">
+                {if $sign_in.last_sign_in_num >= 7}
+                <img src="__STATIC__/images/qdicon1.png" />
+                {else}
+                <img src="__STATIC__/images/qdicon0.png" />
+                {/if}
+                <div class="qd_qdtip dis_flex"><span class="m768hide">第七天 +{$sign_in.sign_in_integral.7}</span>
+                </div>
+            </div>
+        </div>
+        {if $sign_in.is_sign}
+        <div class="qd_qdbtn"> <!-- qd_qdbtn1 -->
+            已签到
+        </div>
+        {else}
+        <div id="sign_in" class="qd_qdbtn qd_qdbtn1"> <!-- qd_qdbtn1 -->
+            点击签到
+        </div>
+        {/if}
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    $(function () {
+        $('#sign_in').on('click',function(){
+            $.ajax({
+                url:"{:url('signInAction')}",
+                type:"post",
+                dataType:"json",
+                success:function(data){
+                    if (data.code == 1){
+                        layer.msg('签到成功');
+                        setTimeout(function () {
+                            window.location.reload();
+                        },1500)
+                    } else{
+                        layer.msg(data.msg);
+                    }
+                }
+            })
+        })
+    })
+</script>
+{/block}

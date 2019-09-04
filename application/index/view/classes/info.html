@@ -1,0 +1,199 @@
+{extend name="base/base_solid"}
+
+{block name="title"}课堂 - {$class_info.name} - {$website_title}{/block}
+
+{block name="source"}
+<style>
+    body {
+        background: #f1f2f4;
+    }
+
+    .daohang {
+        background-color: #942c2d;
+    }
+
+    .shipin {
+        background: #fff !important;
+    }
+
+    .shipin img {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<div v-if="dataxq.class_info" class="w100 daohang mb20">
+    <div class="w1200">
+        {$class_info.name} (共{$class_info.chapter_sum}节)
+    </div>
+</div>
+<!-- / 主体/ -->
+<div v-if="dataxq.class_info" class="w1200 clearfix">
+    <div class="inrmk1 mb20 clearfix ">
+        <div class="inrbox1 box_siz clearfix">
+            <div class="kcimgbox" style="margin: 0px auto;">
+                <img class="kcimg" style="margin-top: 12px;" src="{$class_info.class_pic}" alt="">
+                <div class="shikan shikan1" onclick="buy('{$class_info.id}')">筑手币兑换</div>
+            </div>
+            <div class="kcmsg">
+                <div class="kc_collect">
+
+                    <div class="uncollect {if $class_info.is_collect} collect_ok  {/if}" id="collect_icon" onclick="collect('{$class_info.id}')"></div>  <!-- collect_ok -->
+                    <span class="changecolor collect_num">收藏(<span id="collect_number">{$class_info.collect_num}</span>)</span>
+                </div>
+                <p>
+                    <span class="kcname"></span>
+                    <span></span>
+                </p>
+                <p class="kcmsgsj"><span class="kcsjtitle">浏览人数</span><span>：{$class_info.see_num}</span></p>
+                <p class="kcmsgsj"><span class="kcsjtitle">学习人数</span><span>：{$class_info.learn_num}</span></p>
+                <p class="kcmsgsj"><span class="kcsjtitle">免费试看</span><span>：{$class_info.free_chapter}节</span>
+                <p class="kcmsgsj"><span class="kcsjtitle">上传时间</span><span>：{$class_info.create_time|date="Y-m-d H:i:s"}</span>
+                </p>
+                <p class="kcmsgsj"><span class="kcsjtitle">筑手币</span><span>：{$class_info.integral}</span></p>
+                {if isset($class_info.vip_name)}
+                <p class="kcmsgsj"><span class="kcsjtitle">会员价</span><span>：{$class_info.vip_integral} | <span
+                        style="color: red;">{$class_info.vip_discount}折</span> </span></p>
+                {/if}
+                <p class="kcmsgsj"><span class="kcsjtitle">课程介绍</span><span>：</span></p>
+                <div>
+                    {$class_info.desc|raw}
+                </div>
+            </div>
+        </div>
+        <div class="hengxian"></div>
+        <div class="top_line_three">
+            <div class="inner anquanqu2" style="padding:14px 30px 16px;">
+                        <span class="marr35 kcfw" style="float: left;line-height: 26px;">
+                            课程服务
+                        </span>
+                <ul class="ke-about clearfix">
+                    {foreach $tag_list as $key => $value}
+                    <li>
+                        <span class="shipin">
+                            <img src="{$value.tag_img}" alt="">
+                        </span>
+                        <span>{$value.name}</span>
+                        <!--<div class="s-tk txt-explain">-->
+                        <!--<div class="tk-txt">-->
+                        <!--该课程共有52节视频课程。-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    </li>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+        <!-- <div class="m768show pb20"></div> -->
+    </div>
+    <div class="inrmk1">
+        <div class="inrbox1 box_siz clearfix">
+            {foreach $chapter_info as $key => $value}
+            <div class="inr2box " onclick="seeClass('{$value.id}')">
+                <div class="ccz">
+                    <p><img src="__STATIC__/images/play.png"></p>
+                </div>
+                <img src="{$value.pic}" alt="">
+                <div class="oh1">{$value.title}</div>
+            </div>
+            {/foreach}
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    // $('.txt-explain').hide();
+    // 课程服务弹窗
+    // $('.ke-about li').hover(function () {
+    //     $(this).find('.txt-explain').show();
+    // }, function () {
+    //     $(this).find('.txt-explain').hide();
+    // })
+    //观看视频
+    var seeClass = function (chapter_id) {
+        $.ajax({
+            url: "{:url('/index/Classes/seeVideo')}",
+            data: {
+                chapter_id: chapter_id,
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 1) {
+                    var index = layer.open({
+                        type: 1,
+                        area: ['805px', '650px'], //宽高
+                        title: data.chapter_name,
+                        resize: false,
+                        scrollbar: false,
+                        content: data.html,
+                    });
+                } else {
+                    layer.msg(data.msg);
+                }
+            }
+        })
+    }
+    //购买课程
+    var buy = function (class_id) {
+        layer.confirm('您确定购买吗', function(){
+            $.ajax({
+                url: "{:url('/index/Classes/buy')}",
+                data: {
+                    class_id: class_id,
+                },
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == 1){
+                        layer.msg('购买成功~')
+                        setTimeout(function(){
+                            window.location.reload();
+                        },1500)
+                    }else{
+                        layer.msg(data.msg);
+                    }
+                },
+                error:function(data){
+                    layer.msg('购买失败,请刷新后重试')
+                }
+            })
+        });
+        return false;
+
+    }
+    //收藏
+    var collect = function (class_id) {
+        $.ajax({
+            url: "{:url('/index/Classes/collect')}",
+            data: {
+                class_id: class_id,
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.code != 1){
+                    layer.msg(data.msg);
+                }else{
+                    var icon = $('#collect_icon');
+                    var number = $('#collect_number');
+                    if (icon.hasClass('collect_ok')){
+                        icon.removeClass('collect_ok')
+                        number.html(parseInt(number.html()) - 1);
+                    }else{
+                        icon.addClass('collect_ok');
+                        number.html(parseInt(number.html()) + 1);
+                    }
+                }
+            },
+            error:function(data){
+                layer.msg('购买失败,请刷新后重试')
+            }
+        })
+    }
+</script>
+{/block}

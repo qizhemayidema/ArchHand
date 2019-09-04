@@ -103,7 +103,6 @@ class User extends Base
             return jsone(1, '编辑成功');
         }
         return jsone(0, '编辑失败');
-
     }
 
     /**

@@ -1,0 +1,228 @@
+{extend name="base/base_solid"}
+
+{block name="title"}账户信息- {$website_title}{/block}
+
+{block name="source"}
+<link href="__STATIC__/css/slick.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/slick-theme.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/iconfont.css"  rel="stylesheet" type="text/css"/>
+<script src="__STATIC__/js/slick.js"></script>
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<script src="__STATIC__/js/select.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/vue.min.js"></script>
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="my_box">
+    <div class="w1200">
+        <div class="mybox_H">
+            <div class="mybox_H_inr">账号信息</div>
+        </div>
+        <div class="w100 bgf mybox_B">
+            <div class="mybox_L">
+                <div :class="ltype==0? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(0)">我的账号</div>
+                <div :class="ltype==1? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(1)">筑手币</div>
+            </div>
+            <div class="mybox_R">
+                <div v-show="ltype==0" class="mybox_R_one">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的账号</span>
+                    </div>
+                    <div class="w100">
+                        <div class="formlist clearfix">
+                            <div class="formtit">会员等级:</div>
+                            <div class="my_vip_lv">
+                                {$account.vip_name}
+                            </div>
+                            <a class="my_email_set" href="{:url('vip')}">升级成为VIP会员，百万资料免费下载</a>
+                        </div>
+
+                        <div class="formlist clearfix">
+                            <div class="formtit">账户余额:</div>
+                            <div class="my_vip_lv">{$account.integral} 筑手币</div>
+                        </div>
+                        <div class="formlist clearfix">
+                            <div class="formtit">已下载资料:</div>
+                            <div class="my_vip_lv" >下载{$account.download_count}篇资料。</div>
+                            <a class="my_email_set" href="{:url('myLibrary')}">查看下载记录</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-show="ltype==1" class="mybox_R_one">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">筑手币</span>
+
+                    </div>
+                    <div class="w100">
+                        <table class="w100 my_zsb_msg" border="" cellspacing="" cellpadding="">
+                            <tr>
+                                <th style="width: 50%;">日期</th>
+                                <th>收支</th>
+                                <th>筑手币</th>
+                                <th>备注</th>
+                            </tr>
+                            <tbody id="integral_list_box">
+                                {foreach $integral as $key => $value}
+                                <tr class="tac">
+                                    <td >{$value.create_time|date="Y-m-d H:i:s"}</td>
+                                    {if $value.type == '购买课程' || $value.type == '购买云库素材'}
+                                    <td>支出</td>
+                                    <td class="cf14f4f">{$value.integral}</td>
+                                    {else}
+                                    <td>收入</td>
+                                    <td class="c00a012">{$value.integral}</td>
+                                    {/if}
+                                    <td>{$value.type}</td>
+                                </tr>
+                                {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    //开启加载层
+    // banner
+    $('.single-item').slick({
+        dots: true,
+        speed: 500,
+        arrows: false,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 3000
+    });
+</script>
+<script>
+
+    var vm = new Vue({
+        el: '#body',
+        data: {
+            login:true,
+            page:1,pagesize:'{$integral_page_length}',
+            myaccount:'',
+            mysbjl:'',
+            showpwd:false,
+            total2:0,  //总数
+            tximg:'',
+            ltype:0,   //左侧分类
+            mkcur: 0,
+        },
+        created: function() {
+        },
+        mounted() {
+            // $('.M-box3').pagination({
+            // 	pageCount: 50,
+            // 	jump: true,
+            // 	coping: true,
+            // 	mode:'unfixed',
+            // 	count:2,
+            // 	homePage: '首页',
+            // 	endPage: '末页',
+            // 	prevContent: '上页',
+            // 	nextContent: '下页',
+            // 	callback: function (api) {
+            // 		console.log(api)
+            // 			console.log(api.getCurrent())
+            // 	}
+            // });
+        },
+        methods: {
+            showpwdfuc(){
+                this.showpwd=!this.showpwd
+            },
+            qhcur(index) {
+                this.ltype = index
+            },
+
+            //筑手币记录
+            gtetzsbjl(){
+                ///api/My_user/integralHistory
+                var that =this
+                $.ajax({
+                    type: "post",
+                    url: "{:url('/index/My_account/getIntegralHistory')}",
+                    data: {
+                        page:that.page,
+                    },
+                    success: function (res) {
+                        if(res.code==1){
+                            that.mysbjl=res.data
+                            if(that.page==1&&res.count>that.pagesize){
+
+                                $('.M-box2').pagination({
+                                    totalData: res.count,
+                                    showData:vm.pagesize,
+                                    // mode: 'fixed',
+                                    callback: function (api) {
+                                        console.log(api.getCurrent())
+                                        vm.page=api.getCurrent()
+                                        that.gtetzsbjl()
+                                    }
+                                })
+                            }
+                        }else{
+                            if(res.msg){
+                                layer.msg(res.msg)
+                            }else{
+                                layer.msg('获取失败')
+                            }
+                        }
+
+                    },
+                    error:function(err){
+                        layer.msg('获取失败')
+                        console.log(err)
+                    }
+                })
+            },
+        }
+    })
+    {if $integralCount}
+    $('.M-box2').pagination({
+        totalData:{$integralCount},
+        showData:{$integral_page_length},
+        // mode: 'fixed',
+        callback: function (api) {
+            var page=api.getCurrent()
+            $.ajax({
+                url:"{:url('/index/My_account/getIntegralHistory')}",
+                type:"post",
+                data:{
+                    page : page,
+                },
+                dataType:"json",
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg);
+                    } else{
+                        $('#integral_list_box').html(data.data);
+                    }
+                }
+            })
+        }
+    })
+    {/if}
+</script>
+{/block}

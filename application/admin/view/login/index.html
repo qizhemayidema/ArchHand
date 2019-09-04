@@ -70,7 +70,7 @@
                 processData:false,
                 contentType:false,
                 success:function(res){
-                    let data = $.parseJSON(res);
+                    var data = $.parseJSON(res);
                     if (data.code == 0){
                         layer.alert(data.msg);
                     } else{

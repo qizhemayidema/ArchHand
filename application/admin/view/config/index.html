@@ -3,6 +3,26 @@
 <head>
     {include file="common/meta,common/source"}
     <title>基本设置</title>
+    <style>
+        /*.table-bordered th{*/
+        /*border: none;*/
+        /*}*/
+        .table-border{
+            border: none;
+        }
+        .table-bordered td{
+            border: none;
+        }
+        .partner_label{
+            width:30%;
+        }
+        .partner_div_name{
+            width:70%;
+        }
+        .partner_div_url{
+            width: 70%;
+        }
+    </style>
 </head>
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页
@@ -19,9 +39,10 @@
             <div class="tabBar cl">
                 <span>基本设置</span>
                 <span>右侧导航设置</span>
+                <span>底部导航设置</span>
                 <span>助手币管理</span>
-                <span>今日力推</span>
-                <span>合作方管理</span>
+                <span>首页今日力推</span>
+                <span>首页合作方管理</span>
             </div>
             <div class="tabCon">
                 <div class="row cl">
@@ -113,11 +134,54 @@
 
             <div class="tabCon">
                 <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">关于我们：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor1" placeholder="" autofocus name="about">
+                            {$site?(!empty($site->bottom_navigation)?$site->bottom_navigation->about:''):''}
+                        </textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">常见问题：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor2" placeholder="" autofocus name="FAQ">
+                            {$site?(!empty($site->bottom_navigation)?$site->bottom_navigation->FAQ:''):''}
+                        </textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">隐私政策：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor3" placeholder="" autofocus name="privacy_policy">
+                            {$site?(!empty($site->bottom_navigation)?$site->bottom_navigation->privacy_policy:''):''}
+                        </textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">招聘信息：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor4" placeholder="" autofocus name="job">
+                            {$site?(!empty($site->bottom_navigation)?$site->bottom_navigation->job:''):''}
+                        </textarea>
+                    </div>
+                </div>
+                <div class="row cl">
+                    <label class="form-label col-xs-4 col-sm-2">联系我们：</label>
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <textarea id="editor5" placeholder="" autofocus name="contact_us">
+                            {$site?(!empty($site->bottom_navigation)?$site->bottom_navigation->contact_us:''):''}
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabCon">
+                <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">发布积分：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" class="input-text" value="{$site->issue_integral?:null}" id="issue_integral" name="issue_integral"
                                placeholder="50">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp发布文库和社区发布话题获取的助手币</span>
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp发布云库和社区发布话题获取的助手币</span>
                     </div>
                 </div>
 
@@ -125,8 +189,8 @@
                     <label class="form-label col-xs-4 col-sm-2">发布积分每日获取次数：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" class="input-text" value="{$site->issue_integral_count?:null}" id="issue_integral_count" name="issue_integral_count"
-                        placeholder="3">
-                    <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp发布文库和社区发布话题每日可获取助手币次数设置，文库与社区次数不共享 1-99次</span>
+                               placeholder="3">
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp发布云库和社区发布话题每日可获取助手币次数设置，云库与社区次数不共享 1-99次</span>
                     </div>
                 </div>
 
@@ -135,7 +199,7 @@
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" class="input-text" value="{$site->comment_integral?:null}" id="comment_integral" name="comment_integral"
                                placeholder="30">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp评论他人话题、文库、课程获取的助手币</span>
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp评论他人话题、云库、课程获取的助手币</span>
                     </div>
                 </div>
                 <div class="row cl">
@@ -143,23 +207,23 @@
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" class="input-text" value="{$site->comment_integral_count?:null}" id="comment_integral_count" name="comment_integral_count"
                                placeholder="3">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp评论话题、文库、课程每日可获取助手币次数设置，话题、文库、课程评论次数不共享 1-99次</span>
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp评论话题、云库、课程每日可获取助手币次数设置，话题、云库、课程评论次数不共享 1-99次</span>
                     </div>
                 </div>
                 <!--<div class="row cl">-->
-                    <!--<label class="form-label col-xs-4 col-sm-2">积分比例：</label>-->
-                    <!--<div class="formControls col-xs-8 col-sm-9">-->
-                        <!--<input type="text" class="input-text" value="{$site->ratio_integral?:null}" id="ratio_integral" name="ratio_integral"-->
-                               <!--placeholder="20">-->
-                        <!--<span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbspRMB与助手币兑换比例(示例：1元兑换20助手币,填写 20)</span>-->
-                    <!--</div>-->
+                <!--<label class="form-label col-xs-4 col-sm-2">积分比例：</label>-->
+                <!--<div class="formControls col-xs-8 col-sm-9">-->
+                <!--<input type="text" class="input-text" value="{$site->ratio_integral?:null}" id="ratio_integral" name="ratio_integral"-->
+                <!--placeholder="20">-->
+                <!--<span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbspRMB与助手币兑换比例(示例：1元兑换20助手币,填写 20)</span>-->
+                <!--</div>-->
                 <!--</div>-->
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">手续费 %：</label>
                     <div class="formControls col-xs-8 col-sm-9">
                         <input type="text" class="input-text" value="{$site->service_charge_integral?:null}" id="service_charge_integral" name="service_charge_integral"
                                placeholder="10">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp购买课程或文库时扣除的助手币</span>
+                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp购买课程或云库时扣除的助手币</span>
                     </div>
                 </div>
                 <div class="row cl">
@@ -194,7 +258,7 @@
                 <div class="row cl">
                     <label class="form-label col-xs-4 col-sm-2">内容：</label>
                     <div class="formControls col-xs-8 col-sm-9">
-                        <textarea id="editor" placeholder="" autofocus name="today_content">{$site->today_recommend->today_content?:null}</textarea>
+                        <textarea style="width: 100%;height: 250px;" placeholder="" autofocus name="today_content">{$site->today_recommend->today_content?:null}</textarea>
 
                         <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页今日力推内容</span>
                     </div>
@@ -212,24 +276,46 @@
             </div>
 
             <div class="tabCon">
-                <div class="row cl">
-                    <label class="form-label col-xs-4 col-sm-2">合作方名称：</label>
-                    <div class="formControls col-xs-8 col-sm-9">
-                        <input type="text" class="input-text" value="{$site->today_recommend->today_title?:null}"
-                               id="partner_name" name="today_title"
-                               placeholder="">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页底部导航合作方名称</span>
-                    </div>
-                </div>
-                <div class="row cl">
-                    <label class="form-label col-xs-4 col-sm-2">合作方名称：</label>
-                    <div class="formControls col-xs-8 col-sm-9">
-                        <input type="text" class="input-text" value="{$site->today_recommend->today_title?:null}"
-                               id="partner_url" name="today_title"
-                               placeholder="">
-                        <span class="c-999"><i class="Hui-iconfont">&#xe6cd;</i>&nbsp首页底部导航合作方链接地址</span>
-                    </div>
-                </div>
+                <table class="table table-border table-bordered table-bg" style="width: 80%;margin-left: 9%;margin-top: 1.4%;margin-bottom:1.5%">
+                    <tbody id="chapter_tbody">
+                    {if !empty($site->partner)}
+                    {foreach $site->partner as $key=>$partner}
+                    <tr class="aa">
+                        <td class="text-c">
+                            <label class="form-label col-xs-4 col-sm-2 partner_label">合作方名称：</label>
+                            <div class="formControls col-xs-4 col-sm-5 partner_div_name">
+                                <input type="text" class="input-text" value="{$partner?$partner->name:''}"
+                                       id="partner_name" name="partner[{$key}][name]"
+                                       placeholder="">
+                            </div>
+                        </td>
+                        <td class="text-c" >
+                            <label class="form-label col-xs-4 col-sm-2 partner_label">合作方链接：</label>
+                            <div class="formControls col-xs-4 col-sm-5 partner_div_url">
+                                <input type="text" class="input-text" value="{$partner?$partner->url:''}"
+                                       id="partner_url" name="partner[{$key}][url]"
+                                       placeholder="">
+                            </div>
+                        </td>
+
+                        <td class="text-c">
+                            <a title="删除" href="javascript:;" onclick="remove_table(this)" class="ml-5" style="text-decoration:none">
+                                <i class="Hui-iconfont">&#xe6e2;</i>
+                            </a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    {/if}
+                    <tr class="aa">
+                        <td colspan="2" class="text-c">
+                            <input onclick="add_chapter(this)" id="add_chapter_button" class="btn btn-secondary radius" type="button" value="添加合作方">
+                        </td>
+                        <td colspan="2" class="text-c">
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
             </div>
 
         </div>
@@ -247,6 +333,129 @@
 
 <script type="text/javascript">
 
+    let editor1 = new Simditor({
+        textarea:$('#editor1'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'bottom_navigation'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor2 = new Simditor({
+        textarea:$('#editor2'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'bottom_navigation'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor3 = new Simditor({
+        textarea:$('#editor3'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'bottom_navigation'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor4 = new Simditor({
+        textarea:$('#editor4'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'bottom_navigation'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    let editor5 = new Simditor({
+        textarea:$('#editor5'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/admin/upload/upload',
+            params:{'path':'bottom_navigation'},
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+
+    function remove_table(obj){
+
+        let tr_length = $('#chapter_tbody tr').length;
+        if(tr_length>2){
+            let html_content = obj.parentNode.parentNode;
+            let tbody = html_content.parentNode;
+            tbody.removeChild(html_content);
+        }else{
+            layer.msg('当前已经是最后一层数据，不能删除', {icon: 5, time: 1500});
+            return false;
+        }
+
+    }
+
+    function add_chapter(obj){
+        let tr_length = $('#chapter_tbody tr').length;
+        let name = 'partner['+tr_length+'][name]';
+        let url = 'partner['+tr_length+'][url]';
+        let html = '<tr class="aa">\n' +
+            '                            <td class="text-c">\n' +
+            '                        <label class="form-label col-xs-4 col-sm-2 partner_label">合作方名称：</label>\n' +
+            '                        <div class="formControls col-xs-4 col-sm-5 partner_div_name">\n' +
+            '                            <input type="text" class="input-text" value=""\n' +
+            '                                   id="partner_name" name='+name+'\n' +
+            '                                   placeholder="">\n' +
+            '                        </div>\n' +
+            '                    </td>\n' +
+            '                    <td class="text-c" >\n' +
+            '                        <label class="form-label col-xs-4 col-sm-2 partner_label">合作方链接：</label>\n' +
+            '                        <div class="formControls col-xs-4 col-sm-5 partner_div_url">\n' +
+            '                            <input type="text" class="input-text" value=""\n' +
+            '                                   id="partner_url" name='+url+'\n' +
+            '                                   placeholder="">\n' +
+            '                        </div>\n' +
+            '                    </td>\n' +
+            '\n' +
+            '                    <td class="text-c">\n' +
+            '                        <a title="删除" href="javascript:;" onclick="remove_table(this)" class="ml-5" style="text-decoration:none">\n' +
+            '                            <i class="Hui-iconfont">&#xe6e2;</i>\n' +
+            '                        </a>\n' +
+            '                    </td>\n' +
+            '                </tr>\n' +
+            '                <tr class="aa">\n' +
+            '                    <td colspan="2" class="text-c">\n' +
+            '                        <input onclick="add_chapter(this)" id="add_chapter_button" class="btn btn-secondary radius" type="button" value="添加合作方">\n' +
+            '                    </td>\n' +
+            '                </tr>';
+        // let tbody = $('#chapter_tbody').html();
+        obj.parentNode.parentNode.remove();
+        $('#chapter_tbody').append(html);
+    }
+
     function layer_close() {
         window.location.href = "{:url('config/index')}";
     }
@@ -262,22 +471,6 @@
         });
     });
 
-    let editor = new Simditor({
-        textarea:$('#editor'),
-        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
-            'blockquote','table','link','image','hr','indent','outdent','alignment'],
-        upload:{
-            url:'/admin/upload/upload',
-            params:{'path':'today_recommend'},
-            fileKey:'file',
-            connectionCount:1,
-            leaveConfirm:'正在上传图片请勿关闭此页面'
-        },
-        placeholder:'',
-        imageButton:['upload'],
-    });
-
-
     $('#birthday').datetimepicker({
         language: "zh-cn",
         format: "yyyy-mm-dd hh:ii",
@@ -287,81 +480,81 @@
     let list = $('#fileList');
     let list_url = $('#fileList_url');
 
-        //上传图片,初始化WebUploader
-        var uploader = WebUploader.create({
-            auto: true,// 选完文件后，是否自动上传。
-            swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
-            server: "{:url('Upload/uploadUser','path=qr_code')}",// 文件接收服务端。
-            duplicate: true,// 重复上传图片，true为可重复false为不可重复
-            pick: '#imgPicker',// 选择文件的按钮。可选。
+    //上传图片,初始化WebUploader
+    var uploader = WebUploader.create({
+        auto: true,// 选完文件后，是否自动上传。
+        swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
+        server: "{:url('Upload/uploadUser','path=qr_code')}",// 文件接收服务端。
+        duplicate: true,// 重复上传图片，true为可重复false为不可重复
+        pick: '#imgPicker',// 选择文件的按钮。可选。
 
-            accept: {
-                title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png',
-                mimeTypes: 'image/jpg,image/jpeg,image/png'
-            },
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png'
+        },
 
-            'onUploadSuccess': function (file, data, response) {
-                $("#data_photo").val(data);
-                $("#img_data").attr('src', data).show();
-            }
-        });
+        'onUploadSuccess': function (file, data, response) {
+            $("#data_photo").val(data);
+            $("#img_data").attr('src', data).show();
+        }
+    });
 
-        uploader.on('fileQueued', function (file) {
-            list.html('<div id="' + file.id + '" class="item">' +
-                '<h4 class="info">' + file.name + '</h4>' +
-                '<p class="state">正在上传...</p>' +
-                '</div>');
-        });
+    uploader.on('fileQueued', function (file) {
+        list.html('<div id="' + file.id + '" class="item">' +
+            '<h4 class="info">' + file.name + '</h4>' +
+            '<p class="state">正在上传...</p>' +
+            '</div>');
+    });
 
-        // 文件上传成功
-        uploader.on('uploadSuccess', function (file) {
-            $('#' + file.id).find('p.state').text('上传成功！');
-        });
+    // 文件上传成功
+    uploader.on('uploadSuccess', function (file) {
+        $('#' + file.id).find('p.state').text('上传成功！');
+    });
 
-        // 文件上传失败，显示上传出错。
-        uploader.on('uploadError', function (file) {
-            $('#' + file.id).find('p.state').text('上传出错!');
-        });
+    // 文件上传失败，显示上传出错。
+    uploader.on('uploadError', function (file) {
+        $('#' + file.id).find('p.state').text('上传出错!');
+    });
 
 
-        //上传图片,初始化WebUploader
-        var uploader_url = WebUploader.create({
+    //上传图片,初始化WebUploader
+    var uploader_url = WebUploader.create({
 
-            auto: true,// 选完文件后，是否自动上传。
-            swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
-            server: "{:url('Upload/uploadUser','path=today_recommend')}",// 文件接收服务端。
-            duplicate: true,// 重复上传图片，true为可重复false为不可重复
-            pick: '#imgPicker_url',// 选择文件的按钮。可选。
+        auto: true,// 选完文件后，是否自动上传。
+        swf: '/static/admin/webupload/Uploader.swf',// swf文件路径
+        server: "{:url('Upload/uploadUser','path=today_recommend')}",// 文件接收服务端。
+        duplicate: true,// 重复上传图片，true为可重复false为不可重复
+        pick: '#imgPicker_url',// 选择文件的按钮。可选。
 
-            accept: {
-                title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png',
-                mimeTypes: 'image/jpg,image/jpeg,image/png'
-            },
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/jpg,image/jpeg,image/png'
+        },
 
-            'onUploadSuccess': function (file, data, response) {
-                $("#data_url").val(data);
-                $("#img_data_url").attr('src', data).show();
-            }
-        });
+        'onUploadSuccess': function (file, data, response) {
+            $("#data_url").val(data);
+            $("#img_data_url").attr('src', data).show();
+        }
+    });
 
-        uploader_url.on('fileQueued', function (file) {
-            list_url.html('<div id="' + file.id + '" class="item">' +
-                '<h4 class="info">' + file.name + '</h4>' +
-                '<p class="state">正在上传...</p>' +
-                '</div>');
-        });
+    uploader_url.on('fileQueued', function (file) {
+        list_url.html('<div id="' + file.id + '" class="item">' +
+            '<h4 class="info">' + file.name + '</h4>' +
+            '<p class="state">正在上传...</p>' +
+            '</div>');
+    });
 
-        // 文件上传成功
-        uploader_url.on('uploadSuccess', function (file) {
-            $('#' + file.id).find('p.state').text('上传成功！');
-        });
+    // 文件上传成功
+    uploader_url.on('uploadSuccess', function (file) {
+        $('#' + file.id).find('p.state').text('上传成功！');
+    });
 
-        // 文件上传失败，显示上传出错。
-        uploader_url.on('uploadError', function (file) {
-            $('#' + file.id).find('p.state').text('上传出错!');
-        });
+    // 文件上传失败，显示上传出错。
+    uploader_url.on('uploadError', function (file) {
+        $('#' + file.id).find('p.state').text('上传出错!');
+    });
 
 
 

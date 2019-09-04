@@ -1,0 +1,214 @@
+{extend name="base/base_solid"}
+
+{block name="source"}
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+</style>
+{/block}
+{block name="title"}
+社区 - {$plate_info.plate_name} - {$website_title}
+{/block}
+
+{block name="body"}
+<div class="w100 daohang">
+    <div class="w1200" v-html="name">
+        {$plate_info.cate_name} > {$plate_info.plate_name}
+    </div>
+</div>
+<!-- /banner/ -->
+<div class="sqbanner"></div>
+<!-- / 主体/ -->
+<input type="hidden" name="plate_type" value="{$plate_type}">
+<input type="hidden" name="plate_id" value="{$plate_info.id}">
+<div class="w1200 clearfix mb20">
+    <div class="zt_l clearfix">
+        <div class="ztbox_header">
+            <div class="fl">
+                <div class="cspointer zttype {if $plate_type == 0}cur {/if}" onclick="window.location.href='{:url('forumPlateIndex',['plate_id'=>$plate_id,'type'=>0])}'">主题</div>
+                <div class="cspointer zttype {if $plate_type == 1}cur {/if}" onclick="window.location.href='{:url('forumPlateIndex',['plate_id'=>$plate_id,'type'=>1])}'">新帖</div>
+                <div class="cspointer zttype {if $plate_type == 2}cur {/if}" onclick="window.location.href='{:url('forumPlateIndex',['plate_id'=>$plate_id,'type'=>2])}'">热帖</div>
+                <div class="cspointer zttype {if $plate_type == 3}cur {/if}" onclick="window.location.href='{:url('forumPlateIndex',['plate_id'=>$plate_id,'type'=>3])}'">精华</div>
+                <div class="cspointer zttype {if $plate_type == 4}cur {/if}" onclick="window.location.href='{:url('forumPlateIndex',['plate_id'=>$plate_id,'type'=>4])}'">原创推荐</div>
+            </div>
+            {if $user_info}
+            <a href="{:url('forumAdd')}" class="ztfabu">发新帖</a>
+            {/if}
+        </div>
+        <div class="hengxian"></div>
+        <div class="zt_l_box clearfix" id="forum_list_box">
+            {if !count($forum_list)}
+            <div class="zanwu">暂无数据</div>
+            {/if}
+            {foreach $forum_list as $key => $value}
+            <div class="tiezi clearfix zhul_sy_zyList cspointer" onclick="window.location.href='{:url('forumInfo',['forum_id'=>$value.id])}'">
+                <img class="tieImg" src="{$value.pic}" alt="">
+                <div class="zhul_nzy_rinfo">
+                    <div class="zhul_zy_rtop">
+                        <h3 class="zhul_zy_rtit">
+                            <a href="###"> {$value.name}</a>
+                        </h3>
+                        {if $value.is_classics}
+
+                        <a href="#" rel="nofollow">
+                            <p class="zhul_zy_jing">精</p>
+                        </a>
+                        {/if}
+
+                        {if $value.is_top}
+                        <p class="zhul_zy_jing">
+                            <a class="qxzd">置顶</a>
+                        </p>
+                        {/if}
+                    </div>
+                    <!---->
+                    <div class="zhul_zy_fbdate" style="line-height: 30px;padding: 0;">
+                        <!-- style="width:auto;" -->
+                        <!-- style="width:auto;" -->
+                        <span class="zhul_sy_headerBox zhul_pop_parent"><span>{$value.nickname}</span></span>
+                        发表于<em>{$value.create_time|date="Y-m-d H:i:s"}</em>
+                        <img src="__STATIC__/images/scan.png" style="vertical-align: middle;margin-left: 16px">&nbsp;<em>{$value.see_num}</em>人浏览
+                        <img src="__STATIC__/images/flow.png" style="vertical-align:middle;padding-bottom: 1px;margin-left: 16px;">&nbsp;
+                        <em>{$value.comment_num}</em>人回复&nbsp;&nbsp;
+                    </div>
+                    <div class="zhul_zy_ltcon2">
+                        {$value.desc}
+                    </div>
+                </div>
+            </div>
+            {/foreach}
+        </div>
+        <div class="tac" v-show="total>page_length">
+            <div class="m-style M-box3">
+
+            </div>
+        </div>
+    </div>
+    <div class="zt_r clearfix">
+        <div class="zhul_zy_ninfo">
+            <div class="zhus_d1 clearfix">
+                <div class="zhul_zy_nxzImg">
+                    <a href="###" target="_self" title="建筑">
+                        <img src="{$plate_info.plate_img}" width="80">
+                    </a>
+                </div>
+                <a class="plate_name" title="{$plate_info.plate_name}" href="###">
+                    <strong>{$plate_info.plate_name}</strong>
+                </a>
+            </div>
+            <!-- <div class="zhul_lts_njianjie">这里是土建及装饰工程商务经理、造价员、预算员、学生一起分享讨论预算技巧、造价信息、工作经历……的大本营，欢迎加入</div> -->
+            <div class="zhul_zy_nRtongji">
+                <ul class="zhul_lts_nRshuju clearfix">
+                    <!-- <li style="position:relative;"><span class="nfontnum oh1" v-html="plate.plate_info.comment_num">154478</span><span class="fontcolor">成员</span></li> -->
+                    <li><span class="nfontnum oh1" v-html="plate.plate_info.forum_num">{$plate_info.forum_num}</span><span class="fontcolor">主题</span></li>
+                    <li><span class="nfontnum oh1" v-html="plate.plate_info.comment_num">{$plate_info.comment_num}</span><span class="fontcolor">回复</span></li>
+                    <!-- <li><span class="nfontnum oh1" v-html="plate.plate_info.comment_num">266235</span><span class="fontcolor">点赞</span></li> -->
+                </ul>
+            </div>
+        </div>
+        <!-- /*管理团队*/ -->
+        <div class="new_zy_hotgroud">
+            <div class="zhul_zy_nRxztop">
+                <h3 class="zhul_zy_nRtit">管理团队 <div class="fr" onclick="joinManager()">申请加入团队</div>
+                </h3>
+                <span></span>
+            </div>
+            <ul class="zhul_xx_nhfwy">
+                <!--<div class="zanwu" style="line-height: 30PX;">暂无数据</div>-->
+                <!--组长-->
+                {foreach $manager_list as $key => $value}
+                <li>
+                    <p class="zhul_ft_yqLimg zhul_Rheaderbox">
+                        <a href="javascript:void(0);"><img src="{$value.avatar_url}" width="100%" style="border-radius:50%;"></a></p>
+                    <p class="group_manage">{if $value.role_id == 0} 版主 {else} {$value.role_name} {/if}</p>
+                    <p class="zhul_xx_uname"><a href="###">{$value.nickname}</a></p>
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+        <!-- /帖子/ -->
+        <div class="new_zy_hotgroud clearfix" style=" border:0;overflow:hidden;margin-top:10px; ">
+            <div class="zhul_zy_nRxztop">
+                <h3 class="zhul_zy_nRtit">最新帖子</h3>
+                <span></span>
+            </div>
+            <ul class="group-t-list group-t-list-txt clearfix">
+                {if !count($new_list)}
+                <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                {/if}
+                {foreach $new_list as $key => $value}
+                <li class="group-t-item group-t-item-txt">
+                    <div class="group-t-txt-wrapper">
+                        <span>•</span>
+                        <a class="group-t-txt c_click_log" href="javascript:void(0);">{$value.name}</a>
+                    </div>
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script>
+    var joinManager = function(){
+        layer.prompt({title: '请填写您的申请理由~', formType: 2,maxlength:300}, function(text, index){
+            $.ajax({
+                url:"{:url('/index/Forum/joinInManager')}",
+                data:{
+                    plate_id : $('input[name=plate_id]').val(),
+                    content : text,
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg)
+                    }else{
+                        layer.msg('申请成功~ 请耐心等待版主审核');
+                        layer.close(index);
+                    }
+                }
+            })
+
+
+        });
+    }
+
+    $(function () {
+        {if $forum_list_count}
+        $('.M-box3').pagination({
+            totalData:{$forum_list_count},
+            showData:{$page_length},
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                var plate_type = $('input[name=plate_type]').val();
+                $.ajax({
+                    url:"{:url('/index/Plate/getList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                        plate_type : plate_type,
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#forum_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+        {/if}
+    })
+</script>
+{/block}

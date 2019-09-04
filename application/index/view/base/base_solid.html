@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {include file="common/meta"}
+    {include file="common/source"}
+    <title>{block name="title"} {/block}</title>
+    {block name="source"}{/block}
+</head>
+
+<body>
+<div id="body">
+    {include file="common/header"}
+
+
+
+    {block name="body"} {/block}
+
+
+
+    {include file="common/footer"}
+    {include file="common/right_window"}
+</div>
+
+
+</body>
+{include file="common/login_js"}
+{block name="js"}
+
+{/block}
+<script>
+    $(function(){
+        $('#search_button').on('click',function(){
+            var search = $('#search_input').val();
+            if (search.length == 0){
+                layer.msg('搜索不能为空');
+            } else{
+                window.location.href="{:url('libraryIndex')}?search="+search
+            }
+
+        })
+    })
+</script>
+</html>

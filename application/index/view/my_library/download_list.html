@@ -1,0 +1,6 @@
+{foreach $download as $key => $value}
+<tr class="tac">
+    <td >{$value.create_time|date="Y-m-d H:i:s"}</td>
+    <td><a href="{:url('libraryInfo',['library_id'=>$value.id])}">{$value.name}</a></td>
+</tr>
+{/foreach}

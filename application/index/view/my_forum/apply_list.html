@@ -1,0 +1,30 @@
+{foreach $apply as $key => $value}
+<div class="js_list oh bb1 sq_list">
+    <a href="{:url('forumPlateIndex',['plate_id'=>$value.plate_id])}">
+
+        <div class="js_list_img  fl">
+            <img src="{$value.plate_img}" alt="">
+        </div>
+        <div class="js_info fl">
+            <div class="js_info_top oh">
+                <h3>{$value.plate_name}</h3>
+                <span class="fz14 c9 mr20">{$value.create_time|date="Y-m-d H:i:s"}</span>
+                {if $value.status == 0}
+                <span class="fz14 blue">审批中</span>
+                {elseif $value.status == 1}
+                <span class="fz14 green">审核通过</span>
+                {elseif $value.status == 2}
+                <span class="fz14 red">已拒绝</span>
+                {/if}
+            </div>
+            <div class="js_info_content fz14 c6">
+                申请原因：{$value.apply_for_desc}</div>
+        </div>
+    </a>
+    {if $value.status == 0}
+    <div class="js_btn">
+        <button class="blue_btn" type="button"  onclick="delApply('{$value.plate_id}')">取消申请</button>
+    </div>
+    {/if}
+</div>
+{/foreach}

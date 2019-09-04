@@ -1,0 +1,548 @@
+{extend name="base/base_solid"}
+
+{block name="title"} 我的信息 - {$website_title} {/block}
+
+{block name="source"}
+<link href="__STATIC__/css/slick.css" rel="stylesheet" type="text/css">
+
+<link href="__STATIC__/css/slick-theme.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/css/iconfont.css"  rel="stylesheet" type="text/css"/>
+<script src="__STATIC__/js/slick.js"></script>
+<script src="__STATIC__/js/city-picker.min.js" charset="utf-8"></script>
+<script src="__STATIC__/js/select.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/vue.min.js"></script>
+
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="my_box">
+    <div class="w1200">
+        <div class="mybox_H">
+            <div class="mybox_H_inr">我的信息</div>
+        </div>
+        <div class="w100 bgf mybox_B">
+            <div class="mybox_L">
+                <div :class="ltype==0? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(0)">基本资料</div>
+                <div :class="ltype==1? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(1)">修改密码</div>
+                <!-- <div :class="ltype==2? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(2)">绑定手机</div> -->
+                <!-- <div :class="ltype==3? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(3)">绑定邮箱</div> -->
+            </div>
+            <div class="mybox_R">
+                <div v-show="ltype==0" class="mybox_R_one">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">基本资料</span>
+                    </div>
+                    <div class="w100">
+                        <form id="form1">
+                            <div class="formlist clearfix">
+                                <div class="formtit">头像设置:</div>
+                                <div :class="avatar_url? 'uploadfile uploadfile1':'uploadfile'">
+                                    <img v-if="user_url" id="showImg" :src="user_url">
+                                    <input id="file" class="txsc" type="file" accept="image/*">
+                                    <input type="hidden" :value="avatar_url" name="tx">
+                                </div>
+                                <div class="upimgtip">
+                                    <p>选择本地照片，上传编辑自己的头像</p>
+                                    <p>支持jpg、jpeg、gif、png、bmp格式的图片</p>
+                                </div>
+                            </div>
+                            <div class="formlist clearfix">
+                                <div class="formtit">*真实姓名:</div>
+                                <div class="forminr">
+                                    <input class="form_int" type="text" name="username_zs" v-model="real_name">
+                                </div>
+                            </div>
+                            <div class="formlist clearfix">
+                                <div class="formtit">*昵称:</div>
+                                <div class="forminr">
+                                    <input class="form_int" type="text" name="username" v-model="nickname">
+                                </div>
+                            </div>
+                            <div class="formlist clearfix">
+                                <div class="formtit">*性别:</div>
+                                <div class="forminr1">
+                                    <label><input class="mymsg_radio" name="sex" type="radio" v-model="sex" value="1">男</label>
+                                    <label><input class="mymsg_radio" style="margin-left: 20px;"v-model="sex" name="sex" type="radio" value="2">女</label>
+                                </div>
+                            </div>
+                            <div class="formlist clearfix">
+                                <div class="formtit">*生日:</div>
+                                <div class="forminr">
+                                    <!-- <input type="text" id='datetime-picker'/> -->
+                                    <input id="my-input" type="text" date-format='yyyy-mm-dd' onChange="usertime(event)" :placeholder="birthday"/>
+                                </div>
+                                <!-- <div id="date" class="forminr1">
+                                    <select name="year" id="year">
+                                        <option value="">选择年份</option>
+                                    </select>
+                                    <select name="month" id="month">
+                                        <option value="">选择月份</option>
+                                    </select>
+                                    <select id="days" name="day" class="day">
+                                        <option value="">选择日期</option>
+                                    </select>
+                                    <script type="text/javascript">
+                                        $(function(){
+                                            $("#date").selectDate()
+
+                                            $("#days").focusout(function(){
+                                                var year = $("#year option:selected").html()
+                                                var month = $("#month option:selected").html()
+                                                var day = $("#days option:selected").html()
+                                                console.log(year+month+day)
+                                            })
+
+                                        })
+
+                                    </script>
+                                </div> -->
+                            </div>
+                            <div class="formlist clearfix">
+                                <div class="formtit">*专业:</div>
+                                <div class="forminr">
+                                    <input class="form_int" type="text" name="zhuanye" v-model="profession">
+                                </div>
+                            </div>
+                            <div class="formlist clearfix">
+                                <div class="formtit">*地址:</div>
+                                <div class="forminr">
+                                    <input class="form_int" type="text" name="address" v-model="address">
+                                </div>
+                            </div>
+                            <input class="my_msg_Submit" type="button" value="保存" @click="shezhi()"/>
+                        </form>
+                    </div>
+                </div>
+
+                <div v-if="ltype==1" class="mybox_R_one">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">修改密码</span>
+
+                    </div>
+                    <div class="w100">
+                        <form id="form2">
+                            <div class="formlist clearfix">
+                                <div class="formtit">当前密码:</div>
+                                <div class="forminr">
+                                    <input class="form_int" type="password" name="oldpwd" v-model="oldpwd">
+                                </div>
+                            </div>
+                            <div class="formlist clearfix">
+                                <div class="formtit">新密码:</div>
+                                <div class="forminr">
+                                    <input v-if="showpwd" class="form_int" type="text" name="newpwd" v-model="newpwd">
+                                    <input v-if="!showpwd" class="form_int" type="password" name="newpwd" v-model="newpwd">
+                                    <span v-if="showpwd" class="showkg" @click="showpwdfuc()"></span>
+                                    <span v-if="!showpwd" class="showkg showkg1" @click="showpwdfuc()"></span>
+                                </div>
+                            </div>
+                            <div class="formlist clearfix">
+                                <div class="formtit">确认密码:</div>
+                                <div class="forminr">
+
+                                    <input class="form_int" type="password" name="newpwd1"  v-model="newpwd1">
+
+                                </div>
+                            </div>
+                            <input class="my_msg_Submit" type="button" value="保存" @click="mmsave()"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+
+    var vm = new Vue({
+        el: '#body',
+        data: {
+            login:true,
+            showpwd:false,
+            setstate:0,   //手机号
+            setstate_email:0,   //手机号
+            time_email:60,     //  邮箱计时
+            time:60,          //手机计时
+            area:'',    //地区
+            ltype:0,   //左侧分类
+            mkcur: 0,
+            user_url:'{$basic_user_info.avatar_url}',
+            // usermsg:{
+            address: "{$basic_user_info.address}",
+            avatar_url: '',
+            birthday: "{$basic_user_info.birthday}",
+            nickname: "{$basic_user_info.nickname}",
+            profession: "{$basic_user_info.profession}",
+            real_name: "{$basic_user_info.real_name}",
+            sex: '{$basic_user_info.sex}',
+            // },
+            oldpwd:'',   //旧密码
+            newpwd:'',   //密码
+            newpwd1:'',   //确认密码
+
+
+        },
+        created: function() {
+        },
+        mounted() {
+            var that =this
+            // $("#city-picker").cityPicker({
+            //   title: "请选择收货地址",
+            // 	onChange: function (picker, values, displayValues) {
+            // 		console.log(values, displayValues);
+            // 		that.area=displayValues.join(' ')
+            // 	}
+            // });
+            $("#my-input").calendar();
+            // $('.M-box3').pagination({
+            // 	pageCount: 50,
+            // 	jump: true,
+            // 	coping: true,
+            // 	mode:'unfixed',
+            // 	count:2,
+            // 	homePage: '首页',
+            // 	endPage: '末页',
+            // 	prevContent: '上页',
+            // 	nextContent: '下页',
+            // 	callback: function (api) {
+            // 		console.log(api)
+            // 			console.log(api.getCurrent())
+            // 	}
+            // });
+        },
+        methods: {
+            showpwdfuc(){
+                this.showpwd=!this.showpwd
+            },
+            qhcur(index) {
+                this.ltype = index
+            },
+            //保存资料
+            shezhi() {
+                var that =this
+                $.ajax({
+                    type: "post",
+                    url: "{:url('/index/My_info/update')}",
+                    data: {
+                        address: that.address,
+                        avatar_url:  that.avatar_url,
+                        birthday:  that.birthday,
+                        nickname: that.nickname,
+                        profession: that.profession,
+                        real_name: that.real_name,
+                        sex: that.sex,
+                    },
+
+                    success: function (res) {
+                        console.log(res);
+                        if(res.code==-1){
+                            logout_goindex()
+                            return
+                        }
+                        if(res.code==1){
+                            that.usermsg=res.data
+                            layer.msg('保存成功')
+                            setTimeout(function() {
+                                window.location.reload()
+                            }, 1000);
+                        }else{
+                            if(res.msg){
+                                layer.msg(res.msg)
+                            }else{
+                                layer.msg('操作失败')
+                            }
+                        }
+
+                    },
+                    error:function(err){
+                        layer.msg('操作失败')
+                        console.log(err)
+                    }
+                })
+            },
+        }
+    })
+    $('input[type="file"]').on('change', function(e) {
+        console.log(e)
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file); // 读出 base64
+        reader.onloadend = function () {
+            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+            var dataURL = reader.result;
+            // 下面逻辑处理
+            vm.avatar_url=reader.result
+            vm.user_url=reader.result
+            console.log(dataURL)
+        };
+    });
+    function usertime(e){
+        console.log(e.target.value)
+        var stime=e.target.value.split('/')
+        stime=stime.join('-')
+        vm.birthday=stime
+        // console.log(values)
+        // console.log(displayValues)
+    }
+    //保存资料
+    // function shezhi() {
+    // 	var that =this
+    // 	if(getCookie('token')==''||getCookie('token')===null||getCookie('token')===undefined){
+    // 		vm.login=false
+    // 		layer.msg('登录信息已过期，请先登录账号!')
+    // 		return
+    // 	}
+    // 	$.ajax({
+    // 	  type: "post",
+    // 	  url: IPurl+'/api/User/updatePassword',
+    // 	  data: {
+    // 			token:getCookie('token'),
+    // 			address: that.usermsg.address,
+    // 			avatar_url:  that.usermsg.avatar_url,
+    // 			birthday:  that.usermsg.birthday,
+    // 			nickname: that.usermsg.nickname,
+    // 			profession: that.usermsg.profession,
+    // 			real_name: that.usermsg.real_name,
+    // 			sex: that.usermsg.sex,
+    // 		},
+    // 	  success: function (res) {
+    // 	    console.log(res);
+    // 	    if(res.code==1){
+    // 				that.usermsg=res.data
+    // 				layer.msg('保存成功')
+    // 				setTimeout(function() {
+    // 					window.location.href=""
+    // 				}, 1000);
+    // 	    }else{
+    // 				if(res.msg){
+    // 					layer.msg(res.msg)
+    // 				}else{
+    // 					layer.msg('操作失败')
+    // 				}
+    // 			}
+    //
+    // 	  },
+    // 		error:function(err){
+    // 			layer.msg('操作失败')
+    // 			console.log(err)
+    // 		}
+    // 	})
+    //    }
+    //修改密码
+    function mmsave() {
+        var that =this
+        if(!vm.oldpwd){
+            layer.msg('请输入旧密码!')
+            return
+        }
+        if(!vm.newpwd){
+            layer.msg('请输入新密码!')
+            return
+        }
+        if(vm.newpwd!==vm.newpwd1){
+            layer.msg('两次密码不一致!')
+            return
+        }
+        $.ajax({
+            type: "post",
+            url: "{:url('/index/My_info/updatePassword')}",
+            data: {
+                old_password:vm.oldpwd,
+                new_password:vm.newpwd,
+                re_password:vm.newpwd1
+            },
+            success: function (res) {
+                if(res.code==1){
+                    that.usermsg=res.data
+                    layer.msg('修改成功')
+                    setTimeout(function(){
+                        window.location.reload()
+                    },1500)
+                }else{
+                    if(res.msg){
+                        layer.msg(res.msg)
+                    }else{
+                        layer.msg('操作失败')
+                    }
+                }
+
+            },
+            error:function(err){
+                layer.msg('操作失败')
+                console.log(err)
+            }
+        })
+    }
+    //绑定手机号
+    function telsave() {
+        var ff=$('#form3').serialize()
+        console.log(ff)
+        $.ajax({
+            //几个参数需要注意一下
+            type: "POST",//方法类型
+            dataType: "json",//预期服务器返回的数据类型
+            url: "/users/login" ,//url
+            data: $('#form3').serialize(),
+            success: function (result) {
+                console.log(result);//打印服务端返回的数据(调试用)
+                if (result.resultCode == 200) {
+                    alert("SUCCESS");
+                }
+                ;
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    //绑定邮箱
+    /*function emailsave() {
+        var ff=$('#form4').serialize()
+        console.log(ff)
+        $.ajax({
+        //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "/users/login" ,//url
+                data: $('#form4').serialize(),
+                success: function (result) {
+                        console.log(result);//打印服务端返回的数据(调试用)
+                        if (result.resultCode == 200) {
+                                alert("SUCCESS");
+                        }
+                        ;
+                },
+                error : function() {
+                        alert("异常！");
+                }
+        });
+    }*/
+    function getcode(){
+        if(!(/^1\d{10}$/.test(vm.usertel))){
+            layer.msg('手机号格式不正确');
+        }else{
+
+            api.ajax({
+                url: IPurl,
+                method: 'get',
+                // timeout: 2000,
+                dataType: 'json',
+                returnAll: false,
+                data: {
+                    values: { 'apipage': 'sendcode', "op": "reg", 'tel': vm.usertel },
+                }
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.error==0) {
+                        api.toast({
+                            msg: '发送成功',
+                            duration: 1000,
+                            location: 'middle'
+                        });
+                        getcodeTime()
+                    }else{
+                        api.toast({
+                            msg: ret.returnstr,
+                            duration: 1000,
+                            location: 'middle'
+                        });
+
+                    }
+                    // vm.ret = ret;
+                }else{
+                    // alert(JSON.stringify(err));
+                }
+            })
+        }
+    }
+    //邮箱验证码
+    /*function getcode_email(){
+        if(!(/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(vm.usertel))){
+                layer.msg('邮箱格式不正确');
+        }else{
+
+            api.ajax({
+                    url: IPurl,
+                    method: 'get',
+                    // timeout: 2000,
+                    dataType: 'json',
+                    returnAll: false,
+                    data: {
+                            values: { 'apipage': 'sendcode', "op": "reg", 'tel': vm.usertel },
+                    }
+            }, function(ret, err) {
+                    if (ret) {
+                        if (ret.error==0) {
+                            api.toast({
+                                    msg: '发送成功',
+                                    duration: 1000,
+                                    location: 'middle'
+                            });
+                             getcodeTime_email()
+                        }else{
+                                api.toast({
+                                        msg: ret.returnstr,
+                                        duration: 1000,
+                                        location: 'middle'
+                                });
+
+                        }
+                            // vm.ret = ret;
+                    }else{
+                            // alert(JSON.stringify(err));
+                    }
+            })
+        }
+    }*/
+    //手机号倒计时
+    function getcodeTime(){
+        // alert('获取验证码')
+        let time=59
+        let st=setInterval(function(){
+            if(time==0){
+
+                vm.setstate=0
+                clearInterval(st);
+            }else{
+                let news=time--;
+                console.log(news)
+                vm.setstate=1
+                vm.time=news
+
+            }
+        },1000);
+    }
+    //邮箱倒计时
+    /*function getcodeTime_email(){
+        // alert('获取验证码')
+        let time=59
+        let st_email=setInterval(function(){
+                if(time==0){
+
+                            vm.setstate_email=0
+                        clearInterval(st_email);
+                }else{
+                        let news=time--;
+                        console.log(news)
+                         vm.setstate_email=1
+                         vm.time_email=news
+
+                }
+        },1000);
+    }*/
+</script>
+{/block}

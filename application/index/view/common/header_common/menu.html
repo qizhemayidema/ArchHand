@@ -1,0 +1,67 @@
+<div id="cssmenu" class="fl">
+
+    <ul>
+        <li class="active">
+            <a href="{:url('/index')}">首页</a>
+        </li>
+        <li class="has-sub">
+            <a href="javascript:void(0);">社区<img class="m768hide" src="__STATIC__/images/indexXBtn1.png" alt=""></a>
+            <span class="submenu-button"></span>
+            <!--<a href="javascript:void;" class="cad6a6b">社区 <img class="m768hide" src="__STATIC__/images/indexXBtn1.png" alt=""></a>-->
+            <!--<div id="channel-box" class="channel-box" style="display: none;"> -->
+            <ul id="channel-box" class="channel-box">
+                <i class="j-top" style="left: 22px;"></i>
+                <div>
+                    {foreach $forum_plate_list as $key => $value}
+                    <p class="channel-title">{$value.cate_name}</p>
+                    <div class="channel-list" style="margin-top: 6px;">
+                        {foreach $value.plate as $key1 => $value1}
+                        <a href="{:url('forumPlateIndex',['plate_id'=>$value1.id])}">{$value1.plate_name}</a>
+                        {/foreach}
+                    </div>
+                    {/foreach}
+                </div>
+            </ul>
+        </li>
+
+        <li>
+            <a href="{:url('libraryIndex')}">云库</a>
+        </li>
+        <li>
+            <a href="{:url('classIndex')}">课程</a>
+        </li>
+        <li>
+            <a href="VIP.html">VIP</a>
+        </li>
+        <li>
+            <a href="{:url('help')}">帮助</a>
+        </li>
+        {if $user_info}
+        <li class="m768show has-sub"><span class="submenu-button"></span>
+            <a href="javascript:void(0);">我的</a>
+            <ul>
+                <li>
+                    <a href="{:url('myInfo')}">我的信息</a>
+                </li>
+                <li>
+                    <a href="{:url('myForum')}">我的社区</a>
+                </li>
+                
+                <li>
+                    <a href="{:url('myLibrary')}">我的云库</a>
+                </li>
+
+                <li>
+                    <a href="{:url('myClass')}">我的课程</a>
+                </li>
+                <li>
+                    <a href="{:url('myAccount')}">账户信息</a>
+                </li>
+                <li>
+                    <a href="{:url('/index/Login/logout')}">退出</a>
+                </li>
+            </ul>
+        </li>
+        {/if}
+    </ul>
+</div>

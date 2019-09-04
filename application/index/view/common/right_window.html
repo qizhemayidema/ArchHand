@@ -1,0 +1,89 @@
+<div class="suspension">
+    <div class="suspension-box">
+        <a href="#" class="a a-service "><i class="i"></i></a><a href="javascript:;" class="a a-service-phone ">
+        <i class="i"></i></a><a href="javascript:;" class="a a-qrcode"><i class="i"></i>
+    </a>
+        <a href="javascript:;" class="a a-top"><i class="i"></i></a>
+        <div class="d d-service" style="display: none;">
+            <i class="arrow"></i>
+            <div class="inner-box">
+                <div class="d-service-item clearfix">
+                    <a href="tencent://message/?uin={$qq}&amp;Site=www.luoxiao123.cn&amp;Menu=yes"
+                       class="clearfix"><span class="circle"><i class="i-qq"></i></span>
+                        <h3>
+                            咨询在线客服</h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="d d-service-phone" style="display: none;">
+            <i class="arrow"></i>
+            <div class="inner-box">
+                <div class="d-service-item clearfix">
+                    <span class="circle"><i class="i-tel"></i></span>
+                    <div class="text">
+                        <p>
+                            服务热线</p>
+                        <p class="red number">
+                             {$phone}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d d-qrcode" style="display: none;">
+            <i class="arrow"></i>
+            <div class="inner-box">
+                <div class="qrcode-img">
+                    <img style="width: 150px;" src="{$qr_code}" alt="">
+                </div>
+                <p>
+                    微信服务号</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ----- 侧边悬浮 ---- */
+    $(document).on("mouseenter", ".suspension .a", function () {
+        var _this = $(this);
+        var s = $(".suspension");
+        var isService = _this.hasClass("a-service");
+        var isServicePhone = _this.hasClass("a-service-phone");
+        var isQrcode = _this.hasClass("a-qrcode");
+        if (isService) {
+            s.find(".d-service").show().siblings(".d").hide();
+        }
+        if (isServicePhone) {
+            s.find(".d-service-phone").show().siblings(".d").hide();
+        }
+        if (isQrcode) {
+            s.find(".d-qrcode").show().siblings(".d").hide();
+        }
+    });
+    $(document).on("mouseleave", ".suspension, .suspension .a-top", function () {
+        $(".suspension").find(".d").hide();
+    });
+    $(document).on("mouseenter", ".suspension .a-top", function () {
+        $(".suspension").find(".d").hide();
+    });
+    $(document).on("click", ".suspension .a-top", function () {
+        $("html,body").animate({
+            scrollTop: 0
+        });
+    });
+    $(window).scroll(function () {
+        var st = $(document).scrollTop();
+        var $top = $(".suspension .a-top");
+        if (st > 400) {
+            $top.css({
+                display: 'block'
+            });
+        } else {
+            if ($top.is(":visible")) {
+                $top.hide();
+            }
+        }
+    });
+</script>
