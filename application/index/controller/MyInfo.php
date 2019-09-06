@@ -46,11 +46,11 @@ class MyInfo extends Base
         $data = $request->post();
         $rules = [
             'nickname'      => 'require|max:40',
-            'real_name'     => 'require|max:10',
+            'real_name'     => 'max:10',
             'sex'           => 'require|integer',
-            'birthday'      => 'require',
-            'profession'    => 'require|max:40',
-            'address'       => 'require|max:120',
+            'birthday'      => 'date',
+            'profession'    => 'max:40',
+            'address'       => 'max:120',
         ];
 
         $messages = [
@@ -60,7 +60,7 @@ class MyInfo extends Base
             'real_name.max'         => '真实姓名最大长度为 10',
             'sex.require'           => '性别必须选择',
             'sex.integer'           => '性别非法',
-            'birthday.require'          => '生日必须填写',
+            'birthday.date'          => '生日格式非法',
             'profession.require'    => '专业必须填写',
             'address.require'    => '专业必须填写',
             'profession.max'       => '专业最大长度为 40',

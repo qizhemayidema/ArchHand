@@ -1671,7 +1671,7 @@ a:hover {
     width: 100%;
     height: 200px;
     position: absolute;
-    z-index: 10;
+    z-index: 2;
     top: 0;
     left: 0;
     background: rgba(0, 0, 0, .5);
@@ -4484,7 +4484,7 @@ em {
 }
 
 .vip_list_title img {
-    float: left;
+    /*float: left;*/
     margin-top: 30px;
     margin-right: 10px;
 }
@@ -4846,7 +4846,7 @@ em {
 }
 
 .vip_list_title img {
-    float: left;
+    /*float: left;*/
     margin-top: 30px;
     margin-right: 10px;
 }
@@ -4877,7 +4877,7 @@ em {
     top: 0;
     left: 50%;
     margin-left: -75px;
-    z-index: 10;
+    z-index: 2;
     letter-spacing: 5px;
 }
 
@@ -5389,6 +5389,12 @@ button {
 
 .top_warpper_right .js_sel_box{
     margin-top: 5px;
+}
+.cls_com_con {
+    padding-left: 83px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 /*结束*/
 
@@ -6202,6 +6208,10 @@ button {
     .kc_sc_cal{
         width: 58px;
         font-size: 12px;
+    }
+    .cls_com_con{
+        clear:left;
+        padding-left: 0;
     }
 }
 

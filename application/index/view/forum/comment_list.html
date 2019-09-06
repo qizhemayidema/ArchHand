@@ -11,7 +11,7 @@
             发表于<span>{$value.create_time|date="Y-m-d H:i:s"}</span>
         </p>
     </div>
-    <div class="pl_lc">{$floor_start +$key + 1}楼</div>
+    <div class="pl_lc">{$floor_start + 1}楼</div>
 </div>
 <div class="zhul_xx_pingtCon clearfix">
     <div class="fwbbox" style="min-height: 0;">
@@ -24,6 +24,12 @@
                 <span class="hand {if isset($value.is_like) && $value.is_like}redhand {/if}"></span>
                 点赞(<em>{$value.like_num}</em>)
             </a>
+            {if $is_manager}
+            <a href="javascript:void(0)"  onclick="delComment('{$value.id}')">
+                <img src="__STATIC__/images/delete.png" alt="" style="width: 14px;">
+                删除
+            </a>
+            {/if}
         </p>
     </div>
 

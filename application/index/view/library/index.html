@@ -136,6 +136,7 @@
     });
 </script>
 <script>
+    {if $library_count}
     $('.M-box3').pagination({
         totalData:{$library_count},
         showData:{$page_length},
@@ -145,6 +146,7 @@
             getData(page);
         }
     })
+    {/if}
     var changeAttr = function(_this){
         if ($(_this).hasClass('typecur'))  return false;
         $(_this).parents('.class_list').find('p').each(function(k,v){

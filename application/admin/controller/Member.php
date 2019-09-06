@@ -48,15 +48,6 @@ class Member extends Base
         if (!$validate->check($form)) {
             return jsone(0, $validate->getError());
         }
-        if (!$form['desc']) {
-            //加载默认配置
-            $config = \HTMLPurifier_Config::createDefault();
-            //实例化对象
-            $purifier = new \HTMLPurifier($config);
-            //过滤
-            $form['desc'] = $purifier->purify($form['desc']);
-        }
-
         try {
             $vip = Vip::create($form);
             if ($vip) {
@@ -105,14 +96,6 @@ class Member extends Base
         $validate = new VipValidate();
         if (!$validate->check($form)) {
             return jsone(0, $validate->getError());
-        }
-        if (!$form['desc']) {
-            //加载默认配置
-            $config = \HTMLPurifier_Config::createDefault();
-            //实例化对象
-            $purifier = new \HTMLPurifier($config);
-            //过滤
-            $form['desc'] = $purifier->purify($form['desc']);
         }
         $vip = Vip::update($form);
         if ($vip) {

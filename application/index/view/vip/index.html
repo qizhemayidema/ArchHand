@@ -1,0 +1,52 @@
+{extend name="base/base_solid"}
+
+{block name="title"} VIP - {$website_title} {/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="sqbanner vipbg mb20 po" style="background-image: url(__STATIC__/images/images/vipbg_02.png);">
+    <div class="joinbox">
+        <div class="join1 fz0">
+            <div class="duanheng"></div>
+            <div class="jointit">加入筑手智库</div>
+            <div class="duanheng"></div>
+        </div>
+        <div class="join2 fz0">
+            <div class="yh_l"></div>
+            <div class="jointit1">百场大牛讲座<span>+</span>百万精品资料<span>+</span>海量精品课程</div>
+            <div class="yh_l yh_r"></div>
+        </div>
+    </div>
+</div>
+<!-- / 主体/ -->
+<!-- / 主体/ -->
+<div class="w1200 clearfix">
+    <!-- /设计学院/ -->
+    <div class="bgf p25 mt20 mb20 oh">
+        {foreach $vip as $key => $value}
+        <div class="vip_list bd1 fl mr25">
+            <div class="vip_list_title tac fw9">
+                <div style="text-align: center;font-size: 0">
+                    <img src="__STATIC__/images/vip_03.png" alt="" style="display: inline-block;vertical-align: top;">
+                    <p style="display: inline-block;font-size: 24px;">{$value.vip_name}</p>
+                </div>
+            </div>
+            <div class="vip_privilege ">
+                <h3>VIP特权</h3>
+                <p></p>
+            </div>
+            <div class="mb20"></div>
+            <div class="vip_privilege_list lh40 tac fz16 c6 vip_bg">全站素材海量下载</div>
+            <div class="vip_privilege_list lh40 tac fz16 c6">高速下载通道</div>
+            <div class="vip_privilege_list lh40 tac fz16 c6 vip_bg">收藏无限制</div>
+            <div class="vip_privilege_list lh40 tac fz16 c6">智能搜索</div>
+            <div class="vip_privilege_list lh40 tac fz16 c6 vip_bg">全场付费 <span style="color: red;font-weight: bold;">{$value.discount}折</span></div>
+            <div class="tac">
+                <button type="button" class="vip_btn">立即开通</button>
+
+            </div>
+        </div>
+        {/foreach}
+    </div>
+</div>
+{/block}

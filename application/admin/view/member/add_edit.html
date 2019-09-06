@@ -35,14 +35,6 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>VIP说明：</label>
-            <div class="formControls col-xs-6 col-sm-9">
-                <textarea id="editor" placeholder="" autofocus name="desc">{if isset($vip)}{$vip['desc']}{/if}</textarea>
-            </div>
-        </div>
-
-
-        <div class="row cl">
             <div class="col-xs-8 col-sm-6 col-xs-offset-4 col-sm-offset-6">
                 <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
             </div>
@@ -59,20 +51,6 @@
 
 <script type="text/javascript">
 
-    let editor = new Simditor({
-        textarea:$('#editor'),
-        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
-            'blockquote','table','link','image','hr','indent','outdent','alignment'],
-        upload:{
-            url:'/admin/upload/upload',
-            params:{'path':'vip'},
-            fileKey:'file',
-            connectionCount:1,
-            leaveConfirm:'正在上传图片请勿关闭此页面'
-        },
-        placeholder:'',
-        imageButton:['upload'],
-    });
 
 
     $('#birthday').datetimepicker({

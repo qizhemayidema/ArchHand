@@ -1,0 +1,13 @@
+{foreach $comment as $key => $value}
+    <div class="evaluation_list oh bb1">
+        <img src="{$value.avatar_url}" alt="">
+        <div>
+            <h3 class="fz24 c3">{:mb_substr($value.nickname,0,1)}***{:mb_substr($value.nickname,mb_strlen($value.nickname) - 1)}
+                <span style="color: #999;font-size: 18px;float: right;">
+                                {$value.create_time|date="Y-m-d H:i:s"}
+                        </span>
+            </h3>
+            <p class="fz18 c9 cls_com_con">{$value.comment}</p>
+        </div>
+    </div>
+{/foreach}

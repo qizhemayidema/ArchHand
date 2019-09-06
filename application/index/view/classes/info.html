@@ -3,6 +3,8 @@
 {block name="title"}课堂 - {$class_info.name} - {$website_title}{/block}
 
 {block name="source"}
+<script src="__STATIC__/js/jquery.pagination.js"></script>
+<link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
 <style>
     body {
         background: #f1f2f4;
@@ -30,6 +32,8 @@
     </div>
 </div>
 <!-- / 主体/ -->
+<input type="hidden" name="class_id" value="{$class_info.id}">
+{:token()}
 <div v-if="dataxq.class_info" class="w1200 clearfix">
     <div class="inrmk1 mb20 clearfix ">
         <div class="inrbox1 box_siz clearfix">
@@ -100,6 +104,49 @@
             </div>
             {/foreach}
         </div>
+    </div>
+
+    <!--  -->
+    <div class="inrmk1">
+        <div class="inrbox1 box_siz clearfix">
+            <div class="oh">
+                <div class="fl_inp">
+                    <input type="text" placeholder="…" name="comment">
+                </div>
+                <button type="button" class="sub_btn" onclick="comment()">评论</button>
+            </div>
+        </div>
+    </div>
+    <!--  -->
+    <div class="inrmk1">
+        <div class="inrbox1 box_siz clearfix">
+            <div class="evaluation_title">
+                评论
+            </div>
+            <!--  -->
+            {if !$comment}
+            <div class="zanwu">暂无数据</div>
+            {else}
+            <div id="comment_list_box">
+            {foreach $comment as $key => $value}
+                <div class="evaluation_list oh bb1">
+                    <img src="{$value.avatar_url}" alt="">
+                    <div>
+                        <h3 class="fz24 c3">{:mb_substr($value.nickname,0,1)}***{:mb_substr($value.nickname,mb_strlen($value.nickname) - 1)}
+                            <span style="color: #999;font-size: 18px;float: right;">
+                                {$value.create_time|date="Y-m-d H:i:s"}
+                        </span>
+                        </h3>
+                        <p class="fz18 c9 cls_com_con">{$value.comment}</p>
+                    </div>
+                </div>
+            {/foreach}
+            </div>
+            {/if}
+        </div>
+    </div>
+    <div class="tac">
+        <div class="m-style M-box3"></div>
     </div>
 </div>
 {/block}
@@ -195,5 +242,66 @@
             }
         })
     }
+
+    var comment = function(){
+        var content = $('input[name=comment]').val();
+        var class_id = $('input[name=class_id]').val();
+        var token = $('input[name=__token__]').val();
+        if (content.length == 0){
+            layer.msg('评论不能能为空')
+            return false;
+        }
+        $.ajax({
+            url: "{:url('/index/Classes/saveComment')}",
+            data: {
+                class_id: class_id,
+                content : content,
+                __token__ : token,
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if (data.code != 1){
+                    layer.msg(data.msg);
+                }else{
+                    layer.msg('评论成功~')
+                    setTimeout(function(){
+                        window.location.reload()
+                    },500)
+                }
+            },
+            error:function(data){
+                layer.msg('请刷新后重试')
+            }
+        })
+    }
+
+    {if $comment_count}
+    $('.M-box3').pagination({
+        totalData:{$comment_count},
+        showData:{$comment_page_length},
+        // mode: 'fixed',
+        callback: function (api) {
+            var page=api.getCurrent()
+            var cate_id = $('input[name=cate_id]').val();
+            $.ajax({
+                url:"{:url('/index/Classes/getCommentList')}",
+                type:"post",
+                data:{
+                    page : page,
+                    class_id : $('input[name=class_id]').val(),
+                },
+                dataType:"json",
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg);
+                    } else{
+                        $('#comment_list_box').html(data.data);
+                    }
+                }
+            })
+        }
+    })
+    {/if}
 </script>
 {/block}

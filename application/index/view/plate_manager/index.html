@@ -1,6 +1,6 @@
 {extend name="base/base_solid"}
 
-{block name="title"} - {$website_title}{/block}
+{block name="title"}板块管理 - {$plate_info.plate_name} - {$website_title}{/block}
 
 {block name="source"}
 <link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
@@ -24,14 +24,18 @@
 
 {block name="body"}
 <!-- /banner/ -->
+<!-- /banner/ -->
+<input type="hidden" name="plate_id" value="{$plate_info.id}">
 <div class="my_box">
     <div class="w1200">
         <div class="mybox_H">
-            <div class="mybox_H_inr fl">居住建筑</div>
+            <div class="mybox_H_inr fl">板块管理-{$plate_info.plate_name}</div>
+            <div class="fr top_btn_box">
+            </div>
             <div class="fr isOpenAdd">
                 <div class="checkbox cupo">
-                    <label class="fz14 c3 oh">
-                        <input type="checkbox" class="fl">
+                    <input id="plate_allow" type="checkbox" {if $plate_info.is_allow_join_manager} checked {/if} class="fl">
+                    <label for="plate_allow" class="fz14 c3 oh">
                         <span>是否开启成员申请</span>
                     </label>
                 </div>
@@ -48,96 +52,38 @@
                 <div class="mybox_R_one hook">
                     <div class="my_b_r_type my_b_r_type1">
                         <span class="">角色设置</span>
+                        <button type="button" class="red_btn fr add_role">
+                            <a href="javascript:void(0);" onclick="roleAdd()" class="cf">添加角色</a></button>
                     </div>
                     <div class="w100">
+                        {foreach $role as $key => $value}
                         <div class="js_list oh bb1">
-                            <div class="js_list_img  fl">
-                                <img src="images/js_03.png" alt="">
-                            </div>
                             <div class="js_info fl">
                                 <div class="js_info_top oh">
-                                    <h3>管理员1</h3>
-                                    <a href="">编辑</a>
-                                    <span class="fz14 c9">于2019-01-01加入</span>
+                                    <h3>{$value.role_name}</h3>
+                                    {if $value.role_desc}
+                                    <span class="fz14 c9">备注 : {$value.role_desc}</span>
+                                    {/if}
                                 </div>
                                 <div class="js_sel_box oh">
                                     <div class="top_warpper_right oh">
+                                        {foreach $permission as $key1 => $value1}
                                         <div class="tx_list oh">
-                                            <div class="tx_active">
+                                            <div class="{if in_array($value1.id,explode(',',$value.permission_ids))} tx_active {/if}">
                                                 <p></p>
                                             </div>
-                                            <h3 class="fz 14 c3">加精</h3>
+                                            <h3 class="fz 14 c3">{$value1.name}</h3>
                                         </div>
-                                        <div class="tx_list oh">
-                                            <div class="">
-                                                <p></p>
-                                            </div>
-                                            <h3 class="fz 14 c3">置顶</h3>
-                                        </div>
-                                        <div class="tx_list oh">
-                                            <div class="tx_active">
-                                                <p></p>
-                                            </div>
-                                            <h3 class="fz 14 c3">删帖</h3>
-                                        </div>
-                                        <div class="tx_list oh">
-                                            <div class="">
-                                                <p></p>
-                                            </div>
-                                            <h3 class="fz 14 c3">删评论</h3>
-                                        </div>
+                                        {/foreach}
                                     </div>
                                 </div>
                             </div>
                             <div class="js_btn">
-                                <button class="red_btn mb5" type="button">踢除</button>
-                                <button class="blue_btn" type="button">踢除</button>
+                                <button class="blue_btn" type="button" onclick="roleEdit('{$value.id}');">修改</button>
+                                <button class="red_btn mb5" type="button" onclick="roleDel('{$value.id}')">删除</button>
                             </div>
                         </div>
-                        <div class="js_list oh bb1">
-                            <div class="js_list_img  fl">
-                                <img src="images/js_03.png" alt="">
-                            </div>
-                            <div class="js_info fl">
-                                <div class="js_info_top oh">
-                                    <h3>管理员1</h3>
-                                    <a href="">编辑</a>
-                                    <span class="fz14 c9">于2019-01-01加入</span>
-                                </div>
-                                <div class="js_sel_box oh">
-                                    <div class="top_warpper_right oh">
-                                        <div class="tx_list oh">
-                                            <div class="tx_active">
-                                                <p></p>
-                                            </div>
-                                            <h3 class="fz 14 c3">加精</h3>
-                                        </div>
-                                        <div class="tx_list oh">
-                                            <div class="">
-                                                <p></p>
-                                            </div>
-                                            <h3 class="fz 14 c3">置顶</h3>
-                                        </div>
-                                        <div class="tx_list oh">
-                                            <div class="tx_active">
-                                                <p></p>
-                                            </div>
-                                            <h3 class="fz 14 c3">删帖</h3>
-                                        </div>
-                                        <div class="tx_list oh">
-                                            <div class="">
-                                                <p></p>
-                                            </div>
-                                            <h3 class="fz 14 c3">删评论</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="js_btn">
-                                <button class="red_btn mb5" type="button">踢除</button>
-                                <button class="blue_btn" type="button">踢除</button>
-                            </div>
-                        </div>
+                        {/foreach}
                     </div>
                 </div>
                 <!-- 成员管理 -->
@@ -146,24 +92,37 @@
                         <span class="">成员管理</span>
                     </div>
                     <div class="w100">
+                        {foreach $manager as $key => $value}
                         <div class="js_list oh bb1">
                             <div class="js_list_img  fl">
-                                <img src="images/js_03.png" alt="">
+                                <img src="{$value.avatar_url}" alt="">
                             </div>
                             <div class="js_info fl">
                                 <div class="js_info_top oh">
-                                    <h3>昵称123</h3>
-                                    <span class="fz14 c9">2019-01-01</span>
+                                    <h3>{$value.nickname}</h3>
+                                    <span class="fz14 c9 fr">加入时间 : {$value.create_time|date="Y-m-d H:i:s"}</span>
                                 </div>
                                 <div class="js_info_top oh">
-                                    <h3>管理员1</h3>
+                                    <h3>
+                                        <select name="changeRoleId" id="">
+                                            {if $value.role_id == 0 }
+                                            <option value="">版主</option>
+                                            {else}
+                                            {foreach $role as $key1 => $value1}
+                                            <option data-user_id="{$value.user_id}" value="{$value1.id}" {if $value1.id == $value.role_id} selected {/if}>{$value1.role_name}</option>
+                                            {/foreach}
+                                            {/if}
+                                        </select>
+                                    </h3>
                                 </div>
                             </div>
                             <div class="js_btn">
-                                <button class="red_btn mb5" type="button">踢除</button>
-                                <button class="blue_btn" type="button">踢除</button>
+                                {if $value.role_id != 0}
+                                <button class="red_btn mb5" type="button" onclick="shotOffManager('{$value.user_id}')">踢除</button>
+                                {/if}
                             </div>
                         </div>
+                        {/foreach}
                     </div>
                 </div>
                 <!-- 审核处理 -->
@@ -172,28 +131,45 @@
                         <span class="">审核处理</span>
                     </div>
                     <div class="oh sh_tab">
-                        <div class="fl fz16 c3 cupo active">待审核（2）</div>
-                        <div class="fl fz16 c3 cupo">已通过（0）</div>
-                        <div class="fl fz16 c3 cupo">已拒绝（0）</div>
+                        <div class="fl fz16 c3 cupo active" data-num="{$apply_num[0] ?? 0}" onclick="seeApplyForStatus(this,0)">待审核（{$apply_num[0] ?? 0}）</div>
+                        <div class="fl fz16 c3 cupo" data-num="{$apply_num[1] ?? 0}" onclick="seeApplyForStatus(this,1)">已通过（{$apply_num[1] ?? 0}）</div>
+                        <div class="fl fz16 c3 cupo" data-num="{$apply_num[2] ?? 0}" onclick="seeApplyForStatus(this,2)">已拒绝（{$apply_num[2] ?? 0}）</div>
                     </div>
-                    <div class="w100">
+                    <div class="w100" id="apply_list_box">
+                        {if !count($apply)}
+                        <div class="zanwu" >暂无数据</div>
+                        {else}
+                        {foreach $apply as $key => $value}
                         <div class="js_list oh bb1">
                             <div class="js_list_img  fl">
-                                <img src="images/js_03.png" alt="">
+                                <img src="{$value.avatar_url}" alt="">
                             </div>
                             <div class="js_info fl">
                                 <div class="js_info_top oh">
-                                    <h3>昵称123</h3>
-                                    <span class="fz14 c9">2019-01-01</span>
+                                    <h3>{$value.nickname}</h3>
+                                    <span class="fz14 c9 fr">申请时间:{$value.create_time|date="Y-m-d H:i:s"}
+                                        {if $value.status != 0}
+                                        &nbsp;&nbsp;处理时间:{$value.update_time|date="Y-m-d H:i:s"}
+                                        {/if}
+                                    </span>
                                 </div>
                                 <div class="js_info_content fz14 c6">
-                                    申请原因：这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因，这里是申请原因这里是300字的申请原因.
+                                    申请原因：{$value.apply_for_desc}
                                 </div>
                             </div>
                             <div class="js_btn">
-                                <button class="red_btn mb5" type="button">通过</button>
-                                <button class="blue_btn" type="button">拒绝</button>
+                                {if $value.status == 0}
+                                <button class="blue_btn" type="button" onclick="applyOk('{$value.apply_id}')">通过</button>
+                                <button class="red_btn mb5" type="button" onclick="applyNotOk('{$value.apply_id}')">拒绝</button>
+                                {/if}
                             </div>
+                        </div>
+                        {/foreach}
+                        {/if}
+                    </div>
+                    <div class="tac" style="margin-top: 20px;">
+                        <div class="m-style M-box1">
+
                         </div>
                     </div>
                 </div>
@@ -205,14 +181,8 @@
 
 {block name="js"}
 <script>
-    $(".tx_list").click(function() {
-        var _div = $(this).find('div')
-        if (_div.hasClass('tx_active')) {
-            _div.removeClass('tx_active');
-        }else{
-            _div.addClass('tx_active');
-        }
-    });
+
+
     $(".hook").eq(0).show();
     $(".mybox_L_div").eq(0).addClass('cur');
     $(".mybox_L_div").click(function() {
@@ -222,5 +192,258 @@
         $(".mybox_L_div").removeClass('cur');
         $(".mybox_L_div").eq(_index).addClass('cur');
     })
+
+    var roleAdd = function(){
+        layer.open({
+            type:2,
+            title:'添加角色',
+            move: false,
+            area: ['320px','485px'],
+            content :"{:url('forumPlateManagerRoleAdd',['plate_id'=>$plate_info.id])}",
+            resize: false,
+            scrollbar: false,
+
+        })
+    }
+
+    var roleEdit = function(role_id){
+        layer.open({
+            type:2,
+            title:'修改角色',
+            move: false,
+            area: ['320px','485px'],
+            content :"{:url('forumPlateManagerRoleEdit',['plate_id'=>$plate_info.id])}?role_id="+role_id,
+            resize: false,
+            scrollbar: false,
+        })
+    }
+
+    var roleDel = function(role_id){
+        layer.confirm('您确定删除吗',function(){
+            $.ajax({
+                url:"{:url('/index/Plate_manager/delRole')}",
+                data:{
+                    role_id : role_id,
+                    plate_id : '{$plate_info.id}',
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg);
+                    } else{
+                        layer.msg('删除成功');
+
+                        setTimeout(function(){
+                            window.parent.location.reload();
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        },650)
+                    }
+                }
+            })
+        })
+    }
+
+    var applyOk = function(apply_id){
+        layer.open({
+            title:'选择角色',
+            content : '<select name="apply_ok_role_id" id="">' +
+                '{foreach $role as $key => $value} <option value="{$value.id}">{$value.role_name}</option> {/foreach}' +
+            '</select>',
+            btn : ['确认','取消'],
+            yes: function(index, layero){
+                var role_id = $('select[name=apply_ok_role_id]').val();
+                if(!role_id){
+                    layer.msg('请选择角色');
+                    return false;
+                }
+
+                $.ajax({
+                    url:"{:url('/index/plate_manager/managerJoin')}",
+                    type:"post",
+                    dataType:"json",
+                    data:{
+                        plate_id : '{$plate_info.id}',
+                        apply_id : apply_id,
+                        role_id : role_id,
+                    },
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            layer.msg('已通过');
+                            setTimeout(function(){
+                                window.location.reload();
+                                layer.close(index);
+                            },650)
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    var applyNotOk = function(apply_id){
+        layer.confirm('您确定拒绝吗?',function(){
+            $.ajax({
+                url:"{:url('/index/plate_manager/managerNotJoin')}",
+                type:"post",
+                dataType:"json",
+                data:{
+                    plate_id : '{$plate_info.id}',
+                    apply_id : apply_id,
+                },
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg);
+                    } else{
+                        layer.msg('已拒绝');
+                        setTimeout(function(){
+                            window.location.reload();
+                            layer.close(index);
+                        },650)
+                    }
+                }
+            })
+        })
+    }
+
+    var shotOffManager = function(user_id){
+        layer.confirm('确定将此用户从管理组剔除?',function(){
+            $.ajax({
+                url:"{:url('/index/Plate_manager/shotOffManager')}",
+                type:"post",
+                data:{
+                    user_id : user_id,
+                    plate_id : "{$plate_info.id}",
+                },
+                dataType:"json",
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg);
+                    } else{
+                        layer.msg('已踢出');
+                        setTimeout(function(){
+                            window.location.reload();
+                            layer.close(index);
+                        },650)
+                    }
+                }
+            })
+    })
+    }
+
+    $('#plate_allow').change(function(){
+        var status = $(this).prop('checked');
+
+        $.ajax({
+            url:"{:url('/index/Plate_manager/changeJoinChannel')}",
+            data:{
+                plate_id : '{$plate_info.id}'
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                if (data.code == 0){
+                    layer.msg(data.msg)
+                }else{
+                    layer.msg('修改成功')
+
+                }
+            }
+        })
+    })
+
+    var seeApplyForStatus = function(_this,status) {
+        if ($(_this).hasClass('active')){
+            return false;
+        }
+        $(_this).parents('div').find('div').each(function(k,v){
+            $(v).removeClass('active')
+        })
+        $(_this).addClass('active')
+        var num = $(_this).data('num');
+        var type = status;
+        var plate_id = '{$plate_info.id}';
+        $.ajax({
+            url:"{:url('/index/Plate_manager/getApplyList')}",
+            type:"post",
+            data:{
+                page : 1,
+                type : type,
+                plate_id : plate_id,
+            },
+            dataType:"json",
+            success:function(data){
+                if (data.code == 0){
+                    layer.msg(data.msg);
+                } else{
+                    $('#apply_list_box').html(data.data);
+                    $('.M-box1').html('')
+                    if(num){
+                        applyPage(type,num)
+
+                    }
+                }
+            }
+        })
+    }
+
+    $('select[name=changeRoleId]').change(function(){
+        var role_id = $(this).val();
+        var user_id = $(this).find(':selected').data('user_id')
+        $.ajax({
+            url:"{:url('/index/Plate_manager/changeManagerRole')}",
+            type:"post",
+            data:{
+                user_id : user_id,
+                role_id : role_id,
+                plate_id : '{$plate_info.id}',
+            },
+            dataType:"json",
+            success:function(data){
+                if (data.code == 0){
+                    layer.msg(data.msg);
+                } else{
+                    layer.msg('修改角色成功');
+
+                }
+            }
+        })
+    })
+
+    function applyPage(type = 0,totalData = '{$apply_num[0] ?? 0}',showData = '{$page_length}'){
+        $('.M-box1').pagination({
+            totalData:totalData,
+            showData:showData,
+            // mode: 'fixed',
+            callback: function (api) {
+                var page=api.getCurrent()
+                $.ajax({
+                    url:"{:url('/index/Plate_manager/getApplyList')}",
+                    type:"post",
+                    data:{
+                        page : page,
+                        type : type,
+                        plate_id : '{$plate_info.id}',
+                    },
+                    dataType:"json",
+                    success:function(data){
+                        if (data.code == 0){
+                            layer.msg(data.msg);
+                        } else{
+                            $('#apply_list_box').html(data.data);
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+
+    {if $apply_num ?? 0 }
+    $(function(){applyPage()})
+    {/if}
 </script>
 {/block}

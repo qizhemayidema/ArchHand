@@ -6,6 +6,7 @@ use app\index\model\LibraryAttributeValue;
 use app\index\model\LibraryHaveAttributeValue as LibraryHaveAttributeValueModel;
 use app\index\model\LibraryCategory as LibraryCategoryModel;
 use app\api\validate\Library as LibraryValidate;
+use app\common\controller\Library as CommonLibraryModel;
 use think\Request;
 use think\Validate;
 use app\index\model\Library as LibraryModel;
@@ -13,6 +14,7 @@ use app\index\model\LibraryComment as LibraryCommentModel;
 use app\index\model\UserDownloadLibraryHistory as UDLHModel;
 use app\index\model\UserCollect as UserCollectModel;
 use app\index\model\UserBuyHistory as UserBuyHistoryModel;
+use app\index\model\Store as StoreModel;
 use Upyun\Upyun;
 use Upyun\Config;
 use Upyun\Signature;
@@ -50,6 +52,9 @@ class MyLibrary extends Base
         $download = $downloadData['data'];
         $downloadCount = $downloadData['count'];
 
+        //查找店铺信息
+        $store = (new StoreModel())->where(['id'=>$user_info['store_id']])->find();
+
 
 
         $this->assign('library', $library);
@@ -63,7 +68,7 @@ class MyLibrary extends Base
         $this->assign('download', $download);
         $this->assign('download_count', $downloadCount);
         $this->assign('page_length', $this->commonPageLength);
-
+        $this->assign('store',$store);
         return $this->fetch();
     }
 
@@ -304,7 +309,7 @@ class MyLibrary extends Base
         Db::startTrans();
         try {
             //查询云库是否存在
-            $library = LibraryModel::where('id', $id)->where('is_delete', 0)->where('status', 1)->find();
+            $library = LibraryModel::where('id', $id)->where('is_delete', 0)->find();
             if (!$library) {
                 return json(['code' => 0, 'msg' => '当前云库内容不存在'], 200);
             }
@@ -320,11 +325,9 @@ class MyLibrary extends Base
                     return json(['code' => 0, 'msg' => '删除失败'], 400);
                 }
             }
-
-            //分类数量减1
-            $cate = LibraryCategoryModel::where('id', $library['cate_id'])
-                ->where('count', '>', 0)
-                ->where('count', '>', 0)->setDec('count');
+            if($library['status'] == 1){
+                (new CommonLibraryModel())->setAboutSum($id,0);
+            }
 
             //获取属性
             $have_attribute_value = LibraryHaveAttributeValueModel::where('library_id', $library['id'])->all();
@@ -332,12 +335,6 @@ class MyLibrary extends Base
                 $value_ids [] = $v['attr_value_id'];
                 $ids[] = $v['id'];
             }
-
-            //属性数量减1
-            if ($value_ids)
-                $attribute_value = LibraryAttributeValue::where('library_num', '>', 0)
-                    ->where('id', 'in', $value_ids)
-                    ->where('library_num', '>', 0)->setDec('library_num');
 
             //删除属性
             if ($ids)

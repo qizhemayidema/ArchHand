@@ -55,7 +55,8 @@ class MyForum extends Base
         $manager = (new ForumManagerModel())->alias('manager')
             ->join('forum_plate plate', 'plate.id = manager.plate_id')
             ->leftJoin('forum_manager_role role', 'role.id = manager.role_id')
-            ->where(['manager.user_id' => $user_info['id']]);
+            ->where(['manager.user_id' => $user_info['id']])
+            ->where(['plate.is_delete'=>0]);
         $managerCount = $manager->count();
         $manager = $manager->field('plate.id plate_id,plate.plate_img,plate.plate_name,role.role_name,manager.role_id')
             ->order('manager.role_id')

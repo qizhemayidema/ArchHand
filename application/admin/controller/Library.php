@@ -8,6 +8,7 @@ use think\Controller;
 use think\Db;
 use think\Request;
 use app\admin\model\Library as LibraryModel;
+use app\common\controller\Library as CommonLibraryModel;
 use think\Validate;
 
 class Library extends Base
@@ -20,7 +21,6 @@ class Library extends Base
      */
     public function index()
     {
-
         $libraries = (new LibraryModel)->where('is_delete', 0)
             ->where('status', '<>', -1)->order('status asc,is_classics desc,create_time desc')
             ->paginate(15);
@@ -127,11 +127,17 @@ class Library extends Base
         $id = $request->only('id');
         Db::startTrans();
         try {
+            //如果是通过状态删除的 才能够减少统计数量
+            $status = (new LibraryModel())->where(['id'=>$id['id']])->value('status');
+            if($status == 1){
+                (new CommonLibraryModel())->setAboutSum($id['id'],0);
+            }
             $del = (new LibraryModel())->update(['id' => $id['id'], 'is_delete' => time()]);
             //删除标签
             $del_value = Db::name('library_have_attribute_value')->where('library_id', $id['id'])->delete();
             //删除审核原因
             $verify = Db::name('library_check_history')->where('library_id', $id['id'])->delete();
+            //分类下
             //TODO::删除远程文件
             Db::commit();
         } catch (\Exception $e) {
@@ -176,6 +182,7 @@ class Library extends Base
     {
 
         $form = $request->only('id,status,because,name');
+
         if ($form['status'] == -1) {
             $rule = [
                 'because' => 'require|min:2|max:40',
@@ -193,30 +200,37 @@ class Library extends Base
         }
 
         Db::startTrans();
+        $old_data = LibraryModel::find($form['id'])->getData();
         try {
-            $library = LibraryModel::update(['id' => $form['id'], 'status' => $form['status']]);
-            if ($library) {
-                if ($form['status'] == -1) {
-                    $check = Db::name('library_check_history')->insert([
-                        'library_id' => $form['id'],
-                        'because' => $form['because'],
-                        'manager_name' => session('admin')->user_name,
-                        'library_name' => $form['name'],
-                        'create_time' => time(),
-                    ]);
-                    if (!$check) {
-                        Db::rollback();
-                        dump(1);
-                        return json(['code' => 0, 'msg' => '审核失败']);
-                    }
-                } else {
-                    $check = Db::name('library_check_history')->where('library_id', $form['id'])->delete();
-                    Db::commit();
-                    return json(['code' => 1, 'msg' => '审核成功']);
+
+            LibraryModel::update(['id' => $form['id'], 'status' => $form['status']]);
+            if ($form['status'] == 1 && $old_data['status'] != 1){
+                (new CommonLibraryModel())->setAboutSum($form['id'],1);
+            }elseif ($form['status'] != 1 && $old_data['status'] == 1){
+                (new CommonLibraryModel())->setAboutSum($form['id'],0);
+            }
+            if ($form['status'] == -1) {
+                Db::name('library_check_history')->where('library_id', $form['id'])->delete();
+
+                $check = Db::name('library_check_history')->insert([
+                    'library_id' => $form['id'],
+                    'because' => $form['because'],
+                    'manager_name' => session('admin')->user_name,
+                    'library_name' => $form['name'],
+                    'create_time' => time(),
+                ]);
+                if (!$check) {
+                    Db::rollback();
+                    dump(1);
+                    return json(['code' => 0, 'msg' => '审核失败']);
                 }
+            } else {
+                $check = Db::name('library_check_history')->where('library_id', $form['id'])->delete();
                 Db::commit();
                 return json(['code' => 1, 'msg' => '审核成功']);
             }
+            Db::commit();
+            return json(['code' => 1, 'msg' => '审核成功']);
         } catch (\Exception $e) {
             Db::rollback();
 
@@ -244,5 +258,6 @@ class Library extends Base
             return json(['code' => 0, 'msg' => '出错啦']);
         }
     }
+
 
 }

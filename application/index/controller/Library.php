@@ -25,6 +25,7 @@ use app\index\model\LibraryComment as LibraryCommentModel;
 use app\index\model\Store as StoreModel;
 use app\index\validate\Library as LibraryValidate;
 use app\index\validate\LibraryComment as LibraryCommentValidate;
+use think\Validate;
 use Upyun\Upyun;
 use Upyun\Config;
 use Upyun\Signature;
@@ -307,7 +308,7 @@ class Library extends Base
         $data['user_id'] = $user['id'];
         $validate = new LibraryValidate();
         if (!$validate->check($data)) {
-            return json(['code' => 0, 'msg' => $validate->getError()], 422);
+            return json(['code' => 0, 'msg' => $validate->getError()]);
         }
 
         $config = \HTMLPurifier_Config::createDefault();
@@ -318,6 +319,12 @@ class Library extends Base
         $data['create_time'] = time();
         $data['store_id'] = $this->userInfo['store_id'];
 
+        $rules = ['__token__'=>'require|token'];
+        $messages = ['__token__.token'];
+        $validate = new Validate($rules,$messages);
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>'不能重复提交']);
+        }
         Db::startTrans();
         try {
 
@@ -362,17 +369,7 @@ class Library extends Base
                 Db::rollback();
                 return json(['code' => 0, 'msg' => '发布失败'], 200);
             }
-
-            //增加分类数量
-            $category = (new LibraryCategoryModel())->where('id', $library['cate_id'])->setInc('count');
-            if (!$category) {
-                Db::rollback();
-                return json(['code' => 0, 'msg' => '发布失败'], 200);
-            }
-
-            //批量更新属性文库数量
-            $library_attribute_value = (new LibraryAttributeValue())->where('id', 'in', $value_id)->setInc('library_num');
-
+            
             Db::commit();
             return json(['code' => 1, 'msg' => '发布成功' . $exist], 201);
 

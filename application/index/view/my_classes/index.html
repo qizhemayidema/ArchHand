@@ -35,6 +35,7 @@
             <div class="mybox_L">
                 <div :class="ltype==0? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(0)">已购买课程</div>
                 <div :class="ltype==1? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(1)">收藏的课程</div>
+                <div :class="ltype==2? 'cur mybox_L_div':'mybox_L_div'" @click="qhcur(2)">我的评论</div>
             </div>
             <div class="mybox_R">
                 <div v-show="ltype==0" class="mybox_R_one">
@@ -42,7 +43,7 @@
                         <span class="">已购买课程</span>
                     </div>
                     <div class="w100">
-                        {if !count($buy_info)}
+                        {if !$buy_count}
                         <div class="zanwu">暂无数据</div>
                         {else}
                         <div id="buy_list_box">
@@ -77,13 +78,13 @@
                     </div>
                     <div class="w100">
 
-                        {if !count($collect_info)}
+                        {if !$collect_count}
                         <div class="zanwu">暂无数据</div>
                         {else}
                         <div id="collect_list_box">
                             {foreach $collect_info as $key => $value}
                             <div class="my_kc_one cspointer">
-                                <a href="{:url('classInfo',['class_id'=>$value.id])}"><img class="my_kc_img" src="{$value.class_pic}"  alt=""></a>
+                                <a href="{:url('classInfo',['class_id'=>$value.class_id])}"><img class="my_kc_img" src="{$value['class_pic']}"  alt=""></a>
                                 <div class="my_kc_msg">
                                     <div class="kc_name oh1">{$value.name}</div>
                                     <div class="kc_zhangjie">共有{$value.chapter_sum}节 其中 {$value.free_chapter} 节免费</div>
@@ -91,8 +92,8 @@
                                         <div class="kc_jiage">
                                             价格: <span style="color: #f04e4f;">{$value.integral}</span>
                                         </div>
-                                        <div class="kc_gobuy_btn cspointer" onclick="buykc('{$value.id}')">立即购买</div>
-                                        <div class="kc_sc_cal cspointer" onclick="collect_kc('{$value.id}')">取消收藏</div>
+                                        <div class="kc_gobuy_btn cspointer" onclick="buykc('{$value.class_id}')">立即购买</div>
+                                        <div class="kc_sc_cal cspointer" onclick="collect_kc('{$value.class_id}')">取消收藏</div>
                                     </div>
                                 </div>
                             </div>
@@ -102,6 +103,42 @@
 
                         <div class="tac">
                             <div class="m-style M-box3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-show="ltype==2" class="mybox_R_one">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的评论</span>
+                    </div>
+                    <div class="w100">
+
+                        {if !$comment_count}
+                        <div class="zanwu">暂无数据</div>
+                        {else}
+                        <div id="comment_list_box">
+                            {foreach $comment_info as $key => $value}
+                            <div class="hf_list oh bb1 ">
+                                <a href="{:url('classInfo',['class_id'=>$value.class_id])}">
+                                    <h3 class="fz20 c3 oh1 fw9 mb5">究竟是何人所为??</h3>
+                                    <p class="fz16 c9 oh2 mb10" style="width: 100%;">
+                                        {$value.comment}
+                                    </p>
+                                    <div class="oh">
+                                        <!--<div class="hf_list_img">-->
+                                        <!--<img src="/static/index/images/banner_01.jpg" alt="">-->
+                                        <!--</div>-->
+                                        <div class="fz12 c9 lh26 fl mr20">评论时间：{$value.create_time|date="Y-m-d H:i:s"} </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {/foreach}
+                        </div>
+                        {/if}
+
+
+                        <div class="tac" style="margin-top: 30px;">
+                            <div class="m-style M-box4"></div>
                         </div>
                     </div>
                 </div>
@@ -165,6 +202,31 @@
                  })
              }
          })
+         {/if}
+         {if $comment_count}
+         $('.M-box4').pagination({
+                 totalData:{$comment_count},
+                 showData:{$page_length},
+                 // mode: 'fixed',
+                 callback: function (api) {
+                     var page=api.getCurrent()
+                     $.ajax({
+                         url:"{:url('/index/My_classes/getCommentList')}",
+                         type:"post",
+                         data:{
+                             page : page,
+                         },
+                         dataType:"json",
+                         success:function(data){
+                             if (data.code == 0){
+                                 layer.msg(data.msg);
+                             } else{
+                                 $('#comment_list_box').html(data.data);
+                             }
+                         }
+                     })
+                 }
+             })
          {/if}
      })
     var vm = new Vue({

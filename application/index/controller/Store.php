@@ -2,8 +2,10 @@
 
 namespace app\index\controller;
 
+use app\common\controller\UploadPic;
 use app\index\model\LibraryCategory as LibraryCategoryModel;
 use think\Controller;
+use think\Exception;
 use think\exception\HttpException;
 use think\Request;
 use app\index\model\LibraryHaveAttributeValue as LibraryHaveAttributeValueModel;
@@ -12,6 +14,7 @@ use app\index\model\LibraryComment as LibraryCommentModel;
 use app\index\model\Store as StoreModel;
 use app\index\validate\Library as LibraryValidate;
 use app\index\validate\LibraryComment as LibraryCommentValidate;
+use think\Validate;
 
 class Store extends Base
 {
@@ -132,5 +135,49 @@ class Store extends Base
             return json(['code' => 0, 'msg' => $e->getMessage()], 500);
         }
 
+    }
+
+    public function updateInfo(Request $request)
+    {
+        $user_info = $this->userInfo;
+        $data = $request->post();
+        $rules = [
+            'store_name'    => 'require|max:10',
+        ];
+
+        $messages = [
+            'store_name.require'    => '店铺名称必须填写',
+            'store_name.max'        => '店铺名称最长十个字符',
+        ];
+
+        $validate = new Validate($rules,$messages);
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        $result = [
+            'store_name'    => $data['store_name']
+        ];
+        try{    //如果上传出现意外 抛异常
+            if (isset($data['store_logo']) && $data['store_logo']){
+               $logoRes = (new UploadPic())->uploadBase64Pic($data['store_logo'],'store/'.$user_info['id'].'/');
+               if ($logoRes['code'] == 0){
+                   return json(['code'=>0,'msg'=>'上传logo失败,请刷新后重新尝试']);
+               }
+               $result['store_logo'] = $logoRes['msg'];
+            }
+            if (isset($data['store_background']) && $data['store_background']){
+                $backRes = (new UploadPic())->uploadBase64Pic($data['store_background'],'store/'.$user_info['id'].'/');
+                if ($backRes['code'] == 0){
+                    return json(['code'=>0,'msg'=>'上传背景图失败,请刷新后重新尝试']);
+                }
+                $result['store_background'] = $backRes['msg'];
+            }
+        }catch (\Exception $e){
+            return json(['code'=>0,'msg'=>'上传图片失败']);
+        }
+        (new StoreModel())->where(['id'=>$user_info['store_id']])->update($result);
+
+        return json(['code'=>1,'msg'=>'修改成功']);
     }
 }

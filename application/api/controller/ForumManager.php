@@ -400,10 +400,11 @@ class ForumManager extends ForumManagerBase
         $status = $plateInfo['is_allow_join_manager'] ? 0 : 1;
 
         (new PlateModel())->where(['id' => $plate_id])->update([
-            'status' => $status,
+            'is_allow_join_manager' => $status,
         ]);
         return json(['code' => 1, 'msg' => 'success']);
     }
+
 
 
 }

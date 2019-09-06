@@ -9,13 +9,6 @@ class Footer extends Base
 {
     public function index(Request $request)
     {
-        /**
-         * "about": "<p><im
-            "FAQ": "<p>\u53d
-            "privacy_policy"
-            "job": "<p><img
-            "contact_us": "<
-         */
         $page = $request->get('page')?? 'about';
 
         $footer = $this->getConfig('bottom_navigation');

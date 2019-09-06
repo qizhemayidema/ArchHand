@@ -38,8 +38,8 @@
                     <span class="fz12 c9">{$value.collect_num}</span>
                 </div>
             </div>
-            {else if $value.status == -1}
-            <span class="fz14">未通过原因 : {$value.because}</span>
+            {elseif $value.status == -1}
+            <span class="fz14">未通过原因: {$value.because}</span>
             {/if}
         </div>
         {if $value.status == 1}

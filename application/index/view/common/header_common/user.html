@@ -4,7 +4,7 @@
         <ul style="width: auto;">
             <li style="width: auto;">
                 <img src="{$user_info.avatar_url}" alt="" class="dh_tx">
-                <a class="dh_msg" href="mymsg.html">
+                <a class="dh_msg" href="{:url('myInfo')}">
                     <p class="dh_msgP1" style="margin: 5px 0;">
                         {:mb_substr($user_info.nickname,0,5)}
                         {if strlen($user_info.nickname) > 5}...

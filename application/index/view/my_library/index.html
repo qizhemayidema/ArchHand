@@ -41,6 +41,7 @@
                 <div class=" mybox_L_div">我的评论</div>
                 <div class=" mybox_L_div">我的购买</div>
                 <div class=" mybox_L_div">下载记录</div>
+                <div class=" mybox_L_div">我的店铺</div>
             </div>
             <div class="mybox_R">
                 <!-- 我的发布 -->
@@ -50,7 +51,7 @@
                     </div>
                     <div class="w100">
                         {if !$library_count}
-                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        <div class="zanwu" >暂无数据</div>
                         {else}
                         <div id="publish_list_box">
                             {foreach $library as $key => $value}
@@ -93,8 +94,8 @@
                                                 <span class="fz12 c9">{$value.collect_num}</span>
                                             </div>
                                         </div>
-                                        {else if $value.status == -1}
-                                        <span class="fz14">未通过原因 : {$value.because}</span>
+                                        {elseif $value.status == -1}
+                                        <span class="fz14">未通过原因: {$value.because}</span>
                                         {/if}
                                     </div>
                                 {if $value.status == 1}
@@ -121,7 +122,7 @@
                     </div>
                     <div class="w100">
                         {if !$collect_count}
-                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        <div class="zanwu" >暂无数据</div>
                         {else}
                         <div id="collect_list_box">
                             {foreach $collect as $key => $value}
@@ -159,7 +160,7 @@
                     </div>
                     <div class="w100">
                         {if !$comment_count}
-                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        <div class="zanwu" >暂无数据</div>
                         {else}
                         <div id="comment_list_box">
                             {foreach $comment as $key => $value}
@@ -198,7 +199,7 @@
                     </div>
                     <div class="w100">
                         {if !$buy_count}
-                        <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                        <div class="zanwu" >暂无数据</div>
                         {else}
                         <div id="buy_list_box">
                             {foreach $buy as $key => $value}
@@ -249,6 +250,51 @@
                         <div class="m-style M-box5">
 
                         </div>
+                    </div>
+                </div>
+                <!--店铺-->
+                <div class="mybox_R_one hook">
+                    <div class="my_b_r_type my_b_r_type1">
+                        <span class="">我的店铺</span>
+                    </div>
+                    <div class="w100">
+                        {if $store.status ==1}
+                        <div class="zanwu" style="line-height: 30PX;">您的店铺被封停<br/>如有疑问请联系我们</div>
+                        {else}
+                        <div class="formlist clearfix">
+                            <div class="formtit">店铺名称:</div>
+                            <div class="forminr">
+                                <input type="text" value="{$store.store_name}" name="store_name" class="form_int">
+                            </div>
+                        </div>
+                        <div class="formlist clearfix">
+                            <div class="formtit">LOGO设置:</div>
+                            <div class="uploadfile">
+                                <img id="logoShowImg" src="{$store.store_logo}">
+                                <input id="file" type="file" accept="image/*" class="txsc">
+                                <input type="hidden" name="store_logo">
+                            </div>
+                            <div class="upimgtip">
+                                <p>选择本地图片，上传编辑自己的LOGO</p>
+                                <p>支持jpg、jpeg、gif、png格式的图片</p>
+                                <p>建议正方形的图片</p>
+                            </div>
+                        </div>
+                        <div class="formlist clearfix">
+                            <div class="formtit">店铺背景图:</div>
+                            <div class="uploadfile">
+                                <img id="backgroundShowImg" src="{$store.store_background}">
+                                <input id="backFile" style="position: absolute;top: 0;left: 0;z-index: 2;" type="file" accept="image/*" class="txsc">
+                                <input type="hidden" name="store_background">
+                            </div>
+                            <div class="upimgtip">
+                                <p>选择本地图片，上传编辑自己的背景图</p>
+                                <p>支持jpg、jpeg、gif、png格式的图片</p>
+                                <p>建议 1920 * 380格式</p>
+                            </div>
+                        </div>
+                        <input type="button" value="保存" class="my_msg_Submit" onclick="store_submit()">
+                        {/if}
                     </div>
                 </div>
             </div>
@@ -341,6 +387,49 @@
                 }
             }
         })
+    }
+    $('#file').on('change', function(e) {
+        console.log(e)
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file); // 读出 base64
+        reader.onloadend = function () {
+            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+            var dataURL = reader.result;
+            $('input[name=store_logo]').val(dataURL)
+            $('#logoShowImg').attr('src',dataURL)
+        };
+    });
+    $('#backFile').on('change', function(e) {
+        console.log(e)
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file); // 读出 base64
+        reader.onloadend = function () {
+            // 图片的 base64 格式, 可以直接当成 img 的 src 属性值
+            var dataURL = reader.result;
+            $('input[name=store_background]').val(dataURL)
+            $('#backgroundShowImg').attr('src',dataURL)
+        };
+    });
+    var store_submit = function(){
+        var background = $('input[name=store_background]').val();
+        var logo =  $('input[name=store_logo]').val();
+        var name = $('input[name=store_name]').val();
+        $.ajax({
+            url:"{:url('index/Store/updateInfo')}",
+            type:'post',
+            data:{
+                store_name : name,
+                store_logo : logo,
+                store_background : background,
+            },
+            dataType:'json',
+            success:function(data){
+                layer.msg(data.msg)
+            }
+        })
+
     }
     $(function(){
         {if $library_count}

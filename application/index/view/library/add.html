@@ -48,6 +48,7 @@
 <div class="sqbanner"></div>
 
 <!-- /banner/ -->
+{:token()}
 <div class="my_box">
     <div class="w1200 form_box">
         <div class="fabu_tit">发布云库</div>
@@ -378,7 +379,6 @@
                 res=JSON.parse(res)
                 if(res.code==200){
                     layer.closeAll();
-                    layer.msg('附件上传成功')
                     vm.data_size=res.file_size
                     vm.source_url=res.url
                     // var resultd=res.data
@@ -411,6 +411,7 @@
         form_data.append('source_url',vm.source_url);
         form_data.append('suffix',vm.suffix);
         form_data.append('data_size',vm.data_size);
+        form_data.append('__token__',$('input[name=__token__]').val())
         // var cate_id= $('select[name=cate_id]').val();
         // var name=$("input[name='title']").val()
         // var desc= $("textarea[name='content']").val()
@@ -429,13 +430,11 @@
             processData:false,
             contentType:false,
             success: function (res) {
-                console.log(res);
-                return false;
                 if (res.code == 1) {
                     layer.msg('提交成功')
                     setTimeout(function() {
                         window.location.href="{:url('libraryIndex')}"
-                    }, 1000);
+                    }, 500);
                 }else{
                     if(res.msg){
                         layer.msg(res.msg)

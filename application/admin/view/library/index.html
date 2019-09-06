@@ -54,7 +54,7 @@
                 </td>
                 <td>{$v['integral']}</td>
                 <td>
-                    <a href="{$v['source_url']}" target="_blank">
+                    <a href="{:env('UPYUN.CDN_URL')}{$v['source_url']}" target="_blank">
                         {$v['source_url']}
                     </a>
                 </td>

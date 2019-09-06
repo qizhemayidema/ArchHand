@@ -7,6 +7,7 @@
 <link href="__STATIC__/css/pagination.css" rel="stylesheet" type="text/css">
 <link href="__STATIC__/css/share_style0_32.css" rel="stylesheet" type="text/css">
 <link href="__STATIC__/css/simditor.css" rel="stylesheet" type="text/css"/>
+<link href="__STATIC__/js/layui/css/layui.css" rel="stylesheet" type="text/css"/>
 <script src="__STATIC__/js/jquery.pagination.js"></script>
 <!-- 编辑器 -->
 <script type="text/javascript" src="__STATIC__/js/module.js"></script>
@@ -146,6 +147,14 @@
                     收藏(<em>{$forum.collect_num}</em>)</a>
             </p>
         </div>
+        {if $is_manager}
+        <div class="xqcaozuo" style="text-align: center;">
+
+            <button type="button" class="layui-btn layui-btn-primary" onclick="changeClassics('{$forum.id}')">精华/取消</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="changeTop('{$forum.id}')">置顶/取消</button>
+            <button type="button" class="layui-btn layui-btn-danger" onclick="delForum('{$forum.id}')">删帖</button>
+        </div>
+        {/if}
         <div class="xqpl" id="comment_list_box">
             {if $comment_count}
             {foreach $comment as $key => $value}
@@ -174,6 +183,12 @@
                             <span class="hand {if isset($value.is_like) && $value.is_like}redhand {/if}"></span>
                             点赞(<em>{$value.like_num}</em>)
                         </a>
+                        {if $is_manager}
+                        <a href="javascript:void(0)"  onclick="delComment('{$value.id}')">
+                            <img src="__STATIC__/images/delete.png" alt="" style="width: 14px;">
+                            删除
+                        </a>
+                        {/if}
                     </p>
                 </div>
 
@@ -225,6 +240,90 @@
     </div>
 </div>
 <script>
+    var changeClassics = function(forum_id){
+        layer.confirm('确认加精/取消',function(){
+            $.ajax({
+                url:"{:url('/index/Plate_manager/classics')}",
+                type:'post',
+                data:{
+                    forum_id : forum_id,
+                    plate_id : '{$forum.plate_id}',
+                },
+                dataType:'json',
+                success:function(data){
+                    layer.msg(data.msg);
+                    if (data.code == 1){
+                        setTimeout(function(){
+                            window.location.reload();
+                        },650)
+                    }
+                }
+            })
+         })
+    }
+    var changeTop = function(forum_id){
+        layer.confirm('确认置顶/取消',function(){
+            $.ajax({
+                url:"{:url('/index/Plate_manager/top')}",
+                type:'post',
+                data:{
+                    forum_id : forum_id,
+                    plate_id : '{$forum.plate_id}',
+                },
+                dataType:'json',
+                success:function(data){
+                    layer.msg(data.msg);
+                    if (data.code == 1){
+                        setTimeout(function(){
+                            window.location.reload();
+                        },650)
+                    }
+                }
+            })
+        })
+    }
+    var delForum = function(forum_id){
+        layer.confirm('确认删除?',function(){
+            $.ajax({
+                url:"{:url('/index/Plate_manager/delForum')}",
+                type:'post',
+                data:{
+                    forum_id : forum_id,
+                    plate_id : '{$forum.plate_id}',
+                },
+                dataType:'json',
+                success:function(data){
+                    layer.msg(data.msg);
+                    if (data.code == 1){
+                        setTimeout(function(){
+                            window.location.href = data.callbackUrl;
+                        },650)
+                    }
+                }
+            })
+        })
+    }
+    var delComment = function(comment_id){
+        layer.confirm('确认删除此条评论?',function(){
+            $.ajax({
+                url:"{:url('/index/Plate_manager/delComment')}",
+                type:'post',
+                data:{
+                    forum_comment_id : comment_id,
+                    plate_id : '{$forum.plate_id}',
+                },
+                dataType:'json',
+                success:function(data){
+                    layer.msg(data.msg);
+                    if (data.code == 1){
+                        setTimeout(function(){
+                            window.location.reload()
+                        },650)
+                    }
+                }
+            })
+        })
+    }
     var like = function (_this,forum_id){
         if ($(_this).find('span').hasClass('redhand')){
             layer.msg('您已经点过赞了,不能重复点赞哦~')

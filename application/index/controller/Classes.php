@@ -26,6 +26,7 @@ class Classes extends Base
 {
 
     public $classPageLength = 12;
+    public $commentPageLength = 5;
 
     /**
      * 首页
@@ -126,9 +127,16 @@ class Classes extends Base
                     ->where(['user_id' => $this->userInfo['id'], 'type' => 2, 'buy_id' => $class_id])->find() ? true : false;
             }
 
+            //获取评论
+            $commentData = $this->getCommentList($class_id);
+            $comment = $commentData['data'];
+            $commentCount = $commentData['count'];
             $this->assign('class_info', $classInfo);
             $this->assign('chapter_info', $chapterInfo);
             $this->assign('tag_list', $taglist);
+            $this->assign('comment',$comment);
+            $this->assign('comment_count',$commentCount);
+            $this->assign('comment_page_length',$this->commentPageLength);
             return $this->fetch();
         } catch (\Exception $e) {
             //
@@ -347,17 +355,20 @@ class Classes extends Base
         $rules = [
             'content' => 'require',
             'class_id' => 'require',
+            '__token__'     => 'require|token',
         ];
 
         $messages = [
             'content.require' => '必须携带 content',
             'class_id.require' => '必须携带 class_id',
+            '__token__.token'       => '不能重复提交',
         ];
 
         $validate = new Validate($rules, $messages);
         if (!$validate->check($data)) {
             return json(['code' => 0, 'msg' => $validate->getError()]);
         }
+        
         //加载默认配置
         $config = \HTMLPurifier_Config::createDefault();
 //       //设置白名单
@@ -365,7 +376,10 @@ class Classes extends Base
 //       //实例化对象
         $purifier = new \HTMLPurifier($config);
         $data['content'] = $purifier->purify($data['content']);
-
+        $class = (new ClassesModel())->where(['id' => $data['class_id']])->find();
+        if (!$class){
+            return json(['code'=>0,'msg'=>'没有找到数据,请刷新后看看吧~']);
+        }
         $commentModel->startTrans();
         try {
             $commentModel->insert([
@@ -398,51 +412,65 @@ class Classes extends Base
 
     /**
      * 获取评论列表
-     * @param Request $request
-     * @return \think\response\Json
+     * @param null $class_id
+     * @return array|\think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
-    public function getComment(Request $request)
+    public function getCommentList($class_id = null)
     {
+        $request = request();
         $data = $request->post();
-        $rules = [
-            'page' => 'require',
-            'page_length' => 'require',
-            'class_id' => 'require',
-        ];
+        if ($request->isAjax()){     //post请求
+            $rules = [
+                'page' => 'require',
+                'class_id' => 'require',
+            ];
 
-        $messages = [
-            'page.require' => '参数携带 page',
-            'page_length.require' => '参数携带 page_length',
-            'class_id.require' => '参数携带 class_id'
-        ];
+            $messages = [
+                'page.require' => '参数携带 page',
+                'class_id.require' => '参数携带 class_id'
+            ];
 
-        $validate = new Validate($rules, $messages);
-        if (!$validate->check($data)) {
-            return json(['code' => 0, 'msg' => $validate->getError()]);
+            $validate = new Validate($rules, $messages);
+            if (!$validate->check($data)) {
+                return json(['code' => 0, 'msg' => $validate->getError()]);
+            }
         }
-        $start = $data['page'] * $data['page_length'] - $data['page_length'];
+
+        $class_id = $request->post('class_id') ?? $class_id;
+        $page = $request->post('page') ?? 1;
+
+        $start = $page * $this->commentPageLength - $this->commentPageLength;
 
         $classCommentModel = new ClassCommentModel();
-        $likeModel = new CCLHModel();
+//        $likeModel = new CCLHModel();
 
         $result = $classCommentModel->alias('comment')
             ->join('user user', 'comment.user_id = user.id')
-            ->where(['comment.class_id' => $data['class_id'], 'comment.status' => 1])
+            ->where(['comment.class_id' => $class_id, 'comment.status' => 1])
             ->field('comment.id comment_id,comment.comment,comment.like_num,comment.create_time,user.nickname,user.avatar_url')
-            ->order('comment.id', 'desc')->limit($start, $data['page_length'])
+            ->order('comment.id', 'desc')->limit($start,$this->commentPageLength)
             ->select()->toArray();
+//
+//        if ($request->param('token')) {
+//            foreach ($result as $key => $value) {
+//                $result[$key]['is_like'] = $likeModel->where(['comment_id' => $value['comment_id'], 'user_id' => $this->userInfo['id']])->value('comment_id') ? true : false;
+//            }
+//        }
 
-        if ($request->param('token')) {
-            foreach ($result as $key => $value) {
-                $result[$key]['is_like'] = $likeModel->where(['comment_id' => $value['comment_id'], 'user_id' => $this->userInfo['id']])->value('comment_id') ? true : false;
-            }
+        if ($request->isGet()){
+            $count = $classCommentModel
+                ->where(['class_id' => $class_id, 'status' => 1])
+                ->count();
+            return ['data'=>$result,'count'=>$count];
         }
-        $count = $classCommentModel
-            ->where(['class_id' => $data['class_id'], 'status' => 1])
-            ->count();
+        $this->assign('comment',$result);
+        return json(['code' => 1,'data'=>$this->fetch('classes/comment_list')]);
 
 
-        return json(['code' => 1, 'msg' => 'success', 'data' => $result, 'count' => $count]);
+
     }
 
     /**

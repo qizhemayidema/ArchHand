@@ -27,6 +27,7 @@ class ForumPlate extends Base
             ->join('user user','user.id = manager.user_id')
             ->field('plate.plate_img,cate.cate_name,user.id user_id,user.avatar_url,user.nickname,plate.id,plate.plate_name,plate.forum_num,plate.comment_num')
             ->order('id','desc')
+            ->where(['manager.role_id'=>0])
             ->where(['plate.is_delete'=>0])
             ->paginate(20,false,['query'=>$request->param()]);
 
@@ -184,10 +185,11 @@ class ForumPlate extends Base
             ]);
             $plate_id = $data['id'];
             if($flag){
+                (new ForumManagerModel())->where(['plate_id'=>$data['id'],'role_id'=>0])->delete();
                 $flag->save(['role_id'=>0]);
             }else{
                 //修改原先的版主id
-                (new ForumManagerModel())->where(['plate_id'=>$data['id'],'user_id'=>$plateManInfo['id'],'role_id'=>0])
+                (new ForumManagerModel())->where(['plate_id'=>$data['id'],'role_id'=>0])
                     ->update(['user_id'=>$plateManInfo['id'],'create_time'=>time()]);
             }
             $plateModel->commit();

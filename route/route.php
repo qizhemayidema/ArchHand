@@ -17,8 +17,14 @@ Route::group('/', function () {
     Route::get('/', 'index/Index/index')->name('index');
     //社区板块模块
     Route::group('forumPlate', function () {
+        //添加角色页面  弹框中使用
+        Route::get('/manager/:plate_id/addRole','index/PlateManager/addRole')->name('forumPlateManagerRoleAdd');
+        //编辑角色页面  弹框中使用
+        Route::get('/manager/:plate_id/editRole','index/PlateManager/readRole')->name('forumPlateManagerRoleEdit');
         //社区版主管理页
         Route::get('/manager/:plate_id','index/PlateManager/index')->name('forumPlateManagerIndex');
+
+
         //社区列表页面
         Route::get('/:plate_id/[:type]', 'index/Plate/index')->name('forumPlateIndex');
     });
@@ -67,6 +73,8 @@ Route::group('/', function () {
         Route::get('account','index/My_account/index')->name('myAccount');
 
     })->middleware(\app\http\middleware\IndexCheckLoginStatus::class);
+    //VIP
+    Route::get('vip','index/Vip/index')->name('vipIndex');
     //帮助
     Route::get('help', 'index/Help/index')->name('help');
     //页脚

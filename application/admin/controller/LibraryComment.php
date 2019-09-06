@@ -140,12 +140,27 @@ class LibraryComment extends Base
                 return json(['code' => 0, 'msg' => '未找到当前数据，请刷新网页查看是否删除']);
             }
             if ($comment->getData('status') == 0) {
-
+                $lib_info = (new \app\admin\model\Library())->where(['id'=>$comment['library_id']])->field('comment_num')->find();
+                if ($lib_info){
+                    if ($lib_info['comment_num'] > 0){
+                        $lib_info->setInc('comment_num');
+                    }elseif ($lib_info['comment_num'] <= 0){
+                        $lib_info->save(['comment_num'=>1]);
+                    }
+                }
                 $comment->save(['status' => 1]);
                 $check = Db::name('library_comment_check_history')->where('library_comment_id', $id)->delete();
                 Db::commit();
                 return json(['code' => 1, 'msg' => '正常']);
             } else {
+                $lib_info = (new \app\admin\model\Library())->where(['id'=>$comment['library_id']])->field('comment_num')->find();
+                if ($lib_info){
+                    if ($lib_info['comment_num'] > 0){
+                        $lib_info->setDec('comment_num');
+                    }elseif ($lib_info['comment_num'] < 0){
+                        $lib_info->save(['comment_num'=>0]);
+                    }
+                }
                 $comm = LibraryCommentModel::update(['id' => $id,'status' => 0]);
                 $check = Db::name('library_comment_check_history')->insert([
                     'library_comment_id' => $id,

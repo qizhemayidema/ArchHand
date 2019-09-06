@@ -1,0 +1,151 @@
+
+<html lang="en">
+<head>
+    {include file="common/source"}
+</head>
+<body>
+<div id="body">
+    <!-- nav -->
+    <div class="fr loginbox m768hide" style="display: none;">
+        <div v-if="login" id='cssmenu' class="loginz1 clearfix fl" style="width: auto; margin-top: 20px;">
+            <ul style="width: auto;">
+                <li style="width: auto;">
+                    <img :src="IPurl+userimg" alt="" class="dh_tx">
+                    <a class="dh_msg" href="mymsg.html">
+                        <p class="dh_msgP1" style="margin: 5px 0;">昵称</p>
+                        <p class="dh_msgP2">筑手币: <span class="cff6600">123</span></p>
+                    </a>
+                    <ul style="top: 45px;">
+                        <li>
+                            <a href='mymsg.html'>资料设置</a>
+                        </li>
+                        <li>
+                            <a href='myshequ.html'>我的社区</a>
+                        </li>
+                        <li>
+                            <a href='myyunku.html'>我的云库</a>
+                        </li>
+                        <li>
+                            <a href='my_buy_history.html'>我的课程</a>
+                        </li>
+                        <li>
+                            <a href='myaccount.html'>账户信息</a>
+                        </li>
+                        <li>
+                            <a href='javascript:void(0);' onclick="logout()">退出</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="">
+        <!-- /设计学院/ -->
+        <input type="hidden" name="plate_id" value="{$plate_id}">
+        {:token()}
+        <div class="bgf p25  mb20 oh">
+            <div class="top_warpper oh mt20">
+                <div class="oh top_selType mb10">
+                    <div class="top_warpper_left fz14 c3 lh40 fl">角色名称：</div>
+                    <div class="top_warpper_right oh">
+                        <div class="top_warpper_inp">
+                            <input name="role_name" type="text" style="width: 277px">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="oh top_selType mb10">
+                    <div class="top_warpper_left fz14 c3 lh40 fl">角色功能：</div>
+                    <div class="top_warpper_right oh">
+                        <div class="js_sel_box oh">
+                            <div class="top_warpper_right oh">
+                                {foreach $permission as $key => $value}
+                                <div class="tx_list oh">
+                                    <div data-value="{$value.id}">
+                                        <p></p>
+                                    </div>
+                                    <h3 class="fz 14 c3" >{$value.name}</h3>
+                                </div>
+                                {/foreach}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="oh top_selType mb10">
+                    <div class="top_warpper_left fz14 c3 lh40 fl">备注：</div>
+                    <div class="top_warpper_right oh">
+                        <div class="js_sel_box oh">
+                            <div class="top_warpper_right oh">
+                                <div class="top_warpper_inp">
+                                    <input name="role_desc" placeholder="选填" type="text" style="width: 277px">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="oh top_selType mb20">
+                    <div class="top_warpper_left fz14 c3 lh40 fl">&nbsp;</div>
+                    <div class="top_warpper_right oh">
+                        <button class="pay_btn" onclick="addRole()">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+    $(".tx_list").click(function() {
+        var _div = $(this).find('div')
+        if (_div.hasClass('tx_active')) {
+            _div.removeClass('tx_active');
+        }else{
+            _div.addClass('tx_active');
+        }
+    });
+    var addRole = function(){
+        var role_name = $('input[name=role_name]').val();
+        var per_ids = [];
+        var role_desc = $('input[name=role_desc]').val();
+        var __token__ = $('input[name=__token__]').val();
+        var plate_id = $('input[name=plate_id]').val();
+        $('div[class=tx_active]').each(function(k,v){
+            per_ids.push($(v).data('value'));
+        })
+        if (!role_name.length){
+            layer.msg('角色名称必须填写');
+            return false;
+        }
+        if (!per_ids.length){
+            layer.msg('角色所需权限必须选择');
+            return false;
+        }
+        $.ajax({
+            url:"{:url('/index/Plate_manager/saveRole')}",
+            data:{
+                role_name : role_name,
+                per_ids : per_ids,
+                role_desc : role_desc,
+                __token__ : __token__,
+                plate_id : plate_id,
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                if (data.code == 0){
+                    layer.msg(data.msg);
+                } else{
+                    layer.msg('添加成功');
+
+                    setTimeout(function(){
+                        window.parent.location.reload();
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    },650)
+                }
+            }
+        })
+    }
+</script>
+</html>

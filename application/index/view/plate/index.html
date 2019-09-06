@@ -120,7 +120,7 @@
                 <span></span>
             </div>
             <ul class="zhul_xx_nhfwy">
-                <!--<div class="zanwu" style="line-height: 30PX;">暂无数据</div>-->
+                <!--<div class="zanwu" >暂无数据</div>-->
                 <!--组长-->
                 {foreach $manager_list as $key => $value}
                 <li>
@@ -140,13 +140,13 @@
             </div>
             <ul class="group-t-list group-t-list-txt clearfix">
                 {if !count($new_list)}
-                <div class="zanwu" style="line-height: 30PX;">暂无数据</div>
+                <div class="zanwu" >暂无数据</div>
                 {/if}
                 {foreach $new_list as $key => $value}
                 <li class="group-t-item group-t-item-txt">
                     <div class="group-t-txt-wrapper">
                         <span>•</span>
-                        <a class="group-t-txt c_click_log" href="javascript:void(0);">{$value.name}</a>
+                        <a class="group-t-txt c_click_log" href="{:url('forumInfo',['forum_id'=>$value.id])}">{$value.name}</a>
                     </div>
                 </li>
                 {/foreach}

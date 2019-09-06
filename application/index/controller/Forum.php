@@ -24,7 +24,7 @@ use app\common\controller\UploadPic as UploadPic;
 class Forum extends Base
 {
 
-    public $commentPageLength = 8;
+    public $commentPageLength = 1;
 
     //发布页面
     public function add()
@@ -170,11 +170,12 @@ class Forum extends Base
         $is_collect = false;
         $is_like = false;
         $is_manager = false;
+        
         //是否板块管理者
         if(Session::has($this->userInfoSessionPath)){
             $user_info = $this->userInfo;
             //只查看 是否是管理组成员 给个flag
-            if ((new ForumManagerModel())->where(['plate_id'=>$forum_info['plate_id'],'user_id'=>$user_info])->find()){
+            if ((new ForumManagerModel())->where(['plate_id'=>$forum_info['plate_id'],'user_id'=>$user_info['id']])->find()){
                 $is_manager = true;
             }
             //查询是否点赞 和 是否 收藏
@@ -188,6 +189,7 @@ class Forum extends Base
         //文章内容
         $forum = [
             'id'        => $forum_info['id'],
+            'plate_id'  => $forum_info['plate_id'],
             'name'      => $forum_info['name'],
             'is_classics' => $forum_info['is_classics'],
             'pic'         => $forum_info['pic'],
@@ -274,6 +276,7 @@ class Forum extends Base
         }
         $page = $data['page'];
         $forum_id = $data['forum_id'];
+        $is_manager = false;
 
         //评论
         $start = $page * $this->commentPageLength - $this->commentPageLength;
@@ -283,6 +286,11 @@ class Forum extends Base
                 ->where(['comment.status'=>1])
                 ->where(['comment.forum_id'=>$forum_id]);
             if (Session::has($this->userInfoSessionPath)){
+                //只查看 是否是管理组成员 给个flag
+                $plate_id = (new ForumModel())->where(['id'=>$forum_id])->value('plate_id');
+                if ((new ForumManagerModel())->where(['plate_id'=>$plate_id,'user_id'=>$this->userInfo['id']])->find()){
+                    $is_manager = true;
+                }
                 $comment = $comment->leftJoin('forum_comment_like_history like','like.comment_id = comment.id and like.user_id = '.$this->userInfo['id'])
                     ->field('like.comment_id is_like');
             }
@@ -294,6 +302,7 @@ class Forum extends Base
         }
         $this->assign('comment',$comment);
         $this->assign('floor_start',$start);
+        $this->assign('is_manager',$is_manager);
 
         return json(['code'=>1,'html'=>$this->fetch('forum/comment_list')]);
     }

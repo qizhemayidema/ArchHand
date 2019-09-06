@@ -45,7 +45,7 @@
                     {if condition="$v->getData('status')==0"}
                     <a style="cursor:pointer"
                        class="label label-danger radius"
-                       onclick=" ">
+                       onclick=" verify('{$v->id}','verify')">
                     {$v['status']}
                     </a>
                     {elseif condition="$v->getData('status')==1"}

@@ -1,0 +1,30 @@
+{if !count($apply)}
+<div class="zanwu" >暂无数据</div>
+{else}
+{foreach $apply as $key => $value}
+<div class="js_list oh bb1">
+    <div class="js_list_img  fl">
+        <img src="{$value.avatar_url}" alt="">
+    </div>
+    <div class="js_info fl">
+        <div class="js_info_top oh">
+            <h3>{$value.nickname}</h3>
+            <span class="fz14 c9 fr">申请时间:{$value.create_time|date="Y-m-d H:i:s"}
+                                         {if $value.status != 0}
+                                        &nbsp;&nbsp;处理时间:{$value.update_time|date="Y-m-d H:i:s"}
+                                        {/if}
+                                    </span>
+        </div>
+        <div class="js_info_content fz14 c6">
+            申请原因：{$value.apply_for_desc}
+        </div>
+    </div>
+    <div class="js_btn">
+        {if $value.status == 0}
+        <button class="blue_btn" type="button" onclick="applyOk('{$value.apply_id}')">通过</button>
+        <button class="red_btn mb5" type="button" onclick="applyNotOk('{$value.apply_id}')">拒绝</button>
+        {/if}
+    </div>
+</div>
+{/foreach}
+{/if}

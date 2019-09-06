@@ -140,12 +140,27 @@ class ClassesComment extends Base
                 return json(['code' => 0, 'msg' => '未找到当前数据，请刷新网页查看是否删除']);
             }
             if ($comment->getData('status') == 0) {
-
+                 $class_info = (new \app\admin\model\Classes())->where(['id'=>$comment['class_id']])->field('comment_num')->find();
+                 if ($class_info){
+                     if ($class_info['comment_num'] > 0){
+                         $class_info->setInc('comment_num');
+                     }elseif ($class_info['comment_num'] <= 0){
+                         $class_info->save(['comment_num'=>1]);
+                     }
+                 }
                 $comment->save(['status' => 1]);
                 $check = Db::name('library_comment_check_history')->where('library_comment_id', $id)->delete();
                 Db::commit();
                 return json(['code' => 1, 'msg' => '正常']);
             } else {
+                $class_info = (new \app\admin\model\Classes())->where(['id'=>$comment['class_id']])->field('comment_num')->find();
+                if ($class_info){
+                    if ($class_info['comment_num'] > 0){
+                        $class_info->setDec('comment_num');
+                    }elseif ($class_info['comment_num'] < 0){
+                        $class_info->save(['comment_num'=>0]);
+                    }
+                }
                 $comm = ClassCommentModel::update(['id' => $id,'status' => 0]);
                 $check = Db::name('library_comment_check_history')->insert([
                     'library_comment_id' => $id,

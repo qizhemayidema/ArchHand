@@ -1,6 +1,6 @@
 {foreach $collect_info as $key => $value}
 <div class="my_kc_one cspointer">
-    <a href="{:url('classInfo',['class_id'=>$value.id])}"><img class="my_kc_img" src="{$value.class_pic}"  alt=""></a>
+    <a href="{:url('classInfo',['class_id'=>$value.class_id])}"><img class="my_kc_img" src="{$value['class_pic']}"  alt=""></a>
     <div class="my_kc_msg">
         <div class="kc_name oh1">{$value.name}</div>
         <div class="kc_zhangjie">共有{$value.chapter_sum}节 其中 {$value.free_chapter} 节免费</div>
@@ -8,8 +8,8 @@
             <div class="kc_jiage">
                 价格: <span style="color: #f04e4f;">{$value.integral}</span>
             </div>
-            <div class="kc_gobuy_btn cspointer" onclick="buykc('{$value.id}')">立即购买</div>
-            <div class="kc_sc_cal cspointer" onclick="collect_kc('{$value.id}')">取消收藏</div>
+            <div class="kc_gobuy_btn cspointer" onclick="buykc('{$value.class_id}')">立即购买</div>
+            <div class="kc_sc_cal cspointer" onclick="collect_kc('{$value.class_id}')">取消收藏</div>
         </div>
     </div>
 </div>
