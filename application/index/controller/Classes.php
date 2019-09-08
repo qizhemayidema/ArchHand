@@ -197,7 +197,7 @@ class Classes extends Base
                 'create_time' => time(),
             ]);
             //用户积分变动表   用户自己的表 金额减少
-            $this->addUserIntegralHistory(3,$pay_integral);
+            $this->updateUserIntegral(3,$pay_integral);
             //增加学习人数
             (new ClassModel())->where(['id'=>$data['class_id']])->setInc('learn_num');
             $buy->commit();
@@ -397,7 +397,7 @@ class Classes extends Base
                 ->where('create_time', '>', $today_timestamp)
                 ->limit($day_count)->count();
             if ($count != $day_count) {
-                $this->addUserIntegralHistory(6, $integral);
+                $this->updateUserIntegral(6, $integral);
             }
             (new ClassesModel())->where(['id' => $data['class_id']])->setInc('comment_num');
 

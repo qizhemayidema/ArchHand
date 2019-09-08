@@ -65,7 +65,7 @@ class Plate extends Base
                 ->field('forum.pic,forum.name,user.nickname,forum.is_classics,forum.is_top,forum.create_time,forum.comment_num,forum.see_num')
                 ->field('forum.id,forum.desc')
                 ->where(['forum.is_delete' => 0])
-                ->where(['plate_id'=>$plate_id]);
+                ->where(['forum.plate_id'=>$plate_id]);
             switch ($type) {
                 case 0 :
                     $forum_list = $forum_list->order('forum.is_top', 'desc')
@@ -138,6 +138,7 @@ class Plate extends Base
     {
         $page = $request->post('page') ?? 1;
         $type = $request->post('plate_type') ?? 0;
+        $plate_id = $request->post('plate_id');
         $type_arr = [0, 1, 2, 3, 4];
         if (!in_array($type, $type_arr)) {
             return json(['code' => 0, 'msg' => '参数错误']);
@@ -148,7 +149,8 @@ class Plate extends Base
             ->join('user', 'forum.user_id = user.id')
             ->field('forum.pic,forum.name,user.nickname,forum.is_classics,forum.is_top,forum.create_time,forum.comment_num,forum.see_num')
             ->field('forum.id,forum.desc')
-            ->where(['forum.is_delete' => 0]);
+            ->where(['forum.is_delete' => 0])
+            ->where(['forum.plate_id'=>$plate_id]);
         switch ($type) {
             case 0 :
                 $forum_list = $forum_list->order('forum.is_top', 'desc')

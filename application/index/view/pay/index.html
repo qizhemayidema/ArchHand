@@ -1,0 +1,103 @@
+{extend name="base/base_solid"}
+
+{block name="title"}充值 - {$website_title} {/block}
+
+{block name="source"}
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+    .vipbg{
+        height: 160px;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="sqbanner vipbg mb20 po">
+</div>
+<!-- / 主体/ -->
+<div class="w1200 clearfix">
+    <!-- /设计学院/ -->
+    <div class="top_up_box oh">
+        <a href="" class="fl active">在线充值</a>
+        <a href="" class="fl">提现</a>
+    </div>
+    <div class="bgf p25  mb20 oh">
+        <div class="top_warpper oh mt20">
+            <div class="oh top_selType mb10">
+                <div class="top_warpper_left fz14 c3 lh40 fl">充值金额：</div>
+                <div class="top_warpper_right oh">
+                    <div class="t_list active" data-value="50">50元</div>
+                    <div class="t_list" data-value="100">100元</div>
+                    <div class="t_list" data-value="500">500元</div>
+                    <div class="t_list" data-value="1000">1000元</div>
+                </div>
+            </div>
+            <div class="oh top_selType mb20">
+                <div class="top_warpper_left fz14 c3 lh40 fl">&nbsp;</div>
+                <div class="top_warpper_right oh">
+                    <div class="top_warpper_inp">
+                        <input type="text" name="pay_money" oninput="value=value.replace(/[^\d]/g,'')"> 元 <span class="fz12 c9">(<span id="money">1</span>元=<span class="red" id="integral">10</span>个筑手币)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="oh top_selType mb20">
+                <div class="top_warpper_left fz14 c3 lh40 fl">充值渠道：</div>
+                <div class="top_warpper_right oh">
+                    <div class="pay_list active"><img src="__STATIC__/images/pay_05.png" alt=""><span>支付宝</span></div>
+                </div>
+            </div>
+            <div class="oh top_selType mb20">
+                <div class="top_warpper_left fz14 c3 lh40 fl">&nbsp;</div>
+                <div class="top_warpper_right oh">
+                    <button class="pay_btn" onclick="pay()">立即支付</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    var scale = 10;
+    $(".t_list").click(function(){
+        $(".t_list").removeClass('active');
+        $(this).addClass('active');
+        var money =  $(this).data('value');
+        $('input[name=pay_money]').val(money);
+        $('#money').html(money);
+        $('#integral').html(money * scale)
+    })
+    $(".pay_list").click(function(){
+        $(".pay_list").removeClass('active');
+        $(this).addClass('active');
+    })
+    $('input[name=pay_money]').on('input',(function(){
+        var money = $(this).val() ? $(this).val() : 1;
+        $('#money').html(money);
+        $('#integral').html(money * scale)
+    }))
+    $('input[name=pay_money]').on('onpropertychange ',(function(){
+        var money = $(this).val() ? $(this).val() : 1;
+        $('#money').html(money);
+        $('#integral').html(money * scale)
+    }))
+
+    var pay = function(){
+        var pay_money = $('input[name=pay_money]').val();
+        if (pay_money && pay_money > 0){
+
+            window.location.href = "{:url('/index/Pay/pay')}?pay_money="+pay_money;
+        } else{
+            layer.msg('请输入支付金额')
+        }
+
+    }
+</script>
+{/block}

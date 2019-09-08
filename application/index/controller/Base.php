@@ -4,6 +4,7 @@ namespace app\index\controller;
 
 use app\http\middleware\IndexCheckIp;
 use think\Controller;
+use think\Db;
 use think\Exception;
 use think\facade\Session;
 use think\Request;
@@ -11,6 +12,7 @@ use think\Response;
 use app\index\model\User as UserModel;
 use app\index\model\UserIntegralHistory as IntegralHistoryModel;
 use app\index\model\ForumPlate as PlateModel;
+use app\index\model\Vip as VipModel;
 
 class Base extends Controller
 {
@@ -88,27 +90,67 @@ class Base extends Controller
     }
 
     /**
-     * 添加 积分变动记录到表中
-     * @param $integral
+     * 更改用户积分 只要用户积分会出现变动 只调用这个方法 只!
+     * @param $type integer|string 类型
+     * @param $integral integer | string 变动的积分
+     * @param null $user_id 如果为null则默认当前登陆用户 否则指定用户
+     * @throws Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
      */
-    protected function addUserIntegralHistory($type, $integral,$user_id = null)
+    protected function updateUserIntegral($type, $integral, $user_id = null)
     {
         $user_id = $user_id ? $user_id : $this->userInfo['id'];
 
-        $result = [
+        $history = [
             'type' => $type,
             'integral' => $integral,
             'user_id' => $user_id,
             'create_time' => time(),
         ];
-        (new IntegralHistoryModel())->insert($result);
+        /**
+         * 首先要执行更改账号余额的操作 成功后才可录入历史记录
+         * 此处为依靠CAP版本自旋操作 防止并发问题产生
+         */
+        $userModel = new UserModel();
+        $integralHistModel = new IntegralHistoryModel();
+        $integralScale = $this->getConfig('integral_scale');
         $upArr = [1, 2, 5, 6, 7, 8, 9, 10];
         $downArr = [3, 4];
-        $userModel = (new UserModel())->where(['id' => $user_id]);
-        if (in_array($type, $upArr)) {
-            $userModel->setInc('integral', $integral);
-        } else if (in_array($type, $downArr)) {
-            $userModel->setDec('integral', $integral);
+        while(true){
+            $userUpdate = [];   //用户表更改字段
+            $user_info = $userModel->field('id,vip_id,pay_money,version,integral,profit_integral')->find($user_id);
+            if (in_array($type, $upArr)) {
+                //如果是2 -> 充值 则涉及判断用户会员情况
+                if ($type == 2){
+                    //判断用户会员情况
+                    $vipInfo = (new VipModel())->where(['price'=>$user_info['pay_money'] + ($integral) / $integralScale])
+                        ->order('discount')->find();
+                    if ($vipInfo){
+                        $userUpdate['vip_id'] = $vipInfo['id'];
+                    }
+                    $userUpdate['pay_money'] = $user_info['pay_money'] + ($integral / $integralScale);
+                //如果是9 -> 别人下载你的文库所得 计入提现字段
+                }elseif ($type == 9){   //如果此状态 integral需要扣除手续费后传进来
+                    $userUpdate['profit_integral'] = $user_info['profit_integral'] + $integral;
+                }
+                $userUpdate['integral'] = $user_info['integral'] + $integral;
+            } else if (in_array($type, $downArr)) {
+                //判断 提现字段的情况 如果 筑手币扣除后小于 提现字段 则 两个字段数据变成一样的
+                $userUpdate['integral'] = $user_info['integral'] - $integral;
+                if($userUpdate['integral']  < $user_info['profit_integral']){
+                    $userUpdate['profit_integral'] = $userUpdate['integral'];
+                }
+            }
+            $userUpdate['version'] = $user_info['version'] + 1;
+            if (!$userModel->where(['id'=>$user_info['id'],'version'=>$user_info['version']])->update($userUpdate)){
+                sleep(0.05);
+                continue;
+            }
+            $integralHistModel->insert($history);
+            break;
         }
     }
 

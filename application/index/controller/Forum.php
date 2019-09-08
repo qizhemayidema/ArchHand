@@ -142,7 +142,7 @@ class Forum extends Base
 
             if ($today_count != $count){
                 //如果加 筑手币  需要录入积分变动记录
-                $this->addUserIntegralHistory(8,$onceIntegral);
+                $this->updateUserIntegral(8,$onceIntegral);
             }
 
             $forumModel->commit();
@@ -442,7 +442,7 @@ class Forum extends Base
 
             if ($today_count != $count){
                 //如果加 筑手币  需要录入积分变动记录
-                $this->addUserIntegralHistory(7,$onceIntegral);
+                $this->updateUserIntegral(7,$onceIntegral);
             }
 
             //帖子 评论数量 + 1

@@ -45,7 +45,7 @@ class SignIn extends Base
                 'last_sign_in_num'  => 1,
                 'last_sign_in_time' => time(),
             ]);
-            $this->addUserIntegralHistory(1,$integral_list[1]);
+            $this->updateUserIntegral(1,$integral_list[1]);
             return json(['code'=>1,'msg'=>$integral_list[1]]);
         }
         $last_sign_in_time_tomorrow = date('Y-m-d',$this->userInfo['last_sign_in_time'] + 86400);
@@ -61,7 +61,7 @@ class SignIn extends Base
                 'last_sign_in_num'  => $number,
                 'last_sign_in_time' => time(),
             ]);
-            $this->addUserIntegralHistory(1,$integral_list[$number]);
+            $this->updateUserIntegral(1,$integral_list[$number]);
 
             return json(['code'=>1,'msg'=>$integral_list[$number]]);
 
@@ -71,7 +71,7 @@ class SignIn extends Base
                 'last_sign_in_num' => 1,
                 'last_sign_in_time' => time(),
             ]);
-            $this->addUserIntegralHistory(1, $integral_list[1]);
+            $this->updateUserIntegral(1, $integral_list[1]);
             return json(['code' => 1, 'msg' => $integral_list[1]]);
         }else{
             return json(['code' => 0, 'msg' => '您今天已经签到过了,不能再次签到哦']);

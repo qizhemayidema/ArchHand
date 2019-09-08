@@ -172,7 +172,21 @@
         var time = year + month + date+hour+minu;
         return time+"_" + Math.floor(Math.random() * 1000000000 );
     }
-
+    editor = new Simditor({
+        textarea: $('#editor'),
+        toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
+            'blockquote','table','link','image','hr','indent','outdent','alignment'],
+        upload:{
+            url:'/index/Library/uploadContentPic',
+            params:null,
+            fileKey:'file',
+            connectionCount:1,
+            leaveConfirm:'正在上传图片请勿关闭此页面'
+        },
+        placeholder:'',
+        imageButton:['upload'],
+    });
+    editor.sync()
 
     layui.use(['form', 'upload', 'element'], function() {
         form = layui.form
@@ -234,21 +248,7 @@
             console.log(data.name); //复选框value值，也可以通过data.elem.value得到
             // console.log(data.othis); //得到美化后的DOM对象
         });
-        editor = new Simditor({
-            textarea: $('#editor'),
-            toolbar:['title','bold','italic','underline','strikethrough','fontScale','color','ol','ul',
-                'blockquote','table','link','image','hr','indent','outdent','alignment'],
-            upload:{
-                url:'/index/Library/uploadContentPic',
-                params:null,
-                fileKey:'file',
-                connectionCount:1,
-                leaveConfirm:'正在上传图片请勿关闭此页面'
-            },
-            placeholder:'',
-            imageButton:['upload'],
-        });
-        editor.sync()
+
         //选完文件后不自动上传
         upload.render({
             elem: '#test8'

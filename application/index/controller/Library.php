@@ -340,7 +340,7 @@ class Library extends Base
             //判断当日可获得积分次数，
             if ($this->getConfig('issue_integral_count') - $library_integral_count > 0) {
                 $integral = $this->getConfig('issue_integral');
-                $this->addUserIntegralHistory(10, $integral);
+                $this->updateUserIntegral(10, $integral);
                 $exist = '，助手币加' . $integral;
             }
 
@@ -507,7 +507,7 @@ class Library extends Base
             //判断当日可获得积分次数，
             if($this->getConfig('comment_integral_count')-$comment_integral_count>0){
                 $integral = $this->getConfig('comment_integral');
-                $this->addUserIntegralHistory(5, $integral);
+                $this->updateUserIntegral(5, $integral);
                 $exist = '，助手币加'.$integral;
             }
 
@@ -637,7 +637,7 @@ class Library extends Base
         $this->getUserInfo();
         $user_id = $this->userInfo['id'];
         $path = 'library/' . $user_id . '/';
-        $upload = (new UploadPic())->uploadOnePic($path,'file_path');
+        $upload = (new UploadPic())->uploadOnePic($path,'file');
 
         $upload = $upload->getData();
         if ($upload['code'] == 1) {
@@ -729,7 +729,7 @@ class Library extends Base
             $time = time();
             if (($user['integral'] - $discount_integral) >= 0) {
                 //扣除用户积分 记录积分变动
-                $this->addUserIntegralHistory(4, $discount_integral);
+                $this->updateUserIntegral(4, $discount_integral);
                 //更新购买记录表
                 $user_buy_history = UserBuyHistory::create([
                     'type' => 1,
@@ -748,7 +748,7 @@ class Library extends Base
                 }
 
                 //文库主人加积分
-                $user_vendor_integral = $this->addUserIntegralHistory(9, $user_vendor_discount_integral, $library['user_id']);
+                $user_vendor_integral = $this->updateUserIntegral(9, $user_vendor_discount_integral, $library['user_id']);
                 UserDownloadLibraryHistory::create(['library_id' => $id, 'user_id' => $user['id'], 'create_time' => time()]);
                 Db::commit();
                 return json(['code' => 1, 'msg' => '购买成功', 'buy' => 2, 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]], 200);
