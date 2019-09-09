@@ -17,13 +17,13 @@ class Library extends Validate
      */
     protected $rule = [
         'cate_id' => 'require|number|cateCheck',
-        'name' => 'require|min:3|max:17',//print
+        'name' => 'require|min:3|max:16',//print
         'user_id' => 'require|number|userCheck',
         'name_status' => 'require|number',
         'integral' => 'require|number',
         'source_url' => 'require',
         'desc' => 'require|min:10',
-        'suffix' => 'require|alpha',
+        'suffix' => 'require|alphaNum',
         'data_size' => 'require|number',
         'is_original' => 'require|number',
         'is_classics' => 'require|number|in:0,2',
@@ -42,7 +42,7 @@ class Library extends Validate
         'cate_id.cateCheck' => '分类填写错误',
         'name.require' => '请填写标题',
         'name.min:3' => '标题不能小于3个文字',
-        'name.max:64' => '标题不能大于17个文字',
+        'name.max:64' => '标题不能大于16个文字',
         'user_id.require' => '请登录后重试',
         'user_id.number' => '请登录后重试',
         'user_id.userCheck' => '请登陆后重试',

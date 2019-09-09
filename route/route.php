@@ -83,6 +83,11 @@ Route::group('/', function () {
         Route::get('/','index/Pay/index')->name('payIndex');
     })->middleware(\app\http\middleware\IndexCheckLoginStatus::class);
 
+    Route::group('transfer',function(){
+        Route::get('/','index/Transfer/index')->name('transferIndex');
+
+    })->middleware(\app\http\middleware\IndexCheckLoginStatus::class);
+
     //签到模块
     Route::group('signIn', function () {
         //签到块

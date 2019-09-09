@@ -27,6 +27,8 @@ class MyAccount extends Base
             'vip_name'  => $vip_name,
             'integral'  => $this->userInfo['integral'],
             'download_count'     => $count,
+            'profit_integral' => $this->userInfo['profit_integral'],
+            'pay_money' => $this->userInfo['pay_money'],
         ];
 
         $integral = (new UserIntegralHistoryModel())->where(['user_id'=>$this->userInfo['id']])

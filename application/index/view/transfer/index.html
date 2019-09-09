@@ -1,0 +1,117 @@
+{extend name="base/base_solid"}
+
+{block name="title"}提现 - {$website_title} {/block}
+
+{block name="source"}
+<style>
+    body{
+        background: #f1f2f4;
+    }
+    .daohang {
+        background-color: #942c2d;
+    }
+    .vipbg{
+        height: 160px;
+    }
+</style>
+{/block}
+
+{block name="body"}
+<!-- /banner/ -->
+<div class="sqbanner vipbg mb20 po">
+</div>
+<!-- / 主体/ -->
+<div class="w1200 clearfix">
+    <!-- /设计学院/ -->
+    <div class="top_up_box oh">
+        <a href="{:url('payIndex')}" class="fl ">在线充值</a>
+        <a href="#" class="fl active">提现</a>
+    </div>
+    <div class="bgf p25  mb20 oh">
+        <div class="top_warpper oh mt20">
+            <div class="fz14 c3 mb10">可提现筑手币：<span class="red" id="money">{$user_info.profit_integral}</span> <span class="fz12 c9">(1元=<span class="red" id="integral">{$integral_scale}</span>个筑手币)</span></div>
+            <div class="oh top_selType mb10">
+                <div class="top_warpper_left fz14 c3 lh40 fl">兑换金额：</div>
+                <div class="top_warpper_right oh">
+                    <div class="top_warpper_inp">
+                        <input type="text" oninput="value=value.replace(/[^\d]/g,'')" name="transfer_money"  style="width: 237px"> 元
+                    </div>
+                </div>
+            </div>
+            <div class="oh top_selType mb10">
+                <div class="top_warpper_left fz14 c3 lh40 fl">&nbsp;</div>
+                <div class="top_warpper_right oh">
+                    <a href="javascript:void(0);" onclick="allIntegral()"><h3 class="fz14 red">全部兑换</h3></a>
+                </div>
+            </div>
+            <!--<div class="oh top_selType mb10">-->
+                <!--<div class="top_warpper_left fz14 c3 lh40 fl">提现金额：</div>-->
+                <!--<div class="top_warpper_right oh">-->
+                    <!--<div class="top_warpper_inp">-->
+                        <!--<input type="text" name="transfer_money" style="width: 237px"> 元-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="oh top_selType mb10">
+                <div class="top_warpper_left fz14 c3 lh40 fl">提现账号：</div>
+                <div class="top_warpper_right oh">
+                    <div class="top_warpper_inp">
+                        <input type="text"  name="payee_account" placeholder="请输入您的支付宝账号" style="width: 280px">
+                    </div>
+                </div>
+            </div>
+            <!--<div class="oh top_selType mb10">-->
+                <!--<div class="top_warpper_left fz14 c3 lh40 fl">&nbsp;</div>-->
+                <!--<div class="top_warpper_right oh">-->
+                    <!--<div class="tx_list oh">-->
+                        <!--<div class="tx_active">-->
+                            <!--<p></p>-->
+                        <!--</div>-->
+                        <!--<h3 class="fz 14 c3">支付宝</h3>-->
+                    <!--</div>-->
+                    <!--<div class="tx_list oh">-->
+                        <!--<div class="">-->
+                            <!--<p></p>-->
+                        <!--</div>-->
+                        <!--<h3 class="fz 14 c3">微信</h3>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="oh top_selType mb20">
+                <div class="top_warpper_left fz14 c3 lh40 fl">&nbsp;</div>
+                <div class="top_warpper_right oh">
+                    <button class="pay_btn" onclick="transfer()">提现</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    var scale = {$integral_scale};
+    var allIntegral = function(){
+        var str = {$user_info.profit_integral};
+        $('input[name=transfer_money]').val(str / scale);
+    }
+    var transfer = function(){
+        var transfer_money = $('input[name=transfer_money]').val();
+        var payee_account = $('input[name=payee_account]').val();
+        if (!transfer_money || transfer_money <= 0) {
+            layer.msg('请输入兑换金额')
+            return false;
+        }
+        if (!payee_account) {
+            layer.msg('请输入提现账户')
+            return false
+        }
+        if (transfer_money > $('#money').html() / scale){
+            layer.msg('兑换金额超过可提现筑手币')
+            return false;
+        }
+        window.location.href = "{:url('/index/Transfer/transfer')}?transfer_money="+transfer_money+"&payee_account="+payee_account;
+
+    }
+</script>
+{/block}

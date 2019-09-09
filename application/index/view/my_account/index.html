@@ -47,11 +47,20 @@
                             </div>
                             <a class="my_email_set" href="{:url('vipIndex')}">升级成为VIP会员，百万资料免费下载</a>
                         </div>
+                        <div class="formlist clearfix">
+                            <div class="formtit">累计充值:</div>
+                            <div class="my_vip_lv">{$account.pay_money} 元</div>
 
+                        </div>
                         <div class="formlist clearfix">
                             <div class="formtit">账户余额:</div>
                             <div class="my_vip_lv">{$account.integral} 筑手币</div>
                             <a class="my_email_set" href="{:url('payIndex')}"><span style="color: red;">立即充值>></span></a>
+                        </div>
+                        <div class="formlist clearfix">
+                            <div class="formtit">可提现余额:</div>
+                            <div class="my_vip_lv">{$account.profit_integral} 筑手币</div>
+                            <a class="my_email_set" href="{:url('transferIndex')}"><span style="color: blue;">立即提现>></span></a>
 
                         </div>
                         <div class="formlist clearfix">

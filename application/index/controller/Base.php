@@ -126,7 +126,7 @@ class Base extends Controller
                 //如果是2 -> 充值 则涉及判断用户会员情况
                 if ($type == 2){
                     //判断用户会员情况
-                    $vipInfo = (new VipModel())->where(['price'=>$user_info['pay_money'] + ($integral) / $integralScale])
+                    $vipInfo = (new VipModel())->where('price','<=',$user_info['pay_money'] + ($integral) / $integralScale)
                         ->order('discount')->find();
                     if ($vipInfo){
                         $userUpdate['vip_id'] = $vipInfo['id'];
