@@ -2,21 +2,16 @@
 
 namespace app\index\controller;
 
-use think\Controller;
-use think\exception\HttpException;
 use think\facade\Cache;
+use think\exception\HttpException;
 use think\facade\Session;
 use think\Request;
 use app\index\model\LibraryCategory as LibraryCategoryModel;
-
-use app\index\model\LibraryAttributeValue;
 use app\index\model\UserBuyHistory;
 use app\index\model\UserDownloadLibraryHistory;
-use app\index\model\UserIntegralHistory;
+use app\index\model\UserBuyHistory as UserBuyHistoryModel;
 use app\index\model\Vip;
 use app\common\controller\UploadPic;
-
-
 use think\Db;
 use think\facade\Env;
 use app\index\model\LibraryHaveAttributeValue as LibraryHaveAttributeValueModel;
@@ -483,6 +478,12 @@ class Library extends Base
         $validate = new LibraryCommentValidate();
         if (!$validate->check($data)) {
             return json(['code' => 0, 'msg' => $validate->getError()]);
+        }
+        //判断是否购买过
+        $libraryAuther = (new LibraryModel())->where(['id'=>$data['library_id']])->value('user_id');
+        $isBuy = (new UserBuyHistoryModel())->where(['type'=>1,'user_id'=>$user['id'],'buy_id'=>$data['library_id']])->find();
+        if (!$isBuy && $libraryAuther != $user['id']){
+            return json(['code'=>0,'msg'=>'购买后才能评论~']);
         }
         //加载默认配置
         $config =  \HTMLPurifier_Config::createDefault();

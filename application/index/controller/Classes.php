@@ -296,7 +296,6 @@ class Classes extends Base
                 }
             }
             (new ClassModel())->where(['id' => $class_id])->setInc('see_num');
-
             return json(['code' => 1, 'msg' => 'success', 'html' => $html,'chapter_name'=>$chapter_info['title']]);
         } catch (\Exception $e) {
             return json(['code' => 0, 'msg' => '播放出错,请联系网站管理员']);
@@ -368,6 +367,12 @@ class Classes extends Base
         if (!$validate->check($data)) {
             return json(['code' => 0, 'msg' => $validate->getError()]);
         }
+        //判断是否购买过
+        $isBuy = (new UserBuyHistoryModel())->where(['type'=>2,'user_id'=>$this->userInfo['id'],'buy_id'=>$data['class_id']])->find();
+        if (!$isBuy){
+            return json(['code'=>0,'msg'=>'购买后才能评论~']);
+        }
+
         
         //加载默认配置
         $config = \HTMLPurifier_Config::createDefault();

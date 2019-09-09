@@ -57,7 +57,6 @@ class LibraryAttribute extends Base
         if (!$validate->check($data)){
             return json(['code'=>0,'msg'=>$validate->getError()]);
         }
-
         $attrModel = new AttrModel();
 
         if ($attrModel->where(['cate_id'=>$data['cate_id'],'attr_name'=>$data['attr_name']])->find()){
@@ -72,7 +71,7 @@ class LibraryAttribute extends Base
                 'attr_name'     => $data['attr_name'],
             ]);
             $attrId = $attrModel->getLastInsID();
-            $attrValues = explode('，',$data['attr_values']);
+            $attrValues = explode("\r\n",$data['attr_values']);
             $attrValuesSet = [];
             foreach ($attrValues as $key => $value){
                 $attrValuesSet[] = [
@@ -148,7 +147,7 @@ class LibraryAttribute extends Base
         ]);
 
         if ($data['new_attr_value']){
-            $attrValues = explode('，',$data['new_attr_value']);
+            $attrValues = explode("\r\n",$data['new_attr_value']);
             $attrValuesSet = [];
             foreach ($attrValues as $key => $value){
                 $attrValuesSet[] = [

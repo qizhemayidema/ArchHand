@@ -42,7 +42,7 @@
                 <div class="top_warpper_left fz14 c3 lh40 fl">&nbsp;</div>
                 <div class="top_warpper_right oh">
                     <div class="top_warpper_inp">
-                        <input type="text" name="pay_money" oninput="value=value.replace(/[^\d]/g,'')"> 元 <span class="fz12 c9">(<span id="money">1</span>元=<span class="red" id="integral">10</span>个筑手币)</span>
+                        <input type="text" name="pay_money" value="{if $vip_info}{$vip_info.price}{/if}" oninput="value=value.replace(/[^\d]/g,'')"> 元 <span class="fz12 c9">(<span id="money">1</span>元=<span class="red" id="integral">10</span>个筑手币)</span>
                     </div>
                 </div>
             </div>

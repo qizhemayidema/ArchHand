@@ -36,7 +36,7 @@
                     <p><img src="__STATIC__/images/play.png"></p>
                 </div>
                 <p><img src="{$value1.class_pic}" alt=""></p>
-                <div>{$value1.name}</div>
+                <div>{:mb_substr($value1.name,0,16)}</div>
             </div>
             {/foreach}
         </div>

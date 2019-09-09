@@ -108,7 +108,7 @@
                         <a class="hot"></a>
                         {/if}
                     </p>
-                    <div>{$value.name}</div>
+                    <div>{:mb_substr($value.name,0,16)}</div>
                 </div>
                 {/foreach}
                 {/if}

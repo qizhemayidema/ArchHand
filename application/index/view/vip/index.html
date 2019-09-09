@@ -31,6 +31,7 @@
                     <p style="display: inline-block;font-size: 24px;">{$value.vip_name}</p>
                 </div>
             </div>
+            <div class="vip_privilege_list tac fz16 c6" style="color: red;font-weight: bold">累计充值{$value.price}元</div>
             <div class="vip_privilege ">
                 <h3>VIP特权</h3>
                 <p></p>
@@ -40,10 +41,9 @@
             <div class="vip_privilege_list lh40 tac fz16 c6">高速下载通道</div>
             <div class="vip_privilege_list lh40 tac fz16 c6 vip_bg">收藏无限制</div>
             <div class="vip_privilege_list lh40 tac fz16 c6">智能搜索</div>
-            <div class="vip_privilege_list lh40 tac fz16 c6 vip_bg">全场付费 <span style="color: red;font-weight: bold;">{$value.discount}折</span></div>
+            <div class="vip_privilege_list lh40 tac fz16 c6 vip_bg">全场付费产品 <span style="color: red;font-weight: bold;">{$value.discount}折</span></div>
             <div class="tac">
-                <button type="button" class="vip_btn">立即开通</button>
-
+                <button type="button" class="vip_btn" onclick="window.location.href='{:url('payIndex')}?vip_id={$value.id}'">立即开通</button>
             </div>
         </div>
         {/foreach}

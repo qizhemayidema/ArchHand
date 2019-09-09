@@ -3,12 +3,14 @@
 namespace app\index\controller;
 
 use think\Db;
+use think\exception\HttpException;
 use think\Request;
 use think\Validate;
 use Yansongda\Pay\Pay as PaySdk;
 use Yansongda\Pay\Log;
 use app\index\model\Order as OrderModel;
 use app\index\model\User as UserModel;
+use app\index\model\Vip as VipModel;
 
 
 class Pay extends Base
@@ -16,8 +18,18 @@ class Pay extends Base
     public $integralScale = 10;
 
 
-    public function index()
+    public function index(Request $request)
     {
+        $vip_id = $request->param('vip_id');
+        if ($vip_id){
+            $vipInfo = (new VipModel())->where(['id'=>$vip_id])->find();
+            if (!$vipInfo){
+                throw new HttpException(404);
+            }
+            $this->assign('vip_info',$vipInfo);
+        }else{
+            $this->assign('vip_info','');
+        }
         return $this->fetch();
     }
 

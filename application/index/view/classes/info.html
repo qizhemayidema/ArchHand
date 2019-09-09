@@ -171,14 +171,25 @@
             dataType: 'json',
             success: function (data) {
                 if (data.code == 1) {
+
                     var index = layer.open({
                         type: 1,
-                        area: ['805px', '650px'], //宽高
+                        shadeClose: true,
+                        // area: '500px', //宽高
                         title: data.chapter_name,
                         resize: false,
                         scrollbar: false,
                         content: data.html,
+                        minmax:true,
+                        success: function(layero){
+                            console.log(layero)
+                            //处理layer层中video播放器全屏样式问题
+                            setTimeout(function() {
+                                $(layero).removeClass('layer-anim');
+                            }, 0);
+                        }
                     });
+                    layer.full(index);
                 } else {
                     layer.msg(data.msg);
                 }

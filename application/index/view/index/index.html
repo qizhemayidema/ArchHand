@@ -67,7 +67,7 @@
                         <a class="hot"></a>
                         {/if}
                     </p>
-                    <div>{$value.name}</div>
+                    <div>{:mb_substr($value.name,0,16)}</div>
                 </div>
                 {/foreach}
             </div>
@@ -86,7 +86,7 @@
                 {foreach $library as $key => $value}
                 <div class="inr2box cspointer" onclick="window.location.href='{:url('libraryInfo',['library_id'=>$value.id])}'">
                     <p><img src="{$value.library_pic}" alt=""></p>
-                    <div>{$value.name}</div>
+                    <div>{:mb_substr($value.name,0,16)}</div>
                 </div>
                 {/foreach}
             </div>
@@ -107,7 +107,7 @@
                         <p><img src="__STATIC__/images/play.png"></p>
                     </div>
                     <img src="{$value.class_pic}" alt="">
-                    <div>{$value.name}</div>
+                    <div>{:mb_substr($value.name,0,16)}</div>
                 </div>
                 {/foreach}
             </div>
