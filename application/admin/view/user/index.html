@@ -19,7 +19,7 @@
         <table class="table table-border table-bordered table-hover table-bg table-sort">
             <thead>
             <tr>
-                <th scope="col" colspan="110">帐户列表</th>
+                <th scope="col" colspan="110">帐户列表({$count})</th>
             </tr>
             <tr class="text-c">
                 <th width="5%">ID</th>
@@ -29,6 +29,7 @@
                 <th width="5%">性别</th>
                 <th width="5%">是否开通VIP</th>
                 <th width="5%">助手币</th>
+                <th width="5%">状态</th>
                 <th width="10%">操作</th>
             </tr>
             </thead>
@@ -55,6 +56,16 @@
                     </span>
                 </td>
                 <td>{$v['integral']}</td>
+                <td class="td-status">
+                    <a href="javascript:;" onclick="changeStatus(this,'{$v.id}')">
+                    {if $v.status == 0}
+                        <span class="label label-success radius" data-value="{$v.status}">已启用</span>
+                    {else}
+                        <span class="label label-danger radius" data-value="{$v.status}">已冻结</span>
+                    {/if}
+                    </a>
+
+                </td>
                 <td class="td-manage">
                     <a title="编辑" href="javascript:;" onclick="member_edit('编辑','read?id={$v["id"]}','4','','510')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i>
                     </a>
@@ -83,7 +94,37 @@
     function member_edit(title, url, id, w, h) {
         layer_show(title, url, w, h);
     }
+    var  changeStatus = function(_this,user_id){
+        var status = $(_this).find('span').data('value');
+        console.log(status);
+        var alert_msg = status ?  '确认启用?' : '确认冻结?';
+        layer.confirm(alert_msg,function(){
+            $.ajax({
+                url:"{:url('/admin/User/statusUpdate')}",
+                data : {
+                    user_id :user_id,
+                    status : status,
+                },
+                type : 'post',
+                dataType:'json',
+                success:function(data){
+                    if (data.code == 1){
+                        var html = '';
+                        if (status){
+                            html = '<span class="label label-success radius" data-value="0">已启用</span>';
+                        }else{
+                            html = '<span class="label label-danger radius" data-value="1">已冻结</span>';
+                        }
+                        layer.msg(data.msg);
+                        $(_this).html(html)
+                    } else{
+                        layer.msg(data.msg)
+                    }
+                }
+            })
+        })
 
+    }
 
     /*用户-删除*/
     function member_del(obj, id) {

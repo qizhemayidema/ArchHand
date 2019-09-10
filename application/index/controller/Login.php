@@ -111,6 +111,7 @@ class Login extends Base
         if (!$userInfo){
             return json(['code'=>0,'msg'=>'账号或密码错误,请重新登陆']);
         }
+        if ($userInfo['status'] == 1) return json(['code'=>0,'msg'=>'您的账号被冻结,具体请联系官方客服']);
         $userInfo->where(['id'=>$userInfo['id']])->update([
             'last_login_time' => time(),
         ]);

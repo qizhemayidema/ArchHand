@@ -77,6 +77,9 @@ class Pay extends Base
             $result = $aliPay->verify();
             //查询订单信息
             $order = (new OrderModel())->where(['order_code' => $result->out_trade_no])->find();
+            if ($order['status'] != 1){
+                return $this->redirect(url('myAccount'));
+            }
             //查询用户信息
             $user_info = (new UserModel())->where(['id' => $order['user_id']])->find();
             //订单改变状态

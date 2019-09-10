@@ -11,6 +11,10 @@
     .daohang {
         background-color: #942c2d;
     }
+    .bkinr{
+        word-wrap:break-word;
+        word-break:break-all;
+    }
 </style>
 {/block}
 {block name="body"}
@@ -43,7 +47,7 @@
                     </p>
                 </div>
                 <div class="hengxian"></div>
-                <div class="bkinr ">
+                <div class="bkinr " style="width: 100%;">
                    {$value.question|raw}
                 </div>
             </div>

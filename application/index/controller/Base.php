@@ -43,7 +43,7 @@ class Base extends Controller
     {
         $user_info = Session::get($this->userInfoSessionPath);
         if ($user_info) {
-            $this->userInfo = (new UserModel())->where(['id' => $user_info['id'], 'is_delete' => 1])->find();
+            $this->userInfo = (new UserModel())->where(['id' => $user_info['id'], 'is_delete' => 1,'status'=>0])->find();
         }
     }
 

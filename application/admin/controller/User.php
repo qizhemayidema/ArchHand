@@ -18,6 +18,9 @@ class User extends Base
     public function index()
     {
         $users = UserModel::where('type', 1)->where('is_delete', 1)->paginate(15);
+        $count = UserModel::where('type', 1)->where('is_delete', 1)->count();
+
+        $this->assign('count',$count);
         $this->assign('users', $users);
         return $this->fetch();
     }
@@ -141,6 +144,19 @@ class User extends Base
         }catch(\Exception $e){
             $this->assign('is_exist',$e->getMessage());
             return $this->fetch('common/user_show');
+        }
+    }
+
+    public function statusUpdate(Request $request)
+    {
+        $user_id = null;
+        if ($user_id = $request->post('user_id')){
+            $status = $request->post('status') ? 0 : 1;
+            (new UserModel())->where(['id'=>$user_id])->update(['status'=>$status]);
+            $msg = $status ?  '已冻结' : '已解冻';
+            return json(['code'=>1,'msg'=>$msg]);
+        }else{
+            return json(['code'=>0,'msg'=>'操作失误']);
         }
     }
 }

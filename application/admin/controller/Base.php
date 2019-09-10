@@ -60,6 +60,7 @@ class Base extends Controller
      */
     public function checkPermission($controller = '',$action = '')
     {
+        if(request()->isGet()) return true;
         $controller = $controller != '' ? strtolower($controller) : request()->controller(true);
 
         $action = $action != '' ? strtolower($action) : request()->action(true);
@@ -68,6 +69,13 @@ class Base extends Controller
 
         $except = [
             'index.index',
+            'classestagapi.gettagforcate',
+            'classes.uploadVideo',
+            'classes.uploadPic',
+            'classes.uploadChapterPic',
+            'classes.uploadChapterBase64Pic',
+            'classestag.uploadPic',
+            'forumplate.uploadPic',
         ];
         if (in_array($controller . '.' . $action,$except)){
             return true;

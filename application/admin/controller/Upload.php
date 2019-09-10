@@ -3,12 +3,14 @@
 namespace app\admin\controller;
 
 use app\common\controller\UploadPic;
+use app\http\middleware\LoginCheck;
 use think\Controller;
 use think\File;
 use think\Request;
 
-class Upload extends Base
+class Upload extends Controller
 {
+    protected $middleware = [LoginCheck::class];
     //图片上传
     public function upload(Request $request)
     {

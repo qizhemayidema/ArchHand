@@ -95,7 +95,7 @@ class MyInfo extends Base
 
         if($avatar_url){
             $result['avatar_url'] = $avatar_url;
-            if ($this->userInfo['avatar_url'] && file_exists('.' . $this->userInfo['avatar_url'])){
+            if ($this->userInfo['avatar_url'] != '/static/uploads/user/default/20150828225753jJ4Fc.jpeg' && file_exists('.' . $this->userInfo['avatar_url'])){
                 unlink('.'.$this->userInfo['avatar_url']);
             }
         }
