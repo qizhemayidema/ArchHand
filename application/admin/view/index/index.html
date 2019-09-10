@@ -58,66 +58,106 @@
             </dd>
         </dl>
         {/if}
-
+        {if $Base->checkPermission('User','__index')}
         <dl id="menu-user">
             <dt><i class="Hui-iconfont">&#xe622;</i> 用户管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
+                    {if $Base->checkPermission('official','index')}
                     <li><a data-href="{:url('/admin/official/index')}" data-title="生成官方账号" href="javascript:void(0)">生成官方账号</a></li>
+                    {/if}
+                    {if $Base->checkPermission('user','index')}
                     <li><a data-href="{:url('/admin/user/index')}" data-title="用户列表" href="javascript:;">用户列表</a></li>
+                    {/if}
+                    {if $Base->checkPermission('member','index')}
                     <li><a data-href="{:url('/admin/member/index')}" data-title="会员管理" href="javascript:;">会员管理</a></li>
+                    {/if}
                 </ul>
             </dd>
         </dl>
+        {/if}
+        {if $Base->checkPermission('library','__index')}
         <dl id="menu-library_category">
             <dt><i class="Hui-iconfont">&#xe622;</i> 云库管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
+                    {if $Base->checkPermission('librarycategory','index')}
                     <li><a data-href="{:url('/admin/Library_category/index')}" data-title="分类管理" href="javascript:void(0)">分类管理</a></li>
+                    {/if}
+                    {if $Base->checkPermission('libraryattribute','index')}
                     <li><a data-href="{:url('/admin/Library_attribute/index')}" data-title="属性管理" href="javascript:;">属性管理</a></li>
+                    {/if}
+                    {if $Base->checkPermission('library','index')}
                     <li><a data-href="{:url('/admin/Library/index')}" data-title="云库列表" href="javascript:;">云库列表</a></li>
+                    {/if}
                 </ul>
             </dd>
         </dl>
+        {/if}
+        {if $Base->checkPermission('classes','__index')}
         <dl id="menu-member">
             <dt><i class="Hui-iconfont">&#xe627;</i> 课程管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
+                    {if $Base->checkPermission('ClassesCategory','index')}
                     <li><a data-href="{:url('/admin/Classes_category/index')}" data-title="分类管理" href="javascript:;">分类管理</a></li>
+                    {/if}
+                    {if $Base->checkPermission('classestag','index')}
                     <li><a data-href="{:url('/admin/Classes_tag/index')}" data-title="标签管理" href="javascript:;">标签管理</a></li>
+                    {/if}
+                    {if $Base->checkPermission('classes','index')}
                     <li><a data-href="{:url('/admin/Classes/index')}" data-title="课程管理" href="javascript:;">课程管理</a></li>
+                    {/if}
                 </ul>
             </dd>
         </dl>
-
+        {/if}
+        {if $Base->checkPermission('comment','__index')}
         <dl id="menu-library_comment">
             <dt><i class="Hui-iconfont">&#xe622;</i> 评论管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
+                    {if $Base->checkPermission('librarycomment','index')}
                     <li><a data-href="{:url('/admin/Library_comment/index')}" data-title="云库评论列表" href="javascript:void(0)">云库评论列表</a></li>
+                    {/if}
+                    {if $Base->checkPermission('classescomment','index')}
                     <li><a data-href="{:url('/admin/Classes_comment/index')}" data-title="课程评论列表" href="javascript:void(0)">课程评论列表</a></li>
+                    {/if}
                 </ul>
             </dd>
         </dl>
+        {/if}
+        {if $Base->checkPermission('forum','__index')}
         <dl>
             <dt><i class="Hui-iconfont">&#xe622;</i> 社区管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
                     <li><a data-href="{:url('/admin/Forum_permission/index')}" data-title="板块权限" href="javascript:void(0)">板块权限</a></li>
+                    {if $Base->checkPermission('forumcategory','index')}
                     <li><a data-href="{:url('/admin/Forum_category/index')}" data-title="分类管理" href="javascript:void(0)">分类管理</a></li>
+                    {/if}
+                    {if $Base->checkPermission('forumplate','index')}
                     <li><a data-href="{:url('/admin/Forum_plate/index')}" data-title="板块管理" href="javascript:void(0)">板块管理</a></li>
+                    {/if}
                 </ul>
             </dd>
         </dl>
+        {/if}
+        {if $Base->checkPermission('config','__index')}
         <dl id="menu-system">
             <dt><i class="Hui-iconfont">&#xe62e;</i> 网站设置<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
+                    {if $Base->checkPermission('config','index')}
                     <li><a data-href="{:url('/admin/config/index')}" data-title="配置管理" href="javascript:void(0)">配置管理</a></li>
+                    {/if}
+                    {if $Base->checkPermission('help','index')}
                     <li><a data-href="{:url('/admin/help/index')}" data-title="帮助配置" href="javascript:void(0)">帮助页配置</a></li>
+                    {/if}
                 </ul>
             </dd>
         </dl>
+        {/if}
     </div>
 </aside>
 <div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>

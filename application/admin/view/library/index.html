@@ -76,8 +76,10 @@
                     {else/}
                     <a style="cursor:pointer"
                        class="label label-warning radius"
-                       onclick=" verify_classics('classics','{$v->id}','{$v->is_classics}')">
-                        申请中
+                       {if $Base->checkPermission('library','classics')}
+                        onclick=" verify_classics('classics','{$v->id}','{$v->is_classics}')"
+                        {/if}
+                        >申请中
                     </a>
                     {/if}
                 </td>
@@ -85,19 +87,28 @@
                     {if condition="$v->getData('status')==0"}
                     <a style="cursor:pointer"
                        class="label label-warning radius"
-                       onclick=" verify('审核','verify?id={$v->id}','4','','510')">
-                    {$v['status']}
+                       {if $Base->checkPermission('library','verifysave')}
+                        onclick=" verify('审核','verify?id={$v->id}','4','','510')"
+                        {/if}
+                        >{$v['status']}
                     </a>
                     {elseif condition="$v->getData('status')==1"}
                     <a style="cursor:pointer"
                        class="label label-success radius"
-                       onclick=" verify('审核','verify?id={$v->id}','4','','510')">
+                       {if $Base->checkPermission('library','verifysave')}
+                        onclick=" verify('审核','verify?id={$v->id}','4','','510')"
+                        {/if}
+                        >
                         {$v['status']}
                     </a>
                     {else/}
                     <a style="cursor:pointer"
                        class="label label-danger radius"
-                       onclick=" verify('审核','verify?id={$v->id}','4','','510')">
+                       {if $Base->checkPermission('library','verifysave')}
+
+                        onclick=" verify('审核','verify?id={$v->id}','4','','510')"
+                        {/if}
+                        >
                         {$v['status']}
                     </a>
                     {/if}
@@ -107,8 +118,11 @@
                     <a title="查看" href="javascript:;" onclick="library_show('评论内容','show?id={$v->id}')" class="ml-5"
                        style="text-decoration:none"><i class="Hui-iconfont">&#xe725;</i>
                     </a>
+                    {if $Base->checkPermission('library','delete')}
                     <a title="删除" href="javascript:;" onclick="member_del(this,{$v->id})" class="ml-5"
-                        style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                        style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                    {/if}
+                </td>
             </tr>
             {/foreach}
 

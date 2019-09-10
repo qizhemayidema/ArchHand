@@ -30,7 +30,13 @@ class Base extends Controller
         $this->assign('Base',$this);
 
         if (!$this->checkPermission()){
-            $this->redirect('http://www.baidu.com');
+            if (request()->isAjax()){
+                header('Content-type: application/json');
+                exit(json_encode(['code' => 0, 'msg' => '操作越权'], 256));
+
+            }else{
+                $this->redirect('http://www.baidu.com');
+            }
         }
     }
 
@@ -60,7 +66,7 @@ class Base extends Controller
      */
     public function checkPermission($controller = '',$action = '')
     {
-        if(request()->isGet()) return true;
+        if(!$controller && !$action && request()->isGet()) return true;
         $controller = $controller != '' ? strtolower($controller) : request()->controller(true);
 
         $action = $action != '' ? strtolower($action) : request()->action(true);

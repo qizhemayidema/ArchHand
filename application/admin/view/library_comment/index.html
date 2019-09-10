@@ -45,13 +45,20 @@
                     {if condition="$v->getData('status')==0"}
                     <a style="cursor:pointer"
                        class="label label-danger radius"
-                       onclick=" verify('{$v->id}','verify')">
-                    {$v['status']}
+                       {if $Base->checkPermission('libraryComment','verify')}
+
+                        onclick=" verify('{$v->id}','verify')"
+                        {/if}
+                        >{$v['status']}
                     </a>
                     {elseif condition="$v->getData('status')==1"}
                     <a style="cursor:pointer"
                        class="label label-success radius"
-                       onclick=" verify('{$v->id}','verify')">
+                       {if $Base->checkPermission('libraryComment','verify')}
+
+                        onclick=" verify('{$v->id}','verify')"
+                        {/if}
+                    >
                         {$v['status']}
                     </a>
                     {/if}
@@ -61,9 +68,11 @@
                     <a title="查看" href="javascript:;" onclick="library_comment_show('评论内容','show?id={$v->id}')" class="ml-5"
                        style="text-decoration:none"><i class="Hui-iconfont">&#xe725;</i>
                     </a>
+                    {if $Base->checkPermission('libraryComment','delete')}
                     <a title="删除" href="javascript:;" onclick="member_del(this,{$v->id})" class="ml-5"
                         style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i>
                     </a>
+                    {/if}
                 </td>
             </tr>
             {/foreach}

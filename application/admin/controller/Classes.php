@@ -20,7 +20,7 @@ use app\admin\model\ClassesChapter as ClassChapterModel;
 use app\common\controller\UploadPic;
 
 
-class Classes extends Controller
+class Classes extends Base
 {
 
     public function index()

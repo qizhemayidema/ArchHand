@@ -9,7 +9,11 @@
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 课程管理 <span class="c-gray en">&gt;</span> 标签管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
     <div class="cl pd-5 bg-1 bk-gray mt-20">
-        <span class="l"><a href="javascript:;" onclick="admin_add('添加标签','{:url('/admin/Classes_tag/add')}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加标签</a></span>
+        <span class="l">
+            {if $Base->checkPermission('classestag','save')}
+            <a href="javascript:;" onclick="admin_add('添加标签','{:url('/admin/Classes_tag/add')}','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加标签</a>
+            {/if}
+        </span>
         <div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="border: 0;">
         <select id="category_select" class="select" style="width: 30%;border: 0;">
             <option value="0" {if $cate_id == 0} selected {/if}>全部</option>
@@ -43,10 +47,15 @@
             <td>{$value.name}</td>
             <td><img src="{$value.tag_img}" alt="" style="width: 20px;"></td>
             <td class="td-manage">
+                {if $Base->checkPermission('classestag','update')}
                 <a title="编辑" href="javascript:;" onclick="admin_edit('标签编辑','{:url('/admin/Classes_tag/read',['tag_id'=>$value.id])}','1','800','500')" class="ml-5" style="text-decoration:none">
                     <i class="Hui-iconfont">&#xe6df;</i>
                 </a>
-                <a title="删除" href="javascript:;" onclick="admin_del(this,'{:url('/admin/Classes_tag/delete',['tag_id'=>$value.id])}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                {/if}
+                {if $Base->checkPermission('classestag','delete')}
+                <a title="删除" href="javascript:;" onclick="admin_del(this,'{:url('/admin/Classes_tag/delete',['tag_id'=>$value.id])}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+                {/if}
+            </td>
         </tr>
         {/foreach}
         </tbody>
