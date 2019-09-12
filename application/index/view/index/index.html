@@ -10,11 +10,11 @@
         <p class="sstip">搜索顶级设计作品</p>
         <div class="ssbox  m768hide">
             <img class="sslogo" src="__STATIC__/images/logo1.png" alt="">
-            <input type="text" placeholder="输入关键词搜索，例如：学校" id="search_input"/>
-            <img class="ssbtn" src="__STATIC__/images/ss_03.png" alt="" id="search_button"/>
+            <input type="text" placeholder="输入关键词搜索，例如：学校" class="search_input"/>
+            <img class="ssbtn search_button" src="__STATIC__/images/ss_03.png" alt=""/>
         </div>
     </div>
-    <div class="bannertext m768hide">
+    <div class="bannertext">
         <div class="main ">
             【网站公告】：{$announcement}
         </div>
@@ -23,8 +23,8 @@
 <!-- / 分类/ -->
 <div class="m768show clearfix pb10">
     <div class="ssbox">
-        <img class="sslogo" src="__STATIC__/images/logo1.png" alt=""><input type="text" placeholder="搜索云库">
-        <img class="ssbtn cspointer" src="__STATIC__/images/ss_03.png" alt="">
+        <img class="sslogo" src="__STATIC__/images/logo1.png" alt=""><input class="search_input" type="text" placeholder="搜索云库">
+        <img class="ssbtn cspointer search_button" src="__STATIC__/images/ss_03.png" alt="">
     </div>
 </div>
 <div class="box2">
@@ -55,7 +55,7 @@
             <div class="inrtit">
                 <p class="inrtitp">
                     <span class="text1">官方云库</span>
-                    <span class="text2">/ official cloud library</span>
+                    <span class="text2">/ Official Cloud Library</span>
                     <a class="fr c9 cspointer" href="{:url('libraryIndex')}">更多&gt;&gt;</a>
                 </p>
             </div>
@@ -79,7 +79,7 @@
             <div class="inrtit">
                 <p class="inrtitp">
                     <span class="text1">社区云库</span>
-                    <span class="text2">/ latest cloud library</span>
+                    <span class="text2">/ Community Cloud Library</span>
                     <a class="fr c9 cspointer" href="{:url('libraryIndex')}">更多&gt;&gt;</a>
                 </p>
             </div>
@@ -98,7 +98,7 @@
             <div class="inrtit">
                 <p class="inrtitp">
                     <span class="text1">视频课堂</span>
-                    <span class="text2">/ latest course</span>
+                    <span class="text2">/ Video Class</span>
                     <a class="fr c9 cspointer" href="{:url('classIndex')}">更多&gt;&gt;</a>
                 </p>
             </div>

@@ -13,7 +13,7 @@
   "comment_integral": "5",
   "comment_integral_count": "3",
   "service_charge_integral": "10",
-  "integral_scale" : 10,
+  "integral_scale": 10,
   "sign_in_integral": {
     "1": "10",
     "2": "20",

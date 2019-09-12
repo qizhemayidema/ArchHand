@@ -4,6 +4,7 @@ namespace app\index\controller;
 
 use think\Controller;
 use think\Db;
+use think\Exception;
 use think\Request;
 use think\Validate;
 use app\index\model\Transfer as TransferModel;
@@ -27,11 +28,13 @@ class Transfer extends Base
         $rules = [
             'transfer_money'    => 'require|number',
             'payee_account'     => 'require',
+            '__token__'         => 'token',
         ];
         $messages = [
             'transfer_money.require'    => '提现金额必须填写',
             'transfer_money.number'     => '提现金额必须为正整数',
             'payee_account.require'     => '提现账户必须填写',
+            '__token__.token'           => '请刷新页面后重新提现~',
         ];
         $validate = new Validate($rules,$messages);
         if (!$validate->check($data)){
@@ -44,23 +47,31 @@ class Transfer extends Base
         }
         Db::startTrans();
         try{
+            throw new Exception('暂不开通');
             //创建数据 返回 提现单号
             $out_biz_no = $this->makeTransferData($data['transfer_money'],$data['payee_account']);
             $order = [
                 'out_biz_no' => $out_biz_no,
                 'payee_type' => 'ALIPAY_LOGONID',
                 'payee_account' => $data['payee_account'],
-                'amount' =>  0.01,
+                'amount' => $data['transfer_money'],
             ];
             //调起来提现
             $aliPay = PaySdk::alipay($this->getTransferConfig());
             $result = $aliPay->transfer($order);
-            var_dump($result);
+            if ($result['msg'] == 'Success'){   //直接记录
+                $this->updateUserIntegral(11,$data['transfer_money'] * 10);
+            }else{
+                throw new Exception('提现失败');
+            }
+            Db::commit();
         }catch (\Exception $e){
             Db::rollback();
 //            return json(['code'=>0,'msg'=>'提现失败 请稍后重试']);
             return json(['code'=>0,'msg'=>$e->getMessage()]);
         }
+
+        return json(['code'=>1,'msg'=>'success']);
     }
 
     /**

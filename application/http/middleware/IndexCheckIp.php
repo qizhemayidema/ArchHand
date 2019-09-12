@@ -10,6 +10,12 @@ class IndexCheckIp
 {
     public function handle(Request $request, \Closure $next)
     {
+        //如果是支付的异步回调则不用判断
+        $controller = request()->controller(true);
+        $action = request()->action(true);
+        if ($controller == 'pay' && $action == 'notify'){
+            return $next($request);
+        }
         $ip=FALSE;
 
         //客户端IP 或 NONE

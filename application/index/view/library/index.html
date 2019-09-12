@@ -37,7 +37,7 @@
         <p class="sstip">搜索顶级设计作品</p>
         <div class="ssbox m768hide">
             <img class="sslogo" src="__STATIC__/images/logo1.png" alt="">
-            <input type="text" placeholder="输入关键词搜索，例如：学校"  id="search_input" value="{$search}"/>
+            <input type="text" placeholder="输入关键词搜索，例如：学校" class="search_input" oninput="syncText(this)" value="{$search}"/>
             <img class="ssbtn" src="__STATIC__/images/ss_03.png" alt="" onclick="getData()">
         </div>
     </div>
@@ -46,8 +46,8 @@
 <div class="m768show clearfix">
     <!-- <p class="sstip">搜索精美案例作品</p> -->
     <div class="ssbox">
-        <img class="sslogo" src="__STATIC__/images/logo1.png" alt=""><input type="text">
-        <img class="ssbtn" src="__STATIC__/images/ss_03.png" alt="">
+        <img class="sslogo" src="__STATIC__/images/logo1.png" alt=""><input type="text"  value="{$search}" class="search_input" oninput="syncText(this)" >
+        <img class="ssbtn" src="__STATIC__/images/ss_03.png" alt="" onclick="getData()">
     </div>
 </div>
 
@@ -211,7 +211,8 @@
         getData()
     }
     var getData = function(page = null){
-        var search = $('#search_input').val();
+        var search = $('.search_input:eq(0)').val();
+        console.log(search);
         var cate_id = $('.boxmain').find('div[class=cur]').data().value;
         var attr_ids = '';
         var filtrate = 0;
@@ -264,6 +265,12 @@
         })
     }
 
+    var syncText = function(_this){
+        var value = $(_this).val()
+        $('.search_input').each(function(k,v){
+            $(v).val(value)
+        })
+    }
     // new Vue({
     //     el: '#body',
     //     data: {

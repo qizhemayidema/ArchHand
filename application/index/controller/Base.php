@@ -118,7 +118,7 @@ class Base extends Controller
         $integralHistModel = new IntegralHistoryModel();
         $integralScale = $this->getConfig('integral_scale');
         $upArr = [1, 2, 5, 6, 7, 8, 9, 10];
-        $downArr = [3, 4];
+        $downArr = [3, 4,11];
         while(true){
             $userUpdate = [];   //用户表更改字段
             $user_info = $userModel->field('id,vip_id,pay_money,version,integral,profit_integral')->find($user_id);
@@ -140,8 +140,12 @@ class Base extends Controller
             } else if (in_array($type, $downArr)) {
                 //判断 提现字段的情况 如果 筑手币扣除后小于 提现字段 则 两个字段数据变成一样的
                 $userUpdate['integral'] = $user_info['integral'] - $integral;
-                if($userUpdate['integral']  < $user_info['profit_integral']){
-                    $userUpdate['profit_integral'] = $userUpdate['integral'];
+                if ($type == 11){
+                    $userUpdate['profit_integral'] = $user_info['profit_integral'] - $integral;
+                }else{
+                    if($userUpdate['integral']  < $user_info['profit_integral']){
+                        $userUpdate['profit_integral'] = $userUpdate['integral'];
+                    }
                 }
             }
             $userUpdate['version'] = $user_info['version'] + 1;

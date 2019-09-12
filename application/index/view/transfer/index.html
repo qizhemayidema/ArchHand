@@ -21,6 +21,7 @@
 <div class="sqbanner vipbg mb20 po">
 </div>
 <!-- / 主体/ -->
+{:token()}
 <div class="w1200 clearfix">
     <!-- /设计学院/ -->
     <div class="top_up_box oh">
@@ -110,8 +111,26 @@
             layer.msg('兑换金额超过可提现筑手币')
             return false;
         }
-        window.location.href = "{:url('/index/Transfer/transfer')}?transfer_money="+transfer_money+"&payee_account="+payee_account;
-
+        $.ajax({
+            url:"{:url('/index/Transfer/transfer')}",
+            data:{
+                transfer_money : transfer_money,
+                payee_account : payee_account,
+                __token__ : $('input[name=__token__]').val(),
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                if (data.code == 0){
+                    layer.msg(data.msg)
+                } else{
+                    layer.msg('提现成功~')
+                    setTimeout(function(){
+                        window.location.reload();
+                    },500);
+                }
+            }
+        })
     }
 </script>
 {/block}

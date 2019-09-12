@@ -37,7 +37,17 @@
             } else{
                 window.location.href="{:url('libraryIndex')}?search="+search
             }
+        })
+        $(function(){
+            $('.search_button').on('click',function(){
+                var search = $(this).parents('.ssbox').find('.search_input').val();
+                if (search.length == 0){
+                    layer.msg('搜索不能为空');
+                } else{
+                    window.location.href="{:url('libraryIndex')}?search="+search
+                }
 
+            })
         })
     })
 </script>

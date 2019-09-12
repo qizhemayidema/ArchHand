@@ -19,6 +19,7 @@ class UserIntegralHistory extends Model
             8  => '社区发帖',
             9  => '云库素材被购买(可提现)',
             10 => '发布云库素材',
+            11 => '提现',
         ];
         return $arr[$value];
     }
