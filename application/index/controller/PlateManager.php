@@ -59,10 +59,8 @@ class PlateManager extends Base
         if (!$plateInfo) {   //板块不存在或被删除
             throw new HttpException(404);
         }
-
         //查询角色列表 这个无需分页
         $role = $this->getRoleList();
-
         //查询成员列表 这个无需分页
         $manager = $this->getManagerList();
 
@@ -441,7 +439,7 @@ class PlateManager extends Base
         $data = (new ApplyModel())->alias('apply')
             ->join('user user', 'apply.user_id = user.id')
             ->where(['apply.plate_id' => $this->plate_id])
-            ->where(['status' => $type])
+            ->where(['apply.status' => $type])
             ->field('apply.create_time,apply.update_time,apply.apply_for_desc,user.nickname,user.avatar_url,apply.id apply_id,apply.status')
             ->limit($start, $this->pageLength)
             ->select();

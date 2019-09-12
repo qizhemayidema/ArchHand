@@ -47,7 +47,6 @@ class Transfer extends Base
         }
         Db::startTrans();
         try{
-            throw new Exception('暂不开通');
             //创建数据 返回 提现单号
             $out_biz_no = $this->makeTransferData($data['transfer_money'],$data['payee_account']);
             $order = [
