@@ -92,7 +92,7 @@
                             <tr class="text-c">
                                 <th width="5%" class="file-num">章节</th>
                                 <th class="file-name">课程名称</th>
-                                <th class="file-name">课程视频</th>
+                                <th class="file-name">课程视频(限定mp4)</th>
                                 <th class="file-num">封面图</th>
                                 <th class="file-status">视频状态</th>
                                 <th width="20%" class="file-manage">操作</th>
@@ -120,7 +120,9 @@
                                         <span class="layui-inline layui-upload-choose"></span>
                                     </div>
                                 </td>
-                                <td class="text-c chapter_video_status">未上传</td>
+                                <td class="text-c chapter_video_status">
+                                    未上传
+                                </td>
                                 <td class="text-c">
                                     <a title="删除" href="javascript:;" onclick="remove_chapter(this)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
                                 </td>
@@ -318,6 +320,22 @@
                             cache: false,
                             processData: false,
                             contentType: false,
+                            xhr : function(){
+                                myXhr = $.ajaxSettings.xhr();
+                                if(myXhr.upload){ // check if upload property exists
+                                    myXhr.upload.addEventListener('progress',function(e){
+                                        var loaded = e.loaded;                  //已经上传大小情况
+                                        var total = e.total;                      //附件总大小
+                                        var percent = Math.floor(100*loaded/total)+"%";     //已经上传的百分比
+                                        console.log("已经上传了："+percent);
+                                        $(filename).parents('tr').find('.chapter_video_status').html('<div class="progress-bar">' +
+                                            '                                        <span class="sr-only" style="float:left;width:'+percent+'"></span>' +
+                                            '                                        </div>');
+                                    }, false); // for handling the progress of the upload
+                                }
+                                return myXhr;
+
+                            }
                         }).done(function(data, textStatus) {
 
                             data = JSON.parse(data);
@@ -327,7 +345,7 @@
                             if (k + 1 === chapter_video_length){
                                 setTimeout(function(){
                                     form_ajax();
-                                },1000)
+                                },350)
                             }
                         }).fail(function(res, textStatus, error) {
                             try {
@@ -364,12 +382,14 @@
         function form_ajax () {
             // 拼接 课程表单
             var result = new FormData($('form')[0]);
+            result.delete('file')
             //请求后端
             $.ajax({
                 url: "{:url('/admin/Classes/save')}",
                 type: 'post',
                 DataType: 'json',
                 data: result,
+                cache:false,
                 processData: false,
                 contentType: false,
                 success: function (data) {
@@ -384,6 +404,9 @@
                             parent.layer.close(index);
                         });
                     }
+                },
+                error:function(err){
+                    console.log(err)
                 }
             })
             return false;

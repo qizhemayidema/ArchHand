@@ -44,16 +44,15 @@ class Library extends Base
     {
         $cate = (new LibraryCategoryModel())->getCate();
 
-
-        if (count($cate) > 0) {
-            $cate_id = $cate[0]['id'];
-        } else {
-            $cate_id = 0;
-        }
+//        if (count($cate) > 0) {
+//            $cate_id = $cate[0]['id'];
+//        } else {
+//            $cate_id = 0;
+//        }
         $search = $request->get('search') ?? '';
         //分类 ID
         $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
-            ->where(['cate_id' => $cate_id])
+//            ->where(['cate_id' => $cate_id])
             ->where('status', 1);
         if ($search){
             $library = $library->where('name', 'like', '%' . $search . '%');
@@ -137,7 +136,8 @@ class Library extends Base
                     $query->name('library_have_attribute_value')->field('library_id')
                         ->where('attr_value_id', 'in', $attr_value)->group('library_id')->having('count(attr_value_id)=' . $length);
                 });
-            } else {
+            }
+            if ($cate){
                 $library = $library->where(['cate_id' => $cate]);
             }
             if ($filtrate) {
@@ -146,36 +146,6 @@ class Library extends Base
             $count = $library->count();
             $library = $library->order('is_official desc,create_time desc')->limit($start, $pageSize)->select();
             $this->assign('library', $library);
-//            //搜索
-//            if ($search) {
-//                $library = LibraryModel::field('id,library_pic,name,is_official')->where('is_delete', 0)
-//                    ->where('status', 1)->where('name', 'like', '%' . $search . '%');
-//
-//                $count = $library->count();
-//                $library = $library->order('is_top desc,create_time desc')->limit($start, $pageSize)->select();
-//
-//                $this->assign('library', $library);
-//            } else if ($length) {
-//                $library = LibraryModel::field('id,library_pic,name,is_official')->where('id', 'in', function ($query) use ($attr_value, $length) {
-//                    //查询出拥有特定属性的云库ID
-//                    $query->name('library_have_attribute_value')->field('library_id')
-//                        ->where('attr_value_id', 'in', $attr_value)->group('library_id')->having('count(attr_value_id)=' . $length);
-//                })->where('is_delete', 0)->where('status', 1)->where($filtrate, 1);
-//
-//                $count = $library->count();
-//                $library = $library->order('is_top desc,create_time desc')->limit($start, $pageSize)->select();
-//
-//                $this->assign('library', $library);
-//
-//
-//            } else {
-//                $library = LibraryModel::field('id,library_pic,name,is_official')->where('is_delete', 0)
-//                    ->where('status', 1)->where('cate_id', $cate)->where($filtrate, 1);
-//                $count = $library->count();
-//                $library = $library->order('is_top desc,create_time desc')->limit($start, $pageSize)->select();
-//                $this->assign('library', $library);
-//
-//            }
             return json(['code' => 1, 'msg' => '查询成功', 'data' => $this->fetch('library/index_list'), 'count' => $count, 'page_length' => $pageSize], 200);
 
         } catch (\Exception $e) {

@@ -124,10 +124,10 @@
                 if (data.code == 0){
                     layer.msg(data.msg)
                 } else{
-                    layer.msg('提现成功~')
+                    layer.msg('提现成功~',{time:4000})
                     setTimeout(function(){
                         window.location.reload();
-                    },500);
+                    },4000);
                 }
             }
         })

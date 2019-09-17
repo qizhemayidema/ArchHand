@@ -55,30 +55,17 @@
 
 <div class="box1 mb15">
     <div class="boxmain clearfix">
+        <div class="cur" data-value="0" onclick="changeCate(this,0)">全部</div>
+
         {foreach $cate as $key => $value}
-        <div class="{if $key == 0 }cur{/if}" data-value="{$value.id}" onclick="changeCate(this,'{$value.id}')">{$value.cate_name}</div>
+        <div class="" data-value="{$value.id}" onclick="changeCate(this,'{$value.id}')">{$value.cate_name}</div>
         {/foreach}
     </div>
 </div>
 <!-- /* inr*/ -->
 <div class="class_warpper mb15">
     <div class="w1200 bd bgf" id="attr_list">
-        {if isset($cate.0)}
-        {foreach $cate.0.attribute as $key1 => $value1}
-        <div class="class_list">
-            <h3 >{$value1.attr_name}：</h3>
-            <a href="javascript:void(0);">
-                <p class="typecur clearfix" onclick="changeAttr(this)">全部</p>
-            </a>
-            {foreach $value1.attribute_value as $key2 => $value2}
-            <a href="javascript:void(0);">
-                <p class="clearfix"  name="attr_value" data-value="{$value2.id}" onclick="changeAttr(this)">{$value2.value}
-                </p>
-            </a>
-            {/foreach}
-        </div>
-        {/foreach}
-        {/if}
+      
     </div>
 </div>
 <!-- /最新分享/ -->

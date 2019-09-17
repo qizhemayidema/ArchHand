@@ -99,7 +99,7 @@
                 <label class="layui-form-label">附件上传</label>
                 <div class="layui-input-block">
                     <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
-                    <span ><span id="file_name"></span>(限制压缩包 zip,rar,7z 格式)</span>
+                    <span ><span id="file_name"></span>(限制压缩包 zip,rar,7z 格式 , 大小不超过400MB)</span>
                     <!-- <button type="button" class="layui-btn">开始上传</button> -->
                 </div>
             </div>
@@ -444,10 +444,10 @@
             contentType:false,
             success: function (res) {
                 if (res.code == 1) {
-                    layer.msg('提交成功')
+                    layer.msg('提交成功',{time : 4000})
                     setTimeout(function() {
                         window.location.href="{:url('libraryIndex')}"
-                    }, 500);
+                    }, 4000);
                 }else{
                     if(res.msg){
                         layer.msg(res.msg)
