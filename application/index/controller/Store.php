@@ -31,15 +31,9 @@ class Store extends Base
 
         $cate = (new LibraryCategoryModel())->getCate();
 
-
-        if (count($cate) > 0) {
-            $cate_id = $cate[0]['id'];
-        } else {
-            $cate_id = 0;
-        }
         //分类 ID
         $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
-            ->where(['cate_id' => $cate_id,'store_id'=>$store_id])
+            ->where(['store_id'=>$store_id])
             ->where('status', 1)
             ->order('is_official desc,create_time desc')
             ->field('is_official,name,library_pic,id');
@@ -119,7 +113,8 @@ class Store extends Base
                     $query->name('library_have_attribute_value')->field('library_id')
                         ->where('attr_value_id', 'in', $attr_value)->group('library_id')->having('count(attr_value_id)=' . $length);
                 });
-            } else {
+            }
+            if ($cate){
                 $library = $library->where(['cate_id' => $cate]);
             }
             if ($filtrate) {

@@ -20,35 +20,51 @@
 <script src="__STATIC__/plugins/video/mp4/borwser/index.js" charset="utf-8"></script>
 <script src="__STATIC__/plugins/video/mp4/index.js" charset="utf-8"></script>
 <script type="text/javascript">
+    $(function(){
+        let player=new Player({
+            id: 'mse',
+            autoplay: true,
+            volume: 0.3,
+            url:'{$url}',
+            // poster: "//s2.pstatp.com/cdn/expire-1-M/byted-player-videos/1.0.0/poster.jpg",
+            playsinline: true,
 
-    let player=new Player({
-        id: 'mse',
-        autoplay: true,
-        volume: 0.3,
-        url:'{$url}',
-        // poster: "//s2.pstatp.com/cdn/expire-1-M/byted-player-videos/1.0.0/poster.jpg",
-        playsinline: true,
+            height: window.innerHeight,
+            width: window.innerWidth,
 
-        height: window.innerHeight,
-        width: window.innerWidth,
+            whitelist: ['']
+        });
+    })
 
-        whitelist: ['']
-    });
 
 </script>
 {else if $ext == 'flv'}
 <script  type="application/javascript" src="__STATIC__/plugins/video/flv/index.js" charset="utf-8"></script>
 <script  type="application/javascript" src="__STATIC__/plugins/video/flv/borwser/index1.js" charset="utf-8"></script>
 <script type="application/javascript">
-    let player = new window.FlvJsPlayer({
-        id: 'mse',
-        isLive: false,
-        playsinline: true,
-        url: '{$url}',
-        autoplay: true,
-        height: window.innerHeight,
-        width: window.innerWidth
-    });
+    $(function(){
+        let player = new window.FlvJsPlayer({
+            id: 'mse',
+            isLive: false,
+            playsinline: true,
+            url: '{$url}',
+            autoplay: true,
+            height: window.innerHeight,
+            width: window.innerWidth,
+            cors : true,
+        });
+
+        // let player = new FlvPlayer({
+        //     id: 'mse',
+        //     url: '{$url}',
+        //     // url: [{src: '/video/flv/xgplayer-demo-720p.flv', type: 'video/flv'}, {src: '/video/flv/xgplayer-demo-480p.flv', type: 'video/flv'}, {src: '/video/flv/xgplayer-demo-360p.flv', type: 'video/flv'}],
+        //     playsinline: true,
+        //     height: window.innerHeight,
+        //     width: window.innerWidth,
+        //     cors:true,
+        // });
+    })
+
 </script>
 {/if}
 </html>
