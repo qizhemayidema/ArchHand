@@ -174,15 +174,20 @@
 
                     var index = layer.open({
                         type: 1,
+                        title:false,
                         shadeClose: true,
                         // area: '500px', //宽高
-                        title: data.chapter_name,
+                        // title: data.chapter_name,
                         resize: false,
                         scrollbar: false,
                         content: data.html,
                         minmax:true,
+
                         success: function(layero){
                             console.log(layero)
+                            $(".layui-layer-title").hide(); //隐藏弹窗头, 这是不留×的做法
+                            $(".layui-layer-btn.layui-layer-btn").hide(); //隐藏弹窗按钮
+                            $('#mse').css('overflow','hidden'); //使网页不可滚动
                             //处理layer层中video播放器全屏样式问题
                             setTimeout(function() {
                                 $(layero).removeClass('layer-anim');

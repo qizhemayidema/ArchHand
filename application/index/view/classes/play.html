@@ -1,26 +1,56 @@
 <!doctype html>
 <html lang="en">
 <head>
-    {include file="common/source"}
-    <style>
-        body{
-            background: #f1f2f4;
-        }
-        .daohang {
-            background-color: #942c2d;
-        }
+    <script src="__STATIC__/js/jquery.min.js"></script>
+    <style type="text/css">
+        html, body {width:100%;height:100%;margin:auto;overflow: hidden;}
+        body {display:flex;}
+        #mse {flex:auto;}
 
     </style>
+    <script type="text/javascript">
+        window.addEventListener('resize',function(){document.getElementById('mse').style.height=window.innerHeight+'px';});
+    </script>
 </head>
-<body>
+<body onscroll="return false;">
 
-<div id="body">
-
-    <video class="ketangplay" src="{$url}" controls="controls" style="clear:both;display:block;margin:auto"></video>
-
-</div>
+<div id="mse"></div>
 </body>
+{if $ext == "mp4"}
+<script src="__STATIC__/plugins/video/mp4/borwser/index.js" charset="utf-8"></script>
+<script src="__STATIC__/plugins/video/mp4/index.js" charset="utf-8"></script>
+<script type="text/javascript">
 
+    let player=new Player({
+        id: 'mse',
+        autoplay: true,
+        volume: 0.3,
+        url:'{$url}',
+        // poster: "//s2.pstatp.com/cdn/expire-1-M/byted-player-videos/1.0.0/poster.jpg",
+        playsinline: true,
+
+        height: window.innerHeight,
+        width: window.innerWidth,
+
+        whitelist: ['']
+    });
+
+</script>
+{else if $ext == 'flv'}
+<script  type="application/javascript" src="__STATIC__/plugins/video/flv/index.js" charset="utf-8"></script>
+<script  type="application/javascript" src="__STATIC__/plugins/video/flv/borwser/index1.js" charset="utf-8"></script>
+<script type="application/javascript">
+    let player = new window.FlvJsPlayer({
+        id: 'mse',
+        isLive: false,
+        playsinline: true,
+        url: '{$url}',
+        autoplay: true,
+        height: window.innerHeight,
+        width: window.innerWidth
+    });
+</script>
+{/if}
 </html>
 
 

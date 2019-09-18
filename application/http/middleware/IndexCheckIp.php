@@ -10,6 +10,7 @@ class IndexCheckIp
 {
     public function handle(Request $request, \Closure $next)
     {
+
         //如果是支付的异步回调则不用判断
         $controller = request()->controller(true);
         $action = request()->action(true);
@@ -66,6 +67,7 @@ class IndexCheckIp
             }
             $cache->inc($key_name);
         }else{
+            $cache->rm($key_name);
             $cache->set($key_name,1);
         }
 
