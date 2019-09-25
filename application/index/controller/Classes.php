@@ -285,6 +285,7 @@ class Classes extends Base
             $classInfo = (new ClassModel())->find($class_id);
 
             $this->assign('url', $chapter_info['source_url']);
+            $this->assign('ext',strtolower(substr(strrchr($chapter_info['source_url'], '.'), 1)));
             $html = $this->fetch('classes/play');
 
             if ($chapter_info['chapter_num'] > $classInfo['free_chapter']) {
@@ -298,7 +299,8 @@ class Classes extends Base
             (new ClassModel())->where(['id' => $class_id])->setInc('see_num');
             return json(['code' => 1, 'msg' => 'success', 'html' => $html,'chapter_name'=>$chapter_info['title']]);
         } catch (\Exception $e) {
-            return json(['code' => 0, 'msg' => '播放出错,请联系网站管理员']);
+//            return json(['code' => 0, 'msg' => '播放出错,请联系网站管理员']);
+            return json(['code' => 0, 'msg' => $e->getMessage()]);
         }
     }
 
@@ -373,7 +375,7 @@ class Classes extends Base
             return json(['code'=>0,'msg'=>'购买后才能评论~']);
         }
 
-        
+
         //加载默认配置
         $config = \HTMLPurifier_Config::createDefault();
 //       //设置白名单

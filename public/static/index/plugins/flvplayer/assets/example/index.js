@@ -1,0 +1,18 @@
+var flv = new FlvPlayer({
+    container: '.flvplayer-app',
+    poster: './assets/img/weathering-with-you-poster.jpg',
+    url: './assets/video/weathering-with-you.flv',
+    decoder: './uncompiled/flvplayer-decoder-baseline.js',
+    // decoder: './uncompiled/flvplayer-decoder-multiple.js',
+    debug: true,
+    live: false,
+    muted: false,
+    loop: true,
+    hotkey: true,
+    autoPlay: false,
+    hasAudio: true,
+    control: true,
+    volume: 0.7,
+    width: 640,
+    height: 360,
+});

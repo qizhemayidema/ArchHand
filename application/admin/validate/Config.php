@@ -130,12 +130,12 @@ class Config extends Validate
 
     public function keywordCheck($value, $rule, $data)
     {
-        $keywords = explode(',', $value);
-        foreach ($keywords as $v) {
-            if (strlen($v) > 8) {
-                return false;
-            }
-        }
+//        $keywords = explode(',', $value);
+//        foreach ($keywords as $v) {
+//            if (mb_strlen($v) > 8) {
+//                return false;
+//            }
+//        }
         return true;
     }
 

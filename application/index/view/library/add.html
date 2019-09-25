@@ -367,6 +367,7 @@
 
     }
     function scback(data){
+        jQuery.support.cors = true;
         $.ajax({
             url:"{:input('server.REQUEST_SCHEME')}://v0.api.upyun.com/"+data.service_name,
             type: 'POST',
@@ -402,9 +403,10 @@
                 }
 
             },
-            error:function(){
+            error:function(res){
                 layer.closeAll();
                 layer.msg('失败')
+                console.log(res)
             }
         })
     }
