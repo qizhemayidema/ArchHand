@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>FlvPlayer.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="keywords" content="flvplayer, flv, h264, aac, canvas, player, js, html5, video" />
+    <meta name="description" content="FlvPlayer.js is a JavaScript player for decode flv to the canvas" />
+    <link rel="stylesheet" href="__STATIC__/plugins/flvplayer/assets/css/normalize.css" />
+
+    <link rel="stylesheet" href="__STATIC__/plugins/flvplayer/uncompiled/flvplayer-control.css" />
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        .container {
+            height: 100%;
+        }
+
+        .flvplayer-app {
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="flvplayer-app"></div>
+</div>
+
+<script  type="application/javascript" src="__STATIC__/plugins/flvplayer/uncompiled/flvplayer-control.js" charset="utf-8"></script>
+<script  type="application/javascript" src="__STATIC__/plugins/flvplayer/uncompiled/flvplayer.js" charset="utf-8"></script>
+
+<script>
+    // var vConsole = new VConsole();
+    var flv = new FlvPlayer({
+        container: '.flvplayer-app',
+        url: '{$url}',
+        // poster: './assets/img/weathering-with-you-poster.jpg',
+        // decoder: '__STATIC__/plugins/flvplayer/uncompiled/flvplayer-decoder-baseline.js',
+        decoder: '__STATIC__/plugins/flvplayer/uncompiled/flvplayer-decoder-multiple.js',
+        debug: true,
+        live: false,
+        muted: false,
+        loop: false,
+        hotkey: false,
+        autoPlay: false,
+        hasAudio: true,
+        control: true,
+        volume: 0.7,
+        width: 640,
+        height: 360,
+    });
+    if (FlvPlayer.isSupported()) {
+
+    } else {
+        console.warn('Your browser does not support Flvplayer.js');
+    }
+</script>
+</body>
+
+</html>
