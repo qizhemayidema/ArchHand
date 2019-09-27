@@ -174,7 +174,7 @@ class Base extends Controller
             foreach ($configPath as $key => $value) {
                 $temp = $temp->$value;
             }
-            if (!$temp) throw new Exception();
+            if ($temp === null) throw new Exception();
         } catch (Exception $e) {
             header('Content-type: application/json');
             exit(json_encode(['code' => 0, 'msg' => '获取配置失败'], 256));

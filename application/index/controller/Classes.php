@@ -50,6 +50,8 @@ class Classes extends Base
                 ->select()->toArray();
         }
         $this->assign('lists', $cateInfo);
+        $this->assign('banner',$this->getConfig('image.4.url'));
+
         return $this->fetch();
     }
 
@@ -137,6 +139,7 @@ class Classes extends Base
             $this->assign('comment',$comment);
             $this->assign('comment_count',$commentCount);
             $this->assign('comment_page_length',$this->commentPageLength);
+
             return $this->fetch();
         } catch (\Exception $e) {
             //

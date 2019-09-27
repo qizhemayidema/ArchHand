@@ -68,6 +68,7 @@ class Library extends Base
         $this->assign('library_count', $count);
         $this->assign('page_length', $this->listPageLength);
         $this->assign('search',$search);
+        $this->assign('banner',$this->getConfig('image.3.url'));
         return $this->fetch();
     }
 

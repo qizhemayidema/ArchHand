@@ -16,6 +16,7 @@ class Index extends Base
      */
     public function index()
     {
+
         $official_library = Library::field('id,name,library_pic,is_official')->where('status', 1)->where('is_delete', 0)
             ->order('create_time desc')->where(['is_official' => 1])->limit(0, 8)->select()->toArray();
 
@@ -31,7 +32,7 @@ class Index extends Base
         $this->assign('today_recommend', $this->getConfig('today_recommend'));      //今日力推
         $this->assign('partner',$this->getConfig('partner'));                       //合作方
         $this->assign('announcement',$this->getConfig('announcement'));             //公告
-
+        $this->assign('banner',$this->getConfig('image.1.url'));
         return $this->fetch();
 
     }

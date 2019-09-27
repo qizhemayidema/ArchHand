@@ -13,6 +13,7 @@ class Vip extends Base
         $info = (new VipModel())->order('price','desc')->select();
 
         $this->assign('vip',$info);
+        $this->assign('banner',$this->getConfig('image.5.url'));
         return $this->fetch();
     }
 }

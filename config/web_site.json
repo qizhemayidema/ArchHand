@@ -49,5 +49,31 @@
     "privacy_policy": "<p><img alt=\"1-150321221421.jpg\" src=\"\/static\/uploads\/bottom_navigation\/20190827\/36785d0624c895cef44fc623fa2ed775.jpg\" width=\"820\" height=\"388\"><\/p>",
     "job": "<p><img alt=\"53d66b411241d837.jpg_480x360x95_7a7e609f.jpg\" src=\"\/static\/uploads\/bottom_navigation\/20190827\/939e9219db7fc23cb3515cd47038d0fd.jpg\" width=\"480\" height=\"360\"><\/p>",
     "contact_us": "<p><img alt=\"43617.jpg\" src=\"\/static\/uploads\/bottom_navigation\/20190827\/dc717edad6779485c60ee5edac4699c1.jpg\" width=\"600\" height=\"324\"><\/p>"
+  },
+  "image": {
+    "1": {
+      "name": "\u9996\u9875\u9876\u90e8",
+      "url": "\/static\/index\/images\/banner_01.jpg"
+    },
+    "2": {
+      "name": "\u793e\u533a\u9876\u90e8",
+      "url": "/static/index/images/shequBanner.png"
+    },
+    "3": {
+      "name": "\u4e91\u5e93\u9876\u90e8",
+      "url": "\/static\/index\/images\/banner_01.jpg"
+    },
+    "4": {
+      "name": "\u8bfe\u7a0b\u9876\u90e8",
+      "url": "/static/index/images/kecheng_02.jpg"
+    },
+    "5": {
+      "name": "VIP\u9876\u90e8",
+      "url": "/static/index/images/images/vipbg_02.png"
+    },
+    "6": {
+      "name": "\u5e2e\u52a9\u9876\u90e8",
+      "url": "/static/index/images/shequBanner.png"
+    }
   }
 }

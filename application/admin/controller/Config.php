@@ -33,7 +33,7 @@ class Config extends Base
         $sign = implode(',', $sign);
 
         $data->sign_in_integral = $sign;
-
+        $data->image = json_decode(json_encode($data->image),true);
         $this->assign('site', $data);
 
         return $this->fetch('config/index');
@@ -113,6 +113,7 @@ class Config extends Base
             'today_recommend' => $today_recommend,
             'partner' => $partner,
             'bottom_navigation'=>$bottom_navigation,
+            'image' =>$form['image'],
         ];
 
         $data = json_encode($data);

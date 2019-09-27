@@ -12,6 +12,7 @@ class Help extends Base
     {
         $help = (new HelpModel())->select();
         $this->assign('help',$help);
+        $this->assign('banner',$this->getConfig('image.6.url'));
         return $this->fetch();
     }
 }

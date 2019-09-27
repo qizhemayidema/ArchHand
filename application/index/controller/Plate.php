@@ -2,6 +2,7 @@
 
 namespace app\index\controller;
 
+use function Couchbase\defaultDecoder;
 use think\Controller;
 use think\Request;
 use think\Validate;
@@ -115,6 +116,7 @@ class Plate extends Base
         $this->assign('forum_list_count', $forum_list_count);
         $this->assign('page_length', $this->plateListPageLength);
         $this->assign('plate_id', $plate_id);
+        $this->assign('banner',$this->getConfig('image.2.url'));
 //        print_r($forum_list);die;
 //        var_dump([
 //            'plate_info'    => $plate_info,
