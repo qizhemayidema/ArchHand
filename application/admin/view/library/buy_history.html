@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {include file="common/meta,common/source"}
+    <title>用户购买记录</title>
+</head>
+<body>
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span> 云库管理 <span class="c-gray en">&gt;</span>
+    用户购买记录 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+            href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+            <thead>
+            <tr>
+                <th scope="col" colspan="110">购买记录</th>
+            </tr>
+            <tr class="text-c">
+                <th>封面图</th>
+                <th>云库标题</th>
+                <th>下载用户</th>
+                <th>花费筑手币</th>
+                <th>购买时间</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {foreach $history as $v}
+            <tr class="text-c">
+                <td><img src="{$v.library_pic}" alt="" style="width: 50px;"></td>
+                <td><a target="_blank" href="{:url('libraryInfo',['library_id'=>$v.library_id])}">{$v.name}</a></td>
+                <td>
+                    <a href="javascript:void(0);" onclick="member_show('{$v.nickname}','userShow?id={$v.user_id}','10001','360','400')">
+                        <i class="avatar size-L radius">
+                            <img alt="" width="50px" height="50px" src="{$v.avatar_url?$v.avatar_url:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
+                        </i>
+                    </a>
+                </td>
+                <td>
+                    {$v.integral}
+                </td>
+                <td>
+                    {$v.create_time|date="Y-m-d H:i:s"}
+                </td>
+            </tr>
+            {/foreach}
+
+            </tbody>
+        </table>
+        <div id="AjaxPage" style="text-align:right;">
+            {$history->render()|raw}
+        </div>
+    </div>
+</div>
+
+{include file="common/footer"}
+<!--_footer 作为公共模版分离出去-->
+
+<script type="text/javascript">
+
+    function verify_classics(url, id, classics){
+        layer.msg('加精处理', {
+            closeBtn:1,
+            time: 0 //不自动关闭
+            ,btn: ['同意', '不同意']
+            ,btn1: function(index){
+                layer.close(index);
+                $.get(url,{id:id,classics:1},function(data){
+                    if(data.code==1){
+                        var a='<span class="label label-danger">'+data.msg+'</span>'
+                        $('#zt'+id).html(a);
+                        layer.msg(data.msg,{icon:2,time:1500,shade: 0.1,});
+                        // location.replace(location.href);
+                        window.location.reload();
+                        return false;
+                    }else{
+                        console.log(2)
+                        var b='<span class="label label-info">'+data.msg+'</span>'
+                        $('#zt'+id).html(b);
+                        layer.msg(data.msg,{icon:1,time:1500,shade: 0.1,});
+                        // location.replace(location.href);
+                        window.location.reload();
+                        return false;
+                    }
+                });
+            }
+            ,btn2:function(index){
+                layer.close(index);
+                $.get(url,{id:id,classics:0},function(data){
+                    if(data.code==1){
+                        var a='<span class="label label-danger">'+data.msg+'</span>'
+                        $('#zt'+id).html(a);
+                        layer.msg(data.msg,{icon:2,time:1500,shade: 0.1,});
+                        // location.replace(location.href);
+                        window.location.reload();
+                        return false;
+                    }else{
+                        console.log(2)
+                        var b='<span class="label label-info">'+data.msg+'</span>'
+                        $('#zt'+id).html(b);
+                        layer.msg(data.msg,{icon:1,time:1500,shade: 0.1,});
+                        // location.replace(location.href);
+                        window.location.reload();
+                        return false;
+                    }
+                });
+            }
+
+        });
+    }
+
+
+    function library_show(title,url,id,w,h){
+        var index = layer.open({
+            type: 2,
+            title: title,
+            content: url
+        });
+        layer.full(index);
+    }
+
+    /*用户-查看*/
+    function member_show(title,url,id,w,h){
+        layer_show(title,url,w,h);
+    }
+
+    /*用户-查看*/
+    function  verify(title, url, id, w, h) {
+        layer_show(title, url, w, h);
+    }
+
+
+    /*用户-删除*/
+    function member_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            $.ajax({
+
+                type: 'POST',
+                url: 'delete',
+                dataType: 'json',
+                data:{'id':id},
+                success: function (data) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+</script>
+</body>
+</html>

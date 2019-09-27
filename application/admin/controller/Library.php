@@ -9,6 +9,7 @@ use think\Db;
 use think\Request;
 use app\admin\model\Library as LibraryModel;
 use app\common\controller\Library as CommonLibraryModel;
+use app\admin\model\UserBuyHistory as UserBuyHistoryModel;
 use think\Validate;
 
 class Library extends Base
@@ -65,6 +66,21 @@ class Library extends Base
             $this->assign('is_exist', $e->getMessage());
             return $this->fetch();
         }
+    }
+
+    public function buyHistory()
+    {
+        $history = UserBuyHistoryModel::where(['history.type'=>1])
+            ->alias('history')
+            ->join('library library','library.id = history.buy_id')
+            ->join('user user','user.id = history.user_id')
+            ->field('history.integral,history.create_time')
+            ->field('user.nickname,user.id user_id,user.avatar_url')
+            ->field('library.name,library.library_pic,library.id library_id')
+            ->paginate(15);
+
+        $this->assign('history',$history);
+        return $this->fetch();
     }
 
     /**
