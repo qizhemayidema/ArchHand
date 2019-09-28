@@ -9,6 +9,7 @@
 <script src="__STATIC__/js/slick.js"></script>
 <script src="__STATIC__/js/jquery.pagination.js"></script>
 <script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/jquery.pjax.js"></script>
 
 
 <style>
@@ -55,17 +56,30 @@
 
 <div class="box1 mb15">
     <div class="boxmain clearfix">
-        <div class="cur" data-value="0" onclick="changeCate(this,0)">全部</div>
+        <div class="{if !$checked_cate || $checked_cate == 0}cur{/if}"data-value="0" onclick="changeCate(this,0)">全部</div>
 
         {foreach $cate as $key => $value}
-        <div class="" data-value="{$value.id}" onclick="changeCate(this,'{$value.id}')">{$value.cate_name}</div>
+        <div class="{if $checked_cate == $value.id}cur{/if}" data-value="{$value.id}" onclick="changeCate(this,'{$value.id}')">{$value.cate_name}</div>
         {/foreach}
     </div>
 </div>
 <!-- /* inr*/ -->
 <div class="class_warpper mb15">
     <div class="w1200 bd bgf" id="attr_list">
-      
+        {foreach $attr as $key1 => $value1}
+        <div class="class_list">
+            <h3 >{$value1.attr_name}：</h3>
+            <a href="javascript:void(0);">
+                <p class="{if !array_intersect($checked_attr,array_column($value1.attribute_value,'id'))}typecur{/if} clearfix" onclick="changeAttr(this)">全部</p>
+            </a>
+            {foreach $value1.attribute_value as $key2 => $value2}
+            <a href="javascript:void(0);">
+                <p class="{if in_array($value2.id,$checked_attr)}typecur {/if} clearfix"  name="attr_value" data-value="{$value2.id}" onclick="changeAttr(this)">{$value2.value}
+                </p>
+            </a>
+            {/foreach}
+        </div>
+        {/foreach}
     </div>
 </div>
 <!-- /最新分享/ -->
@@ -127,6 +141,7 @@
     $('.M-box3').pagination({
         totalData:{$library_count},
         showData:{$page_length},
+        current:{$page},
         // mode: 'fixed',
         callback: function (api) {
             var page=api.getCurrent()
@@ -134,301 +149,111 @@
         }
     })
     {/if}
-    var changeAttr = function(_this){
-        if ($(_this).hasClass('typecur'))  return false;
-        $(_this).parents('.class_list').find('p').each(function(k,v){
-            $(v).removeClass('typecur');
-        })
-        $(_this).addClass('typecur');
-        getData()
-    }
-    var changeCate = function(_this){
-        if ($(_this).hasClass('cur'))  return false;
-        $(_this).parents('.boxmain').find('div').each(function(k,v){
-            $(v).removeClass('cur');
-        })
-        $(_this).addClass('cur');
-
-        $.ajax({
-            url:"{:url('/index/Library/getAttrValues')}",
-            type:"post",
-            data:{
-                cate_id : $('.boxmain').find('div[class=cur]').data().value,
-            },
-            dataType:"json",
-            success:function(data){
-                if (data.code == 0){
-                    layer.msg(data.msg);
-                } else{
-                    console.log(data.data);
-                    var html = '';
-                    $(data.data).each(function(k,v){
-                        html += '<div class="class_list">' +
-                            '            <h3>'+v.attr_name+'：</h3>' +
-                            '            <a href="javascript:void(0);">' +
-                            '                <p class="typecur clearfix" onclick="changeAttr(this)">全部</p>\n' +
-                            '            </a>';
-
-                        $(v.attribute_value).each(function(k1,v1){
-                            html +=     '    <a href="javascript:void(0);">' +
-                                '            <p class="clearfix" name="attr_value" data-value="'+v1.id+'" onclick="changeAttr(this)">'+v1.value+'</p>' +
-                                '            </a>';
-                        })
-
-
-                        html +=    '                    </div>'
-                    })
-                    $('#attr_list').html(html);
-                    getData()
+        var makeParam = function(page = null){
+            var paramStr = '?';
+            var search = $('.search_input:eq(0)').val();
+            if (search) paramStr += "search="+search+"&";
+            var cate_id = $('.boxmain').find('div[class=cur]').data().value;
+            if (cate_id) paramStr += "cate="+cate_id+"&";
+            var attr_ids = '';
+            var filtrate = 0;
+            $('p[name=attr_value]').each(function(k,v){
+                if ($(v).hasClass('typecur')){
+                    attr_ids += $(v).data().value + '-';
                 }
-
+            })
+            if (attr_ids){
+                attr_ids = attr_ids.substring(0, attr_ids.lastIndexOf('-'));
+                paramStr += "attr="+attr_ids+"&";
             }
-        })
 
-    }
+            $('#filtrate span').each(function(k,v){
+                if ($(v).hasClass('c942c2d')){
+                    filtrate = $(v).data().value;
+                }
+            })
+            paramStr += "filtrate="+filtrate+"&";
+            paramStr += "page="+(page ? page : 1)+"&";
 
-    var changeSort = function(_this){
-        //c942c2d
-        if ($(_this).hasClass('c942c2d')) return false;
-        $(_this).parents('.m010').find('span').each(function(k,v){
-            $(v).removeClass('c942c2d');
-        })
-        $(_this).addClass('c942c2d');
 
-        getData()
-    }
-    var getData = function(page = null){
-        var search = $('.search_input:eq(0)').val();
-        console.log(search);
-        var cate_id = $('.boxmain').find('div[class=cur]').data().value;
-        var attr_ids = '';
-        var filtrate = 0;
-        $('p[name=attr_value]').each(function(k,v){
-            if ($(v).hasClass('typecur')){
-                attr_ids += $(v).data().value + ',';
-            }
-        })
-        if (attr_ids) attr_ids = attr_ids.substring(0, attr_ids.lastIndexOf(','));
 
-        $('#filtrate span').each(function(k,v){
-            if ($(v).hasClass('c942c2d')){
-                filtrate = $(v).data().value;
-            }
-        })
-        $.ajax({
-            url:"{:url('/index/Library/getList')}",
-            type:"post",
-            data:{
-                page : page ? page : 1,
-                search : search,
-                cate_id : cate_id,
-                attr_ids : attr_ids,
-                filtrate : filtrate,
-            },
-            dataType:"json",
-            success:function(data){
-                if (data.code == 0){
-                    layer.msg(data.msg);
-                } else{
-                    if (data.count == 0){
-                        $('#list_box').html('<div class="zanwu">暂无数据</div>');
-                        $('#page_box div').html('');
+            return paramStr.substring(0, paramStr.lastIndexOf('&'));
+        }
+
+        var changeAttr = function(_this){
+            if ($(_this).hasClass('typecur'))  return false;
+            $(_this).parents('.class_list').find('p').each(function(k,v){
+                $(v).removeClass('typecur');
+            })
+            $(_this).addClass('typecur');
+            getData()
+        }
+        var changeCate = function(_this){
+            if ($(_this).hasClass('cur'))  return false;
+            $(_this).parents('.boxmain').find('div').each(function(k,v){
+                $(v).removeClass('cur');
+            })
+            $(_this).addClass('cur');
+
+            $.ajax({
+                url:"{:url('/index/Library/getAttrValues')}",
+                type:"post",
+                data:{
+                    cate_id : $('.boxmain').find('div[class=cur]').data().value,
+                },
+                dataType:"json",
+                success:function(data){
+                    if (data.code == 0){
+                        layer.msg(data.msg);
                     } else{
-                        $('#list_box').html(data.data);
-                        if (page == null){
-                            $('.M-box3').pagination({
-                                totalData:data.count,
-                                showData:data.page_length,
-                                // mode: 'fixed',
-                                callback: function (api) {
-                                    var page1=api.getCurrent()
-                                    getData(page1);
-                                }
-                            })
-                        }
-                    }
-                }
-            }
-        })
-    }
+                        console.log(data.data);
+                        var html = '';
+                        $(data.data).each(function(k,v){
+                            html += '<div class="class_list">' +
+                                '            <h3>'+v.attr_name+'：</h3>' +
+                                '            <a href="javascript:void(0);">' +
+                                '                <p class="typecur clearfix" onclick="changeAttr(this)">全部</p>\n' +
+                                '            </a>';
 
-    var syncText = function(_this){
-        var value = $(_this).val()
-        $('.search_input').each(function(k,v){
-            $(v).val(value)
-        })
-    }
-    // new Vue({
-    //     el: '#body',
-    //     data: {
-    //         typemsg:'',
-    //         ctypemsg:'',
-    //         login:true,
-    //         ssinr:'',     //搜索内容
-    //         mkcur: 0,     //选择的模块idx
-    //         datalist: [1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1,],   //假数据
-    //
-    //
-    //
-    //         fenleicur:[],  //分类数组
-    //         newcur:0    ,//0 最新   1 原创 2 精华
-    //         page:1,
-    //         pagesize:16,
-    //         total:0
-    //     },
-    //     created: function() {
-    //         // if(getNowCanshu().ssinr){
-    //         //     vm.ssinr=getNowCanshu().ssinr
-    //         // }
-    //     },
-    //     mounted() {
-    //         // $('.M-box3').pagination({
-    //         // 	pageCount: 50,
-    //         // 	jump: true,
-    //         // 	coping: true,
-    //         // 	mode:'unfixed',
-    //         // 	count:2,
-    //         // 	homePage: '首页',
-    //         // 	endPage: '末页',
-    //         // 	prevContent: '上页',
-    //         // 	nextContent: '下页',
-    //         //
-    //         // 	callback: function (api) {
-    //         // 		console.log(api)
-    //         // 			console.log(api.getCurrent())
-    //         // 	}
-    //         // });
-    //     },
-    //     methods: {
-    //
-    //         qhcur(index) {
-    //             this.mkcur = index
-    //         },
-    //
-    //         sousuo(){
-    //             this.getdatalist()
-    //         },
-    //         fenleifunc(index,index1){
-    //             this.fenleicur[this.mkcur][index]=index1
-    //             this.page=1
-    //             vm.$forceUpdate()
-    //             this.getdatalist()
-    //         },
-    //         jumpxq(id){
-    //
-    //             window.location.href="details_yk.html?id="+id
-    //         },
-    //         gettypemsg(){
-    //             var that =this
-    //             ///api/User/basicInfo
-    //             $.ajax({
-    //                 type: "get",
-    //                 url: '/api/library/category/index',
-    //                 data: {},
-    //                 success: function (res) {
-    //                     console.log(res);
-    //                     if(res.code==1){
-    //                         that.typemsg=res.data
-    //                         that.ctypemsg=res.data[0].attribute
-    //                         var selecbox=[]
-    //                         for(var i=0;i<res.data.length;i++){
-    //                             var cbox=[]
-    //                             for(var j=0;j<res.data[i].attribute.length;j++){
-    //                                 cbox.push('-1')
-    //                             }
-    //                             selecbox.push(cbox)
-    //                         }
-    //                         console.log(selecbox)
-    //                         that.fenleicur=selecbox
-    //                         console.log(that.fenleicur)
-    //                         // that.bqdata=res.data[0].attribute
-    //                         vm.$forceUpdate()
-    //                         that.getdatalist()
-    //                         // element.init();
-    //                     }else{
-    //                         if(res.msg){
-    //                             layer.msg(res.msg)
-    //                         }else{
-    //                             layer.msg('获取失败')
-    //                         }
-    //                     }
-    //
-    //                 },
-    //                 error:function(err){
-    //                     layer.msg('获取失败')
-    //                     console.log(err)
-    //                 }
-    //             })
-    //         },
-    //         getdatalist(){
-    //             var that =this
-    //             // /api/library/index/
-    //             var mk=that.typemsg[that.mkcur]
-    //             console.log(mk)
-    //             var arr=[]
-    //             for(var i=0 ; i<that.fenleicur[that.mkcur].length;i++){
-    //                 console.log(that.fenleicur[that.mkcur][i])
-    //                 arr.push(that.fenleicur[that.mkcur][i])
-    //             }
-    //             arr=arr.join(',')
-    //             var that =this
-    //             $.ajax({
-    //                 type: "get",
-    //                 url: '/api/library/index',
-    //                 data: {
-    //                     cate_id:mk.id,
-    //                     attr_ids:arr,
-    //                     filtrate:that.newcur,
-    //                     search:vm.ssinr,
-    //                     page:vm.page,
-    //                     pageSize:vm.pagesize
-    //                 },
-    //                 success: function (res) {
-    //                     console.log(res);
-    //                     if(res.code==1){
-    //                         vm.datalist=res.data.data
-    //                         if(vm.page==1){
-    //                             vm.total=res.data.total
-    //                             if(res.data.total>16){
-    //                                 console.log(res.data.total)
-    //                                 $('.M-box3').pagination({
-    //                                     totalData: res.data.total,
-    //                                     showData:16,
-    //                                     // mode: 'fixed',
-    //                                     callback: function (api) {
-    //                                         console.log(api.getCurrent())
-    //                                         vm.page=api.getCurrent()
-    //                                         that.getdatalist()
-    //                                     }
-    //                                 })
-    //                             }
-    //
-    //                         }
-    //
-    //                         vm.$forceUpdate()
-    //                         // element.init();
-    //                     }else{
-    //                         if(res.msg){
-    //                             layer.msg(res.msg)
-    //                         }else{
-    //                             layer.msg('获取失败')
-    //                         }
-    //                     }
-    //
-    //                 },
-    //                 error:function(err){
-    //                     layer.msg('获取失败')
-    //                     console.log(err)
-    //                 }
-    //             })
-    //         },
-    //         newcfunc(index){
-    //             this.newcur=index
-    //             this.page=1
-    //             this.getdatalist()
-    //         }
-    //
-    //     }
-    // })
+                            $(v.attribute_value).each(function(k1,v1){
+                                html +=     '    <a href="javascript:void(0);">' +
+                                    '            <p class="clearfix" name="attr_value" data-value="'+v1.id+'" onclick="changeAttr(this)">'+v1.value+'</p>' +
+                                    '            </a>';
+                            })
+
+
+                            html +=    '                    </div>'
+                        })
+                        $('#attr_list').html(html);
+                        getData()
+                    }
+
+                }
+            })
+        }
+
+        var changeSort = function(_this){
+            //c942c2d
+            if ($(_this).hasClass('c942c2d')) return false;
+            $(_this).parents('.m010').find('span').each(function(k,v){
+                $(v).removeClass('c942c2d');
+            })
+            $(_this).addClass('c942c2d');
+
+            getData()
+        }
+        var getData = function(page = null){
+            $.pjax({
+                url:"{:url('libraryIndex')}"+makeParam(page),
+                container:"#list_box"
+            })
+        }
+
+        var syncText = function(_this){
+            var value = $(_this).val()
+            $('.search_input').each(function(k,v){
+                $(v).val(value)
+            })
+        }
 </script>
 {/block}

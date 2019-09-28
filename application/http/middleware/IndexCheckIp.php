@@ -58,8 +58,10 @@ class IndexCheckIp
         $key_name = $real_ip . $request->path();
 
         if ($cache->has($key_name)){
-            if ($cache->get($key_name) >= 50){
-                if ($request->isAjax()){
+            if ($cache->get($key_name) >= 100){
+                if ($request->isPjax()){
+                    return '请求次数频繁,请稍后再试';
+                }elseif ($request->isAjax()){
                     return json(['code'=>0,'msg'=>'请求次数频繁,请稍后再试']);
                 }else{
                     throw new HttpException(403);
