@@ -82,6 +82,7 @@ class Base extends Controller
             'classes.uploadChapterBase64Pic',
             'classestag.uploadPic',
             'forumplate.uploadPic',
+            'library.verify'
         ];
         if (in_array($controller . '.' . $action, $except)) {
             return true;

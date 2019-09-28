@@ -60,7 +60,8 @@
             <p style="clear:both;display:inline-block;width:100%;margin-top:10px;"><span>{$library.nickname}</span>&nbsp;
                 发表于<span>{$library.create_time|date="Y-m-d H:i:s"}</span>&nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="scan"></span><span>{$library.see_num}</span>人浏览
-                &nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="scan"></span><span>{$library.file_type}</span>
+
                 <a href="javascript:void(0);">购买所需筑手币 </a><span class="zhul_xx_dpnums"> {$library.integral}</span></p>
         </div>
         <!-- </div> -->
@@ -249,7 +250,7 @@
 </div>
 <script>
     var abcd =  function(library_id){
-        layer.confirm('<p style="text-align: center;">确认购买<br/>(如买过则不再支付筑手币)</p>',function(){
+        layer.confirm('<p style="text-align: center;">购买所需筑手币{$library.integral}个<br/>(如筑手币不足，请前往“我的账户”充值。)</p>',function(){
             $.ajax({
                 url:"{:url('/index/Library/buy')}",
                 type:'post',

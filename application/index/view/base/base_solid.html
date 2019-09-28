@@ -35,7 +35,8 @@
             if (search.length == 0){
                 layer.msg('搜索不能为空');
             } else{
-                window.location.href="{:url('libraryIndex')}?search="+search
+                var url = "{$search_url ?? url('libraryIndex')}?search="+search;
+                window.location.href=url
             }
         })
         $(function(){

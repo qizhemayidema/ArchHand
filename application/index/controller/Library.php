@@ -48,11 +48,6 @@ class Library extends Base
     {
         $cate = (new LibraryCategoryModel())->getCate();
 
-//        if (count($cate) > 0) {
-//            $cate_id = $cate[0]['id'];
-//        } else {
-//            $cate_id = 0;
-//        }
         $search = $request->get('search') ?? '';
         //分类 ID
         $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
@@ -62,7 +57,7 @@ class Library extends Base
             $library = $library->where('name', 'like', '%' . $search . '%');
         }
         $library = $library
-            ->order('is_official desc,create_time desc')
+            ->order('create_time desc')
             ->field('is_official,name,library_pic,id');
         $count = $library->count();
         $library = $library->limit(0, $this->listPageLength)->select()->toArray();
@@ -149,7 +144,7 @@ class Library extends Base
                 $library = $library->where($filtrate, 1);
             }
             $count = $library->count();
-            $library = $library->order('is_official desc,create_time desc')->limit($start, $pageSize)->select();
+            $library = $library->order('create_time desc')->limit($start, $pageSize)->select();
             $this->assign('library', $library);
             return json(['code' => 1, 'msg' => '查询成功', 'data' => $this->fetch('library/index_list'), 'count' => $count, 'page_length' => $pageSize], 200);
 
@@ -176,7 +171,7 @@ class Library extends Base
         //name user_id name_status create_time see_num integral source_url gehsi size desc
         //like_num collect_num comment_num is_classics is_official
         $library = LibraryModel::field('library_pic,id,store_id,name,user_id,name_status,create_time,see_num,integral,suffix,data_size,desc,
-        like_num,collect_num,comment_num,is_classics,is_official,is_original')
+        like_num,collect_num,file_type,comment_num,is_classics,is_official,is_original')
             ->where('id', $id)->where('is_delete', 0)->where('status', 1)->find();
         if ($library) {
             $library->setInc('see_num');

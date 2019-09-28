@@ -55,6 +55,8 @@ Route::group('/', function () {
     Route::group('class', function () {
         //首页
         Route::get('/', 'index/Classes/index')->name('classIndex');
+        //搜索列表页
+        Route::get('/search','index/Classes/search')->name('classSearch');
         //课程列表页
         Route::get('/list/:cate_id', 'index/Classes/list')->name('classList');
         //课程详情页
