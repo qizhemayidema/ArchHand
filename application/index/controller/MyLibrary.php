@@ -315,16 +315,16 @@ class MyLibrary extends Base
             }
 
             //删除又拍云
-            $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
-            $upyun = new Upyun($config);
-            $has = $upyun->has($library['source_url']);
-            if ($has) {
-                //删除
-                $del = $upyun->delete($library['source_url']);
-                if (!$del) {
-                    return json(['code' => 0, 'msg' => '删除失败'], 400);
-                }
-            }
+//            $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
+//            $upyun = new Upyun($config);
+//            $has = $upyun->has($library['source_url']);
+//            if ($has) {
+//                //删除
+//                $del = $upyun->delete($library['source_url']);
+//                if (!$del) {
+//                    return json(['code' => 0, 'msg' => '删除失败'], 400);
+//                }
+//            }
             if($library['status'] == 1){
                 (new CommonLibraryModel())->setAboutSum($id,0);
             }

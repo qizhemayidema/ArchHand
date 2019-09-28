@@ -2,6 +2,9 @@
 
 namespace app\index\controller;
 
+use app\index\model\LibraryHaveAttributeValue;
+use app\index\validate\LibraryEdit;
+use think\Exception;
 use think\facade\Cache;
 use think\exception\HttpException;
 use think\facade\Session;
@@ -20,6 +23,7 @@ use app\index\model\LibraryComment as LibraryCommentModel;
 use app\index\model\Store as StoreModel;
 use app\index\validate\Library as LibraryValidate;
 use app\index\validate\LibraryComment as LibraryCommentValidate;
+use app\common\controller\Library as CommonLibrary;
 use think\Validate;
 use Upyun\Upyun;
 use Upyun\Config;
@@ -225,7 +229,6 @@ class Library extends Base
         $this->assign('store',$store);
         $this->assign('comment_page_length',$this->commentPageLength);
 
-
         return $this->fetch();
 
 
@@ -284,6 +287,7 @@ class Library extends Base
         $data['is_official'] = $user->type == 2 ? 1 : 0;
         $data['create_time'] = time();
         $data['store_id'] = $this->userInfo['store_id'];
+
 
         $rules = ['__token__'=>'require|token'];
         $messages = ['__token__.token'];
@@ -434,6 +438,193 @@ class Library extends Base
         return json(['code'=>1,'msg'=>'success']);
     }
 
+    /***修改页面****/
+    public function edit($library_id)
+    {
+        $info = LibraryModel::find($library_id);
+        $user_info = $this->userInfo;
+
+        if ($info['user_id'] != $user_info['id']){
+            throw new Exception('',404);
+        }
+        if ($info['status'] == 0){
+            throw new Exception('',404);
+        }
+
+        //获取分类
+        $cate = (new LibraryCategoryModel())->getCate();
+
+        $attr = [];
+        foreach ($cate as $key => $value){
+            if ($value['id'] == $info['cate_id']){
+                $attr = $value['attribute'];
+                break;
+            }
+        }
+
+//        print_r($attr);die;
+        $infoHaveAttr = LibraryHaveAttributeValue::where(['library_id'=>$info['id']])->column('attr_value_id');
+//        print_r($infoHaveAttr);die;
+
+        $this->assign('cate', $cate);
+        $this->assign('attr', $attr);
+        $this->assign('info',$info);
+        $this->assign('info_have_attr',$infoHaveAttr);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 保存更新的资源
+     *
+     * @param  \think\Request $request
+     * @param  int $id
+     * @return \think\Response
+     */
+    public function update(Request $request)
+    {
+        $user = $this->userInfo;
+        $data = $request->post();
+
+
+        if (!array_key_exists('id', $data)) {
+            return json(['code' => 0, 'msg' => '缺少必要参数'], 200);
+        }
+        $library = (new LibraryModel())->where('id', $data['id'])->find();
+
+        if(!$library || $library['user_id'] != $user['id']){
+            return json(['code'=>0 , 'msg' => '你要干什么???']);
+        }
+        if ($library['status'] != 1){
+            return json(['code'=>0 , 'msg' => '你要干什么???']);
+        }
+
+        $validate = new LibraryEdit();
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>$validate->getError()]);
+        }
+
+        //判断是否是base64
+        $library_pic = preg_match('/^(data:\s*image\/(\w+);base64,)/', $data['library_pic'], $result);
+
+        if ($library_pic) {
+            //上传图片
+            $image_base64 = $data['library_pic'];
+            $library_pic_path = (new UploadPic())->uploadBase64Pic($image_base64, 'library/' . $user['id'] . '/');
+            $data['library_pic'] = $library_pic_path['msg'];
+        }else{
+            unset($data['library_pic']);
+        }
+
+        $data['user_id'] = $user['id'];
+
+        if (array_key_exists('desc', $data)) {
+            $config = \HTMLPurifier_Config::createDefault();
+            $purifier = new \HTMLPurifier($config);
+            $data['desc'] = $purifier->purify($data['desc']);
+        }
+        if (isset($data['data_size']) && $data['data_size']) {
+        }
+        if ($data['source_url']){
+            $data['data_size'] = round($data['data_size'] / 1024 / 1024, 2);
+        }else{
+            unset($data['source_url']);
+            unset($data['suffix']);
+            unset($data['data_size']);
+        }
+        $data['status'] = 0;
+//        return json(['code'=>0,'msg'=>$data]);
+
+        $rules = ['__token__'=>'require|token'];
+        $messages = ['__token__.token'];
+        $validate = new Validate($rules,$messages);
+        if (!$validate->check($data)){
+            return json(['code'=>0,'msg'=>'不能重复提交']);
+        }
+        Db::startTrans();
+        try {
+
+            $upyunPath = $library->source_url;
+            $have_attr_value = [];
+            //提取属性值
+            $attr_value_ids = $data['attr_val_ids'] ?? [];
+            //提取属性ID和属性值ID
+            foreach ($attr_value_ids as $k => $v) {
+                foreach ($v as $key => $item) {
+                    $value_id[] = $item;
+                    $have_attr_value[] = [
+                        'attr_id' => $k,
+                        'attr_value_id' => $item,
+                        'library_id' => $library['id'],
+                    ];
+                }
+            }
+
+            $library_have_attribute_value = LibraryHaveAttributeValueModel::where('library_id', $library->id)->select();
+
+            $count = count($library_have_attribute_value) >= count($have_attr_value) ? count($library_have_attribute_value) : count($have_attr_value);
+
+            for ($i = 0; $i < $count; $i++) {
+                if (!empty($have_attr_value[$i]) && !empty($library_have_attribute_value[$i])) {
+                    if ($have_attr_value[$i]['attr_value_id'] == $library_have_attribute_value[$i]['attr_value_id']) {
+                        //相同的干掉，不需要更改
+                        unset($have_attr_value[$i]);
+                        unset($library_have_attribute_value[$i]);
+                    }
+                }
+            }
+            //变动文库相关统计信息
+            (new CommonLibrary())->setAboutSum($data['id']);
+
+            //提取删除ID
+            $ids = [];
+            foreach ($library_have_attribute_value as $v) {
+                $ids[] = $v['id'];
+                $attribute_value_ids[] = $v['attr_value_id'];
+            }
+
+            //删除多余属性
+            if ($ids) {
+                $library_have_attribute_value = LibraryHaveAttributeValueModel::destroy($ids);
+
+            }
+            //更新新属性
+            if (isset($have_attr_value) && $have_attr_value) {
+                $library_have_attribute_value = (new LibraryHaveAttributeValueModel())->saveAll($have_attr_value);
+                foreach ($have_attr_value as $v) {
+                    $att_ids[] = $v['attr_value_id'];
+                }
+            }
+
+            unset($data['attr_val_ids']);
+
+
+
+            $library = (new LibraryModel())->save($data, ['id' => $data['id']]);
+            if (isset($data['source_url'])) {
+                //删除又拍云文件
+                $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
+                $upyun = new Upyun($config);
+                $has = $upyun->has($upyunPath);
+                if ($has) {
+                    //删除
+                    $del = $upyun->delete($library['source_url'],true);
+                    if (!$del) {
+                        return json(['code' => 0, 'msg' => '文件删除失败'], 200);
+                    }
+                }
+            }
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['code' => 0, 'msg' => $e->getMessage().$e->getLine()], 200);
+        }
+        return json(['code' => 1, 'msg' => '修改成功'], 200);
+
+
+    }
+
+
     /**
      * 评论接口
      * @param Request $request
@@ -573,7 +764,6 @@ class Library extends Base
         }
         return json(['code'=>1,'msg'=>'success']);
     }
-
 
     /**
      * 获取一级分类下属性

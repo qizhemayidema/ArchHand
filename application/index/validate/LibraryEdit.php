@@ -7,7 +7,7 @@ use app\api\model\User;
 use think\Db;
 use think\Validate;
 
-class Library extends Validate
+class LibraryEdit extends Validate
 {
     /**
      * 定义验证规则
@@ -18,16 +18,16 @@ class Library extends Validate
     protected $rule = [
         'cate_id' => 'require|number|cateCheck',
         'name' => 'require|min:3|max:20',//print
-        'user_id' => 'require|number|userCheck',
+//        'user_id' => 'require|number|userCheck',
         'name_status' => 'require|number',
         'integral' => 'require|number',
-        'source_url' => 'require',
+//        'source_url' => 'require',
         'desc' => 'require|min:10',
-        'suffix' => 'require|alphaNum',
+//        'suffix' => 'require|alphaNum',
         'file_type' => 'require|max:60',
-        'data_size' => 'require|number',
+//        'data_size' => 'require|number',
         'is_original' => 'require|number',
-        'is_classics' => 'require|number|in:0,2',
+        'is_classics' => 'number|in:0,2',
 //        'attr_value_ids' => 'require|array|length',
     ];
 
@@ -44,9 +44,9 @@ class Library extends Validate
         'name.require' => '请填写标题',
         'name.min:3' => '标题不能小于3个文字',
         'name.max:64' => '标题不能大于20个文字',
-        'user_id.require' => '请登录后重试',
-        'user_id.number' => '请登录后重试',
-        'user_id.userCheck' => '请登陆后重试',
+//        'user_id.require' => '请登录后重试',
+//        'user_id.number' => '请登录后重试',
+//        'user_id.userCheck' => '请登陆后重试',
         'name_status.require' => '请选择是否显示名称',
         'name_status.number' => '显示名称出错',
         'integral.require' => '请填写下载所需积分',
@@ -59,7 +59,7 @@ class Library extends Validate
         'data_size.number' => '文件大小错误',
         'is_original.require' => '请填写原创信息',
         'is_original.number' => '原创信息填写错误',
-        'is_classics.require' => '请填写是否加精',
+//        'is_classics.require' => '请填写是否加精',
         'is_classics.number' => '加精信息错误',
         'is_classics.in' => '加精信息错误',
         'attr_value_ids.require'=>'文库属性必须填写',

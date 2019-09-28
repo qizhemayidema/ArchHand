@@ -102,8 +102,13 @@
                                 </a>
                                 {/if}
                                 <div class="js_btn">
+                                    {if $value.status != 0}
+                                    <button class="blue_btn" type="button" onclick="window.location.href='{:url('libraryEdit',['library_id'=>$value.id])}'">修改</button>
+                                    <br/>
+                                    {/if}
                                     <button class="red_btn" type="button" onclick="deletePublish('{$value.id}')">删除</button>
                                 </div>
+
                             </div>
                             {/foreach}
                         </div>

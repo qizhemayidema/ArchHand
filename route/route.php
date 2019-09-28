@@ -42,6 +42,8 @@ Route::group('/', function () {
         Route::get('/', 'index/Library/index')->name('libraryIndex');
         //云库发布页
         Route::get('/publish', 'index/Library/add')->name('libraryAdd');
+        //云库修改页
+        Route::get('/edit/:library_id', 'index/Library/edit')->name('libraryEdit');
         //云库详情页
         Route::get('/:library_id', 'index/Library/info')->name('libraryInfo');
     });
