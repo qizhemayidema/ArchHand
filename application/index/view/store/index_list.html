@@ -1,3 +1,9 @@
+{if !$library || !count($library)}
+<div class="zanwu">暂无数据</div>
+<script>
+    $('.M-box3').html('')
+</script>
+{else}
 {foreach $library as $key => $value}
 <div class="inr2box">
     <p><img src="{$value.library_pic}" onclick="window.location.href='{:url('libraryInfo',['library_id'=>$value.id])}'">
@@ -5,6 +11,19 @@
         <a class="hot"></a>
         {/if}
     </p>
-    <div>{$value.name}</div>
+    <div>{:mb_substr($value.name,0,16)}</div>
 </div>
 {/foreach}
+<script>
+    $('.M-box3').pagination({
+        totalData:{$library_count},
+        showData:{$page_length},
+        current :{$page},
+        // mode: 'fixed',
+        callback: function (api) {
+            var page=api.getCurrent()
+            getData(page);
+        }
+    })
+</script>
+{/if}

@@ -18,7 +18,7 @@ use think\Validate;
 
 class Store extends Base
 {
-    public $pageLength = 16;
+    public $listPageLength = 16;
 
     public function index(Request $request)
     {
@@ -28,26 +28,103 @@ class Store extends Base
         if (!$storeInfo){
             throw new HttpException(404);
         }
-
-        $cate = (new LibraryCategoryModel())->getCate();
-
+//SELECT library_id FROM zhu_library_have_attribute_value
+        //WHERE attr_value IN (1,2) GROUP BY library_id HAVING COUNT(attr_value) = 2 ORDER BY library_id DESC LIMIT 0,1
         //分类 ID
-        $library = LibraryModel::field('id,library_pic,name')->where('is_delete', 0)
-            ->where(['store_id'=>$store_id])
-            ->where('status', 1)
-            ->order('is_official desc,create_time desc')
-            ->field('is_official,name,library_pic,id');
+        $pageSize = $this->listPageLength;
+
+        $cate = $request->param('cate');
+
+        $store_id = $request->param('store_id');
+
+        $search = $request->param('search');
+        //属性ID 以逗号分隔
+        $attr = $request->param('attr');
+        //筛选
+        $filtrate = $request->param('filtrate');
+
+        $page = $request->param('page') ?? 1;
+
+        $start = $page * $pageSize - $pageSize;
+
+        $count = 0;
+        $length = 0;
+        $array_attr = [];
+        if ($attr) {
+            //筛选属性
+            $array_attr = explode('-', $attr);
+            $attr_value = [];
+
+            foreach ($array_attr as $value) {
+                if ($value > 0) {
+                    $attr_value[] = $value;
+                }
+            }
+            $length = count($attr_value);
+        }
+
+        if ($filtrate == 1) {
+            //原创
+            $filtrate = 'is_original';
+        } else if ($filtrate == 2) {
+            //精华
+            $filtrate = 'is_classics';
+        } else {
+            $filtrate = 0;
+        }
+
+        $library = LibraryModel::field('id,library_pic,name,is_official')->where('is_delete', 0)
+            ->where('status', 1);
+        if ($store_id){
+            $library = $library->where(['store_id'=>$store_id]);
+        }
+        if ($search) {
+            $library = $library->where('name', 'like', '%' . $search . '%');
+        }
+        if ($length) {
+            $library = $library->where('id', 'in', function ($query) use ($attr_value, $length) {
+                //查询出拥有特定属性的云库ID
+                $query->name('library_have_attribute_value')->field('library_id')
+                    ->where('attr_value_id', 'in', $attr_value)->group('library_id')->having('count(attr_value_id)=' . $length);
+            });
+        }
+        if ($cate){
+            $library = $library->where(['cate_id' => $cate]);
+        }
+        if ($filtrate) {
+            $library = $library->where($filtrate, 1);
+        }
         $count = $library->count();
-        $library = $library->limit(0, $this->listPageLength)->select()->toArray();
-
+        $library = $library->order('create_time desc')->limit($start, $pageSize)->select()->toArray();
         $this->assign('library', $library);
-        $this->assign('cate', $cate);
-        $this->assign('library_count', $count);
-        $this->assign('page_length', $this->pageLength);
-        $this->assign('store',$storeInfo);
+        $this->assign('library_count',$count);
+        $this->assign('page_length',$this->listPageLength);
+        $this->assign('page',$page);
 
 
-        return $this->fetch();
+
+
+        if ($request->isPjax()){
+            return response()->data($this->fetch('library/index_list'))->header('content-type','text/html');
+        }else {
+            $cateArr = (new LibraryCategoryModel())->getCate();
+            $attrArr = [];
+
+            foreach ($cateArr as $key => $value) {
+                if ($value['id'] == $cate) {
+                    $attrArr = $value['attribute'];
+                    break;
+                }
+            }
+            $this->assign('cate', $cateArr);
+            $this->assign('checked_attr', $array_attr);
+            $this->assign('checked_cate', $cate);
+            $this->assign('attr', $attrArr);
+            $this->assign('search', $search);
+            $this->assign('banner', $this->getConfig('image.3.url'));
+            $this->assign('store',$storeInfo);
+            return $this->fetch();
+        }
     }
 
 
@@ -124,12 +201,11 @@ class Store extends Base
             $library = $library->order('is_official desc,create_time desc')->limit($start, $pageSize)->select();
             $this->assign('library', $library);
 
-            return json(['code' => 1, 'msg' => '查询成功', 'data' => $this->fetch('library/index_list'), 'count' => $count, 'page_length' => $pageSize], 200);
+            return json(['code' => 1, 'msg' => '查询成功', 'data' => $this->fetch('store/index_list'), 'count' => $count, 'page_length' => $pageSize], 200);
 
         } catch (\Exception $e) {
             return json(['code' => 0, 'msg' => $e->getMessage()], 500);
         }
-
     }
 
     public function updateInfo(Request $request)
