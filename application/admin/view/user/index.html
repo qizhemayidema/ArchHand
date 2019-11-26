@@ -27,9 +27,10 @@
                 <th width="10%">头像</th>
                 <th width="10%">昵称</th>
                 <th width="5%">性别</th>
-                <th width="5%">是否开通VIP</th>
-                <th width="5%">助手币</th>
-                <th width="5%">状态</th>
+                <th width="2%">是否开通VIP</th>
+                <th width="2%">助手币</th>
+                <th width="2%">状态</th>
+                <th width="9%">注册时间</th>
                 <th width="10%">操作</th>
             </tr>
             </thead>
@@ -48,7 +49,7 @@
                 <td>{$v['nickname']}</td>
                 <td>{$v['sex']}</td>
                 <td>{$v['vip_id']==0?'否':'是'}
-                    <span style="right;color: #cc0000;">
+                    <span style="color: #cc0000;">
                         <strong>{if $v->getData('vip_id')!=0}
                             {$v->vip->discount}折<i class="Hui-iconfont" >&#xe6c1;</i>
                             {/if}
@@ -65,6 +66,9 @@
                     {/if}
                     </a>
 
+                </td>
+                <td>
+                    {$v.create_time|date="Y-m-d H:i:s"}
                 </td>
                 <td class="td-manage">
                     {if $Base->checkPermission('official','update')}

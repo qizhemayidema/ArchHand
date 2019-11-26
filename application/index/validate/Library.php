@@ -17,7 +17,7 @@ class Library extends Validate
      */
     protected $rule = [
         'cate_id' => 'require|number|cateCheck',
-        'name' => 'require|min:3|max:20',//print
+        'name' => 'require|min:3|max:50',//print
         'user_id' => 'require|number|userCheck',
         'name_status' => 'require|number',
         'integral' => 'require|number',

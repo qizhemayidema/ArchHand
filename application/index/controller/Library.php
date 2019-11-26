@@ -184,7 +184,7 @@ class Library extends Base
             //查询热门案例
             $hot = LibraryModel::field('id,name,library_pic')->where('is_delete', 0)
                 ->where('status', 1)
-                ->order('collect_num desc,like_num desc,comment_num desc,see_num desc create_time asc')
+                ->order('see_num','desc')
                 ->limit(0, 8)->select();
         } else {
             throw new HttpException(404);
@@ -250,7 +250,7 @@ class Library extends Base
         $data = $request->post();
 
         if (!$data['library_pic']) {
-            return json(['code' => 0, 'msg' => '封面图必须上传'], 422);
+            return json(['code' => 0, 'msg' => '封面图必须上传']);
         }
         //上传图片
         $image_base64 = $data['library_pic'];
@@ -741,7 +741,7 @@ class Library extends Base
                  Db::name('library_comment_like_history')->insert(['comment_id' => $comment->id, 'user_id' => $user['id']]);
 
             }else{
-                return json(['code'=>0,'msg'=>'缺少必要参数'],422);
+                return json(['code'=>0,'msg'=>'缺少必要参数']);
             }
             Db::commit();
         } catch (\Exception $e) {
@@ -831,12 +831,17 @@ class Library extends Base
         $user = $this->userInfo;
         $id = $request->post('library_id');
         if (!$id) {
-            return json(['code' => 0, 'msg' => '缺少必要参数'], 422);
+            return json(['code' => 0, 'msg' => '缺少必要参数']);
         }
         Db::startTrans();
         try {
             //查找云库
             $library = LibraryModel::where('id', $id)->where('is_delete', 0)->where('status', 1)->find();
+
+            $sourceUrl = [];
+            foreach (explode(',',$library['source_url']) as $key => $value){
+                $sourceUrl[] = Env::get('UPYUN.CDN_URL') . $value;
+            }
 
             if (!$library) {
                 return json(['code' => 0, 'msg' => '云库不存在'], 200);
@@ -844,15 +849,18 @@ class Library extends Base
 
             //查找是否有文件
             $config = new Config(env('UPYUN.SERVICE_NAME'), env('UPYUN.USERNAME'), env('UPYUN.PASSWORD'));
-            $upyun = (new Upyun($config))->has($library['source_url']);
-            if (!$upyun) {
-                return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 200);
+
+            foreach (explode(',',$library['source_url']) as $key => $value){
+                $upyun = (new Upyun($config))->has($value);
+                if (!$upyun) {
+                    return json(['code' => 0, 'msg' => '当前文件已经删除啦'], 200);
+                }
             }
 
             if ($library->user_id == $user['id']) {
                 UserDownloadLibraryHistory::create(['library_id' => $id, 'user_id' => $user['id'], 'create_time' => time()]);
                 Db::commit();
-                return json(['code' => 1, 'msg' => '查询成功', 'buy' => 3, 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]]);
+                return json(['code' => 1, 'msg' => '查询成功', 'buy' => 3, 'data' => ['source_url' => $sourceUrl]]);
             }
 
             //判断是否以购买过
@@ -860,7 +868,7 @@ class Library extends Base
             if ($is_user_buy_history) {
                 UserDownloadLibraryHistory::create(['library_id' => $id, 'user_id' => $user['id'], 'create_time' => time()]);
                 Db::commit();
-                return json(['code' => 1, 'msg' => '以购买过', 'buy' => 1, 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]]);
+                return json(['code' => 1, 'msg' => '已购买过', 'buy' => 1, 'data' => ['source_url' => $sourceUrl]]);
             }
             //判断积分
             if ($user['vip_id']) {
@@ -896,10 +904,11 @@ class Library extends Base
                 }
 
                 //文库主人加积分
-                $user_vendor_integral = $this->updateUserIntegral(9, $user_vendor_discount_integral, $library['user_id']);
+                $user_vendor_integral = $this->updateUserIntegral(9, $user_vendor_discount_integral, $library['user_id'],$library['name'] .'被' . $user['nickname'] . '购买');
                 UserDownloadLibraryHistory::create(['library_id' => $id, 'user_id' => $user['id'], 'create_time' => time()]);
                 Db::commit();
-                return json(['code' => 1, 'msg' => '购买成功', 'buy' => 2, 'data' => ['source_url' => Env::get('UPYUN.CDN_URL') . $library['source_url']]], 200);
+
+                return json(['code' => 1, 'msg' => '购买成功', 'buy' => 2, 'data' => ['source_url' => $sourceUrl]], 200);
             } else {
                 Db::rollback();
                 return json(['code' => 0, 'msg' => '当前筑手币不足,请及时充值~']);

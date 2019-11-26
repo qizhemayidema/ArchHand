@@ -20,6 +20,12 @@
         showData:{$page_length},
         current :{$page},
         // mode: 'fixed',
+        homePage: '首页',
+        endPage: '末页',
+        prevContent: '上页',
+        nextContent: '下页',
+        // mode: 'fixed',
+        coping: true,
         callback: function (api) {
             var page=api.getCurrent()
             getData(page);

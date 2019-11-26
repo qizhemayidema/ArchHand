@@ -173,14 +173,15 @@ class Library extends Base
     public function verify($id)
     {
         try {
-            $library = LibraryModel::where('id', $id)->find();
+            $id = explode(',',$id);
+            $library = LibraryModel::where('id', $id[0])->find();
             if (!$library) {
                 $this->assign('is_exist', '未找到数据，请刷新页面确认当前数据是否以删除');
                 return $this->fetch();
             }
             $this->assign('status', $library->status);
-            $this->assign('id', $library->id);
-            $this->assign('name', $library->name);
+            $this->assign('id', $id);
+//            $this->assign('name', $library->name);
             return $this->fetch();
         } catch (\Exception $e) {
             $this->assign('is_exist', $e->getMessage());
@@ -199,6 +200,8 @@ class Library extends Base
 
         $form = $request->only('id,status,because,name');
 
+        $id = explode(',',$form['id']);
+
         if ($form['status'] == -1) {
             $rule = [
                 'because' => 'require|min:2|max:40',
@@ -214,37 +217,38 @@ class Library extends Base
                 return json(['code' => 0, 'msg' => $validate->getError()]);
             }
         }
-
         Db::startTrans();
-        $old_data = LibraryModel::find($form['id'])->getData();
         try {
+            foreach ($id as $key => $value){
+                $form['id'] = $value;
 
-            LibraryModel::update(['id' => $form['id'], 'status' => $form['status']]);
-            if ($form['status'] == 1 && $old_data['status'] != 1){
-                (new CommonLibraryModel())->setAboutSum($form['id'],1);
-            }elseif ($form['status'] != 1 && $old_data['status'] == 1){
-                (new CommonLibraryModel())->setAboutSum($form['id'],0);
-            }
-            if ($form['status'] == -1) {
-                Db::name('library_check_history')->where('library_id', $form['id'])->delete();
-
-                $check = Db::name('library_check_history')->insert([
-                    'library_id' => $form['id'],
-                    'because' => $form['because'],
-                    'manager_name' => session('admin')->user_name,
-                    'library_name' => $form['name'],
-                    'create_time' => time(),
-                ]);
-                if (!$check) {
-                    Db::rollback();
-                    dump(1);
-                    return json(['code' => 0, 'msg' => '审核失败']);
+                $old_data = LibraryModel::find($form['id'])->getData();
+                LibraryModel::update(['id' => $form['id'], 'status' => $form['status']]);
+                if ($form['status'] == 1 && $old_data['status'] != 1){
+                    (new CommonLibraryModel())->setAboutSum($form['id'],1);
+                }elseif ($form['status'] != 1 && $old_data['status'] == 1){
+                    (new CommonLibraryModel())->setAboutSum($form['id'],0);
                 }
-            } else {
-                $check = Db::name('library_check_history')->where('library_id', $form['id'])->delete();
-                Db::commit();
-                return json(['code' => 1, 'msg' => '审核成功']);
+                if ($form['status'] == -1) {
+                    Db::name('library_check_history')->where('library_id', $form['id'])->delete();
+
+                    $check = Db::name('library_check_history')->insert([
+                        'library_id' => $form['id'],
+                        'because' => $form['because'],
+                        'manager_name' => session('admin')->user_name,
+                        'library_name' => $form['name'],
+                        'create_time' => time(),
+                    ]);
+                    if (!$check) {
+                        Db::rollback();
+                        dump(1);
+                        return json(['code' => 0, 'msg' => '审核失败']);
+                    }
+                } else {
+                    $check = Db::name('library_check_history')->where('library_id', $form['id'])->delete();
+                }
             }
+
             Db::commit();
             return json(['code' => 1, 'msg' => '审核成功']);
         } catch (\Exception $e) {

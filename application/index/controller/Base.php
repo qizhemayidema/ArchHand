@@ -100,7 +100,7 @@ class Base extends Controller
      * @throws \think\exception\DbException
      * @throws \think\exception\PDOException
      */
-    protected function updateUserIntegral($type, $integral, $user_id = null)
+    protected function updateUserIntegral($type, $integral, $user_id = null , $desc = '')
     {
         $user_id = $user_id ? $user_id : $this->userInfo['id'];
 
@@ -108,6 +108,7 @@ class Base extends Controller
             'type' => $type,
             'integral' => $integral,
             'user_id' => $user_id,
+            'desc'  => $desc,
             'create_time' => time(),
         ];
         /**

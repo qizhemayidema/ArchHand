@@ -95,7 +95,13 @@
                                     <td>收入</td>
                                     <td class="c00a012">{$value.integral}</td>
                                     {/if}
-                                    <td>{$value.type}</td>
+                                    <td>
+                                        {if $value.desc}
+                                        {$value.desc}
+                                        {else}
+                                        {$value.type}
+                                        {/if}
+                                    </td>
                                 </tr>
                                 {/foreach}
                             </tbody>

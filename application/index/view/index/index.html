@@ -37,24 +37,27 @@
                 </p>
             </div>
             <div class="hengxian"></div>
-            <div class="inrbox1 box_siz clearfix">
-                <img class="inr1img1" src="{$today_recommend.today_pic}" alt="">
-                <div class="inr1text1">
-                    <div class="dname">{$today_recommend.today_title}</div>
-                    <div class="oh4 inr1inr">
-                        {$today_recommend.today_content}
+            <a href="{$today_recommend.today_url}">
+                <div class="inrbox1 box_siz clearfix">
+                    <img class="inr1img1" src="{$today_recommend.today_pic}" alt="">
+                    <div class="inr1text1">
+                        <div class="dname">{$today_recommend.today_title}</div>
+                        <div class="oh4 inr1inr">
+                            {$today_recommend.today_content}
+                        </div>
+                        <a href="{$today_recommend.today_url}" target="_blank" class="more1">
+                            了解更多>>
+                        </a>
                     </div>
-                    <a href="{$today_recommend.today_url}" target="_blank" class="more1">
-                        了解更多>>
-                    </a>
                 </div>
-            </div>
+            </a>
+
         </div>
         <!-- /最新分享/ -->
         <div class="inrmk1">
             <div class="inrtit">
                 <p class="inrtitp">
-                    <span class="text1">官方云库</span>
+                    <span class="text1">优选云库</span>
                     <span class="text2">/ Official Cloud Library</span>
                     <a class="fr c9 cspointer" href="{:url('libraryIndex')}">更多&gt;&gt;</a>
                 </p>
@@ -78,7 +81,7 @@
         <div class="inrmk1">
             <div class="inrtit">
                 <p class="inrtitp">
-                    <span class="text1">社区云库</span>
+                    <span class="text1">顶级云库</span>
                     <span class="text2">/ Community Cloud Library</span>
                     <a class="fr c9 cspointer" href="{:url('libraryIndex')}">更多&gt;&gt;</a>
                 </p>
@@ -87,7 +90,9 @@
             <div class="inrbox1 box_siz clearfix">
                 {foreach $library as $key => $value}
                 <div class="inr2box cspointer" onclick="window.location.href='{:url('libraryInfo',['library_id'=>$value.id])}'">
-                    <p><img src="{$value.library_pic}" alt=""></p>
+                    <p><img src="{$value.library_pic}" alt="">
+                        <a class="hot hot2"></a>
+                    </p>
                     <div>{:mb_substr($value.name,0,16)}</div>
                 </div>
                 {/foreach}

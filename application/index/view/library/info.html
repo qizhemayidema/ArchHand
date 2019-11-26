@@ -68,11 +68,7 @@
 
         <div class="hengxian"></div>
         <div class="zt_l_box clearfix">
-            <!-- inner -->
-            <div class="zt_inner w100">
-                {$library.desc|raw}
-            </div>
-            <div style="margin-top: 50px;">
+            <div >
                 <div class="xq_unload_btn">
                     <a href="javascript:void(0);" onclick="abcd('{$library.id}')">下载附件</a>
                 </div>
@@ -81,6 +77,11 @@
                     <span class="file_type">文件大小：<span>{$library.data_size}MB</span></span>
                 </div>
             </div>
+            <!-- inner -->
+            <div class="zt_inner w100">
+                {$library.desc|raw}
+            </div>
+
             <!-- inner -->
             <div class="zhul_xx_nhots clearfix box_siz">
                 <!--分享-->
@@ -249,6 +250,13 @@
     </div>
 </div>
 <script>
+    function sleep(delay) {
+        var start = (new Date()).getTime();
+        while ((new Date()).getTime() - start < delay) {
+            continue;
+        }
+    }
+
     var abcd =  function(library_id){
         layer.confirm('<p style="text-align: center;">购买所需筑手币{$library.integral}个<br/>(如筑手币不足，请前往“我的账户”充值。)</p>',function(){
             $.ajax({
@@ -259,6 +267,8 @@
                 },
                 dataType:'json',
                 success:function(data){
+
+                    console.log(data.data)
                     if (data.code == 1){
                         if (data.msg == '购买成功'){
 
@@ -266,7 +276,12 @@
                         }else{
                             layer.msg('请等待...');
                         }
-                        window.location.href = data.data.source_url
+                        $(data.data.source_url).each(function(k,v){
+                            sleep(300)
+                            window.location.href = v;
+                            sleep(250)
+
+                        })
                     }  else{
                         layer.msg(data.msg);
                     }

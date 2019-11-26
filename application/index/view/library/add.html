@@ -101,7 +101,7 @@
                 <label class="layui-form-label">附件上传</label>
                 <div class="layui-input-block">
                     <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
-                    <span><span id="file_name"></span>(限制压缩包 zip,rar,7z 格式 , 大小不超过1.2G)</span>
+                    <span><span id="file_name"></span>(限制压缩包 zip,rar,7z 格式 , 每个压缩包不超过1.2G,最多五个压缩包)</span>
                     <!-- <button type="button" class="layui-btn">开始上传</button> -->
                 </div>
             </div>
@@ -163,7 +163,12 @@ var layedit
 var laydate
 var upload
 var element
-var vm = {}
+var vm = {
+    files : [],
+    filename : [],
+    data_size : 0,
+    source_url : [],
+}
 
 //创建一个随机文件名称
 function createPic() {
@@ -262,15 +267,19 @@ layui.use(['form', 'upload', 'element'], function() {
         elem: '#test8',
         auto: false,
         accept: 'file',
+        multiple: true,
         exts: 'zip|rar|7z'
             //,multiple: true
             ,
         choose: function(obj) {
             obj.preview(function(index, file, result) {
                 console.log(file)
-                $('#file_name').html(file.name)
-                vm.filename = file.name
-                vm.files = file
+                // $('#file_name').html(file.name)
+                if (vm.files.length >= 5){
+
+                }
+                vm.filename.push(file.name)
+                vm.files.push(file)
                 // var f= new FormData()
                 // console.log($('.layui-upload-file')[0].files[0])
                 // f.append("file[]", $('.layui-upload-file')[0].files[0]);
@@ -322,62 +331,73 @@ function sczip() {
     if (vm.old_files == vm.files && vm.files) {
         shezhi();
     } else {
-        var fname = createPic()
-        var file = vm.filename
-        if (!file) {
-            layer.msg('请上传附件');
-            return false;
-        }
-        var index1 = file.lastIndexOf(".");
-        var index2 = file.length;
-        vm.suffix = file.substring(index1 + 1, index2);
-        fname = fname + file.substring(index1, index2);
-        console.log(fname);
-        layer.msg('正在上传请稍等')
-        var index = layer.load(2, {
-            shade: [0.4, '#000'],
-            scrollbar: false
-        })
-        $.ajax({ //获取秘钥
-            type: "post",
-            url: "{:url('/index/Library/uploadVideo')}",
-            data: {
-                save_file_name: fname,
-            },
-
-            success: function(res) {
-                res = JSON.parse(res)
-                if (res.policy != '') {
-
-                    var uploadData = new FormData();
-                    uploadData.append('file', vm.files);
-                    uploadData.append('policy', res.policy);
-                    // vm.policy=res.policy
-                    vm.service_name = res.service_name
-                    uploadData.append('authorization', res.authorization);
-                    vm.uploadData = uploadData
-                    // console.log(uploadData)
-                    // console.log(vm.uploadData)
-                    scback(res)
-
-                } else {
-                    layer.closeAll();
-                    layer.msg('操作失败')
-                }
-                // var resultd=res.data
-
-
-            },
-            error: function(err) {
-                layer.close(index);
-                layer.msg('操作失败')
+            if (!vm.filename) {
+                layer.msg('请上传附件');
+                return false;
             }
-        })
+
+            if (vm.filename.length > 5){
+                layer.msg('最多五个压缩包')
+                return false;
+            }
+
+            layer.msg('正在上传请稍等')
+            var index = layer.load(2, {
+                shade: [0.4, '#000'],
+                scrollbar: false
+            })
+
+            $(vm.files).each(function(k,v){
+                var length = vm.files.length;
+
+                var file = vm.filename[k]
+                var fname = createPic()
+                var index1 = file.lastIndexOf(".");
+                var index2 = file.length;
+                vm.suffix = file.substring(index1 + 1, index2);
+                fname = fname + file.substring(index1, index2);
+                $.ajax({ //获取秘钥
+                    type: "post",
+                    url: "{:url('/index/Library/uploadVideo')}",
+                    data: {
+                        save_file_name: fname,
+                    },
+
+                    success: function(res) {
+                        res = JSON.parse(res)
+                        if (res.policy != '') {
+                            var uploadData = new FormData();
+                            uploadData.append('file', v);
+                            uploadData.append('policy', res.policy);
+                            // vm.policy=res.policy
+                            vm.service_name = res.service_name
+                            uploadData.append('authorization', res.authorization);
+                            vm.uploadData = uploadData
+                            // console.log(uploadData)
+                            scback(res,k,length)
+
+                        } else {
+                            layer.closeAll();
+                            layer.msg('操作失败')
+                        }
+                        // var resultd=res.data
+
+
+                    },
+                    error: function(err) {
+                        layer.close(index);
+                        layer.msg('操作失败')
+                    }
+                })
+            })
+
+
+
     }
 
 }
 
-function scback(data) {
+function scback(data,k,max_length) {
     $("#progress_box").show();
     jQuery.support.cors = true; 
     $.ajax({
@@ -414,12 +434,16 @@ function scback(data) {
             console.log(res);
             res = JSON.parse(res)
             if (res.code == 200) {
-                layer.closeAll();
-                vm.data_size = res.file_size
-                vm.source_url = res.url
+                vm.data_size += res.file_size
+                vm.source_url.push(res.url)
                 // var resultd=res.data
                 // vm.plimg.push(res.data)
-                shezhi()
+                console.log(k + 1,max_length)
+                if ((k + 1) == max_length){
+                    layer.closeAll();
+                    console.log(vm);
+                    shezhi()
+                }
             } else {
                 layer.closeAll();
             }

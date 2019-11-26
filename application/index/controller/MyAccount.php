@@ -32,7 +32,7 @@ class MyAccount extends Base
         ];
 
         $integral = (new UserIntegralHistoryModel())->where(['user_id'=>$this->userInfo['id']])
-            ->field('type,integral,create_time')
+            ->field('type,integral,desc,create_time')
             ->order('id','desc')->limit(0,$this->integral_page_length)->select();
 
         $integralCount = (new UserIntegralHistoryModel())->where(['user_id'=>$this->userInfo['id']])->count();

@@ -9,8 +9,7 @@
 <article class="page-container">
 	{if !isset($is_exist)}
 	<form id="add" action="verifySave" method="post" class="form form-horizontal" id="form-member-add">
-		<input name="id" type="hidden" value="{$id}">
-		<input name="name" type="hidden" value="{$name}">
+		<input name="id" type="hidden" value="{:implode(',',$id)}">
 		<div class="row cl">
 			<label class="form-label col-xs-4 col-sm-3">审核：</label>
 			<div class="formControls col-xs-6 col-sm-7"> <span class="select-box">

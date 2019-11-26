@@ -168,7 +168,12 @@
     var laydate
     var upload
     var element
-    var vm = {}
+    var vm = {
+        files : [],
+        filename : [],
+        data_size : 0,
+        source_url : [],
+    }
 
     //创建一个随机文件名称
     function createPic() {
@@ -267,15 +272,19 @@
             elem: '#test8',
             auto: false,
             accept: 'file',
+            multiple: true,
             exts: 'zip|rar|7z'
             //,multiple: true
             ,
             choose: function(obj) {
                 obj.preview(function(index, file, result) {
                     console.log(file)
-                    $('#file_name').html(file.name)
-                    vm.filename = file.name
-                    vm.files = file
+                    // $('#file_name').html(file.name)
+                    if (vm.files.length >= 5){
+
+                    }
+                    vm.filename.push(file.name)
+                    vm.files.push(file)
                     // var f= new FormData()
                     // console.log($('.layui-upload-file')[0].files[0])
                     // f.append("file[]", $('.layui-upload-file')[0].files[0]);
@@ -327,172 +336,185 @@
         if (vm.old_files == vm.files && vm.files) {
             shezhi();
         } else {
-            var fname = createPic()
-            var file = vm.filename
-            if (!file) {
+            if (!vm.filename) {
                 shezhi();
-                // layer.msg('请上传附件');
                 return false;
             }
-            var index1 = file.lastIndexOf(".");
-            var index2 = file.length;
-            vm.suffix = file.substring(index1 + 1, index2);
-            fname = fname + file.substring(index1, index2);
-            console.log(fname);
+
+            if (vm.filename.length > 5) {
+                layer.msg('最多五个压缩包')
+                return false;
+            }
+
             layer.msg('正在上传请稍等')
             var index = layer.load(2, {
                 shade: [0.4, '#000'],
                 scrollbar: false
             })
-            $.ajax({ //获取秘钥
-                type: "post",
-                url: "{:url('/index/Library/uploadVideo')}",
-                data: {
-                    save_file_name: fname,
-                },
 
-                success: function(res) {
-                    res = JSON.parse(res)
-                    if (res.policy != '') {
 
-                        var uploadData = new FormData();
-                        uploadData.append('file', vm.files);
-                        uploadData.append('policy', res.policy);
-                        // vm.policy=res.policy
-                        vm.service_name = res.service_name
-                        uploadData.append('authorization', res.authorization);
-                        vm.uploadData = uploadData
-                        // console.log(uploadData)
-                        // console.log(vm.uploadData)
-                        scback(res)
+            $(vm.files).each(function (k, v) {
+                var length = vm.files.length;
 
-                    } else {
-                        layer.closeAll();
+                var file = vm.filename[k]
+                var fname = createPic()
+                var index1 = file.lastIndexOf(".");
+                var index2 = file.length;
+                vm.suffix = file.substring(index1 + 1, index2);
+                fname = fname + file.substring(index1, index2);
+                $.ajax({ //获取秘钥
+                    type: "post",
+                    url: "{:url('/index/Library/uploadVideo')}",
+                    data: {
+                        save_file_name: fname,
+                    },
+
+                    success: function (res) {
+                        res = JSON.parse(res)
+                        if (res.policy != '') {
+                            var uploadData = new FormData();
+                            uploadData.append('file', v);
+                            uploadData.append('policy', res.policy);
+                            // vm.policy=res.policy
+                            vm.service_name = res.service_name
+                            uploadData.append('authorization', res.authorization);
+                            vm.uploadData = uploadData
+                            // console.log(uploadData)
+                            scback(res, k, length)
+
+                        } else {
+                            layer.closeAll();
+                            layer.msg('操作失败')
+                        }
+                        // var resultd=res.data
+
+
+                    },
+                    error: function (err) {
+                        layer.close(index);
                         layer.msg('操作失败')
                     }
-                    // var resultd=res.data
+                })
+            })
 
+        }
+
+        function scback(data, k, max_length) {
+            $("#progress_box").show();
+            jQuery.support.cors = true;
+            $.ajax({
+                url: "{:input('server.REQUEST_SCHEME')}://v0.api.upyun.com/" + data.service_name,
+                type: 'POST',
+                data: vm.uploadData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                async: true,
+                xhr: function () {
+                    myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) { // check if upload property exists
+                        myXhr.upload.addEventListener('progress', function (e) {
+                            var loaded = e.loaded; //已经上传大小情况
+                            var total = e.total; //附件总大小
+                            var percent = Math.floor(100 * loaded / total); //已经上传的百分比
+                            $.hideLoading();
+                            if (percent < 100) {
+                                $.showLoading('上传中' + percent + "%");
+                            } else {
+                                $.hideLoading();
+                            }
+                            console.log("已经上传了：" + percent);
+                            //layer.msg('上传中'+percent)
+                            // $("#progress").width(percent)
+
+                        }, false); // for handling the progress of the upload
+                    }
+                    return myXhr;
+                },
+                success: function (res) {
+                    $("#progress_box").hide();
+                    console.log(res);
+                    res = JSON.parse(res)
+                    if (res.code == 200) {
+                        vm.data_size += res.file_size
+                        vm.source_url.push(res.url)
+                        // var resultd=res.data
+                        // vm.plimg.push(res.data)
+                        console.log(k + 1, max_length)
+                        if ((k + 1) == max_length) {
+                            layer.closeAll();
+                            console.log(vm);
+                            shezhi()
+                        }
+                    } else {
+                        layer.closeAll();
+                    }
 
                 },
-                error: function(err) {
-                    layer.close(index);
-                    layer.msg('操作失败')
+                error: function (res) {
+                    layer.closeAll();
+                    layer.msg('失败')
+                    console.log(res)
                 }
             })
         }
 
-    }
+        //保存资料
+        function shezhi() {
+            vm.old_files = vm.files;
 
-    function scback(data) {
-        $("#progress_box").show();
-        jQuery.support.cors = true;
-        $.ajax({
-            url: "{:input('server.REQUEST_SCHEME')}://v0.api.upyun.com/" + data.service_name,
-            type: 'POST',
-            data: vm.uploadData,
-            cache: false,
-            processData: false,
-            contentType: false,
-            async: true,
-            xhr: function() {
-                myXhr = $.ajaxSettings.xhr();
-                if (myXhr.upload) { // check if upload property exists
-                    myXhr.upload.addEventListener('progress', function(e) {
-                        var loaded = e.loaded; //已经上传大小情况
-                        var total = e.total; //附件总大小
-                        var percent = Math.floor(100 * loaded / total); //已经上传的百分比
-                        $.hideLoading();
-                        if (percent < 100) {
-                            $.showLoading('上传中' + percent + "%");
-                        } else {
-                            $.hideLoading();
-                        }
-                        console.log("已经上传了：" + percent);
-                        //layer.msg('上传中'+percent)
-                        // $("#progress").width(percent)
-
-                    }, false); // for handling the progress of the upload
-                }
-                return myXhr;
-            },
-            success: function(res) {
-                $("#progress_box").hide();
-                console.log(res);
-                res = JSON.parse(res)
-                if (res.code == 200) {
-                    layer.closeAll();
-                    vm.data_size = res.file_size
-                    vm.source_url = res.url
-                    // var resultd=res.data
-                    // vm.plimg.push(res.data)
-                    shezhi()
-                } else {
-                    layer.closeAll();
-                }
-
-            },
-            error:function(res){
-                layer.closeAll();
-                layer.msg('失败')
-                console.log(res)
+            var form_data = new FormData($("#attr_val_ids")[0]);
+            form_data.append('cate_id', $('select[name=cate_id]').val())
+            form_data.append('name', $("input[name='title']").val())
+            form_data.append('desc', $("textarea[name='content']").val())
+            form_data.append('integral', $("input[name='biaoqian']").val())
+            form_data.append('name_status', $("input[name='name_status']:checked").val())
+            form_data.append('is_original', $("input[name='is_original']:checked").val())
+            form_data.append('library_pic', $('input[name=library_pic]').val())
+            form_data.append('source_url', vm.source_url ? vm.source_url : []);
+            form_data.append('suffix', vm.suffix ? vm.suffix : '');
+            form_data.append('data_size', vm.data_size ? vm.data_size : '');
+            form_data.append('file_type', $('input[name=file_type]').val())
+            form_data.append('__token__', $('input[name=__token__]').val())
+            form_data.append('id', '{$info.id}')
+            if ($("input[name='is_classics']:checked").val()) {
+                console.log($("input[name='is_classics']:checked").val())
+                form_data.append('is_classics', $("input[name='is_classics']:checked").val())
             }
-        })
-    }
-    //保存资料
-    function shezhi() {
-        vm.old_files = vm.files;
 
-        var form_data = new FormData($("#attr_val_ids")[0]);
-        form_data.append('cate_id', $('select[name=cate_id]').val())
-        form_data.append('name', $("input[name='title']").val())
-        form_data.append('desc', $("textarea[name='content']").val())
-        form_data.append('integral', $("input[name='biaoqian']").val())
-        form_data.append('name_status', $("input[name='name_status']:checked").val())
-        form_data.append('is_original', $("input[name='is_original']:checked").val())
-        form_data.append('library_pic', $('input[name=library_pic]').val())
-        form_data.append('source_url', vm.source_url ? vm.source_url : '');
-        form_data.append('suffix', vm.suffix ? vm.suffix : '');
-        form_data.append('data_size', vm.data_size ? vm.data_size : '');
-        form_data.append('file_type',$('input[name=file_type]').val())
-        form_data.append('__token__', $('input[name=__token__]').val())
-        form_data.append('id','{$info.id}')
-        if ($("input[name='is_classics']:checked").val()){
-            console.log($("input[name='is_classics']:checked").val())
-            form_data.append('is_classics', $("input[name='is_classics']:checked").val())
-        }
-
-        $.ajax({
-            //几个参数需要注意一下
-            type: "POST", //方法类型
-            dataType: "json", //预期服务器返回的数据类型
-            url: "{:url('/index/Library/update')}", //url
-            data: form_data,
-            processData: false,
-            contentType: false,
-            success: function(res) {
-                if (res.code == 1) {
-                    layer.msg('修改成功', { time: 4000 })
-                    setTimeout(function() {
-                        window.location.href = "{:url('myLibrary')}"
-                    }, 4000);
-                } else {
-                    if (res.msg) {
-                        layer.msg(res.msg)
+            $.ajax({
+                //几个参数需要注意一下
+                type: "POST", //方法类型
+                dataType: "json", //预期服务器返回的数据类型
+                url: "{:url('/index/Library/update')}", //url
+                data: form_data,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    if (res.code == 1) {
+                        layer.msg('修改成功', {time: 4000})
+                        setTimeout(function () {
+                            window.location.href = "{:url('myLibrary')}"
+                        }, 4000);
+                    } else {
+                        if (res.msg) {
+                            layer.msg(res.msg)
+                        } else {
+                            layer.msg('操作失败')
+                        }
+                    }
+                },
+                error: function (err) {
+                    vm.btnkg = 0
+                    console.log(err)
+                    if (err.responseJSON.msg) {
+                        layer.msg(err.responseJSON.msg)
                     } else {
                         layer.msg('操作失败')
                     }
                 }
-            },
-            error: function(err) {
-                vm.btnkg = 0
-                console.log(err)
-                if (err.responseJSON.msg) {
-                    layer.msg(err.responseJSON.msg)
-                } else {
-                    layer.msg('操作失败')
-                }
-            }
-        });
+            });
+        }
     }
 </script>
 

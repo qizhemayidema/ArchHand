@@ -31,7 +31,7 @@ class Library extends Model
 
     public function getStatusAttr($value)
     {
-        $status = [-1 => '审核未通过', 0 => '未审核', 1 => '审核以通过'];
+        $status = [-1 => '审核未通过', 0 => '未审核', 1 => '审核已通过'];
         return $status[$value];
     }
 

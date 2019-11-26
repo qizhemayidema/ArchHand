@@ -11,7 +11,12 @@
             href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
 
-
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            <a class="btn btn-primary radius" data-title="批量审核" onclick="verifys('审核','','510')" href="javascript:;">
+                批量审核</a>
+        </span>
+    </div>
     <div class="mt-20">
         <table class="table table-border table-bordered table-hover table-bg table-sort">
             <thead>
@@ -19,6 +24,7 @@
                 <th scope="col" colspan="110">云库列表</th>
             </tr>
             <tr class="text-c">
+                <th width="3%"><input type="checkbox"></th>
                 <th width="5%">ID</th>
                 <th width="5%">分类</th>
                 <th width="10%">云库标题</th>
@@ -27,7 +33,7 @@
                 <th width="5%">助手币</th>
                 <th width="20%">资源地址</th>
                 <th width="10%">发布时间</th>
-                <th width="5%">是否官方发布</th>
+                <th width="2%">是否官方发布</th>
                 <th width="5%">精华</th>
                 <th width="5%">审核状态</th>
                 <th width="5%">操作</th>
@@ -37,6 +43,7 @@
 
             {foreach $libraries as $v}
             <tr class="text-c">
+                <td><input type="checkbox" class="duoxuan" name="ids[]" value="{$v.id}"></td>
                 <td>{$v['id']}</td>
                 <td>{$v->category->cate_name}</td>
                 <td>{$v['name']}</td>
@@ -46,7 +53,7 @@
                     </i>
                 </td>
                 <td>
-                    <a href="javascript:void(0);" onclick="member_show('{$v->user->nickname}','userShow?id={$v->user->id}','10001','360','400')">
+                    <a href="javascript:void(0);" onclick="member_del(this)">
                         <i class="avatar size-L radius">
                             <img alt="" width="50px" height="50px" src="{$v->user->avatar_url?$v->user->avatar_url:'__STATIC__/static/h-ui/images/ucnter/avatar-default-S.gif'}">
                         </i>
@@ -54,9 +61,12 @@
                 </td>
                 <td>{$v['integral']}</td>
                 <td>
-                    <a href="{:env('UPYUN.CDN_URL')}{$v['source_url']}" target="_blank">
-                        {$v['source_url']}
+                    {foreach :explode(',',$v['source_url']) as $key1 => $value1}
+                    <a href="{:env('UPYUN.CDN_URL')}{$value1}" target="_blank">
+                        {$value1}
                     </a>
+                    <br/>
+                    {/foreach}
                 </td>
                 <td>{$v['create_time']}</td>
                 <td>{$v['is_official']}</td>
@@ -71,7 +81,7 @@
                     <a style="cursor:pointer"
                        class="label label-success radius"
                        onclick=" ">
-                        以加精
+                        已加精
                     </a>
                     {else/}
                     <a style="cursor:pointer"
@@ -184,7 +194,6 @@
                     }
                 });
             }
-
         });
     }
 
@@ -206,6 +215,24 @@
     /*用户-查看*/
     function  verify(title, url, id, w, h) {
         layer_show(title, url, w, h);
+    }
+
+    function verifys(title,w,h){
+        var url = 'verify';
+
+        var res = [];
+        $(".duoxuan:checked").each(function(k,v){
+            res.push($(v).val())
+        })
+
+        if (!res.length){
+            layer.msg('请选择至少一条数据');
+            return;
+        }
+
+        url += '?id=' + res.join(',')
+        layer_show(title, url, w, h);
+
     }
 
 
