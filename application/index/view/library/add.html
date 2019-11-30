@@ -272,9 +272,11 @@ layui.use(['form', 'upload', 'element'], function() {
             //,multiple: true
             ,
         choose: function(obj) {
+            $('#file_name').html('')
             obj.preview(function(index, file, result) {
                 console.log(file)
-                // $('#file_name').html(file.name)
+
+                $('#file_name').append(file.name + '  ')
                 if (vm.files.length >= 5){
 
                 }

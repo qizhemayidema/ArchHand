@@ -67,6 +67,7 @@ class Base extends Controller
     public function checkPermission($controller = '', $action = '')
     {
         if (!$controller && !$action && request()->isGet()) return true;
+
         $controller = $controller != '' ? strtolower($controller) : request()->controller(true);
 
         $action = $action != '' ? strtolower($action) : request()->action(true);

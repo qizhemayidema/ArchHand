@@ -15,6 +15,11 @@
         <span class="l">
             <a class="btn btn-primary radius" data-title="批量审核" onclick="verifys('审核','','510')" href="javascript:;">
                 批量审核</a>
+
+            <a class="btn btn-primary radius" data-title="批量加精" onclick="jiajing()" href="javascript:;">
+                批量加精</a>
+            <a class="btn btn-danger radius" data-title="批量删除" onclick="del_more()" href="javascript:;">
+                批量删除</a>
         </span>
     </div>
     <div class="mt-20">
@@ -220,10 +225,7 @@
     function verifys(title,w,h){
         var url = 'verify';
 
-        var res = [];
-        $(".duoxuan:checked").each(function(k,v){
-            res.push($(v).val())
-        })
+        var res = getMoreSelect();
 
         if (!res.length){
             layer.msg('请选择至少一条数据');
@@ -235,12 +237,82 @@
 
     }
 
+    function jiajing()
+    {
+        var res = getMoreSelect();
+
+        if (!res.length){
+            layer.msg('请选择至少一条数据');
+            return;
+        }
+
+        var url = 'classics';
+
+
+        $.ajax({
+            url:"{:url('classics')}",
+            data:{
+                id:res.join(','),
+                classics : 1,
+            },
+            type:"get",
+            dataType:"json",
+            success:function(data){
+                if (data.code == 0){
+                    layer.alert(data.msg)
+                } else{
+                    window.location.reload();
+                }
+            }
+        })
+
+    }
+
+    function getMoreSelect()
+    {
+        var res = [];
+        $(".duoxuan:checked").each(function(k,v){
+            res.push($(v).val())
+        })
+
+        return res;
+    }
+
+    function del_more()
+    {
+        var res = getMoreSelect();
+
+
+        if (!res.length){
+            layer.msg('请选择至少一条数据');
+            return;
+        }
+
+
+        var ids = res.join(',')
+        layer.confirm('确认要删除吗？', function (index) {
+
+            $.ajax({
+
+                type: 'POST',
+                url: 'delete',
+                dataType: 'json',
+                data:{'id':ids},
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        })
+    }
+
 
     /*用户-删除*/
     function member_del(obj, id) {
         layer.confirm('确认要删除吗？', function (index) {
             $.ajax({
-
                 type: 'POST',
                 url: 'delete',
                 dataType: 'json',

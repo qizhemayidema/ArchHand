@@ -84,7 +84,6 @@
                     </div>
                     {/foreach}
                 </form>
-
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">标题</label>
@@ -102,7 +101,7 @@
                 <label class="layui-form-label">附件上传</label>
                 <div class="layui-input-block">
                     <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
-                    <span><span id="file_name">{:mb_substr($info['source_url'],strrpos($info['source_url'],'/') + 1)}</span>(限制压缩包 zip,rar,7z 格式 , 大小不超过1.2G)</span>
+                    <span><span id="file_name">{:mb_substr($info['source_url'],strrpos($info['source_url'],'/') + 1)}</span>(限制压缩包 zip,rar,7z 格式 , 每个压缩包不超过1.2G,最多五个压缩包)</span>
                     <!-- <button type="button" class="layui-btn">开始上传</button> -->
                 </div>
             </div>
@@ -277,9 +276,11 @@
             //,multiple: true
             ,
             choose: function(obj) {
+                $('#file_name').html('')
+
                 obj.preview(function(index, file, result) {
                     console.log(file)
-                    // $('#file_name').html(file.name)
+                    $('#file_name').append(file.name)
                     if (vm.files.length >= 5){
 
                     }

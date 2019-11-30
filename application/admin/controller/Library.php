@@ -140,20 +140,24 @@ class Library extends Base
      */
     public function delete(Request $request)
     {
-        $id = $request->only('id');
+        $param = $request->only('id');
+        $id = $param['id'];
+        $ids = explode(',',$id);
         Db::startTrans();
         try {
+            foreach ($ids as $k => $id){
             //如果是通过状态删除的 才能够减少统计数量
-            $status = (new LibraryModel())->where(['id'=>$id['id']])->value('status');
+            $status = (new LibraryModel())->where(['id'=>$id])->value('status');
             if($status == 1){
-                (new CommonLibraryModel())->setAboutSum($id['id'],0);
+                (new CommonLibraryModel())->setAboutSum($id,0);
             }
-            $del = (new LibraryModel())->update(['id' => $id['id'], 'is_delete' => time()]);
+            $del = (new LibraryModel())->update(['id' => $id, 'is_delete' => time()]);
             //删除标签
-            $del_value = Db::name('library_have_attribute_value')->where('library_id', $id['id'])->delete();
+            $del_value = Db::name('library_have_attribute_value')->where('library_id', $id)->delete();
             //删除审核原因
-            $verify = Db::name('library_check_history')->where('library_id', $id['id'])->delete();
+            $verify = Db::name('library_check_history')->where('library_id', $id)->delete();
             //分类下
+            }
             //TODO::删除远程文件
             Db::commit();
         } catch (\Exception $e) {
@@ -263,13 +267,14 @@ class Library extends Base
     {
 
         $param = $request->get();
+        $ids = explode(',',$param['id']);
         if ($param['classics']) {
             $is_num = 1;
         } else {
             $is_num = 0;
         }
         try {
-            $classics = Db::name('library')->where('id', $param['id'])->update(['is_classics' => $is_num]);
+            $classics = Db::name('library')->whereIn('id',$ids)->update(['is_classics' => $is_num]);
             if ($classics) {
                 return json(['code' => 1, 'msg' => '操作成功']);
             }
